@@ -1,0 +1,40 @@
+{
+  "appId": "com.buildprop.app",
+  "productName": "BuildProp",
+  "directories": {
+    "output": "../dist-electron-standard"
+  },
+  "files": [
+    "main.js",
+    "package.json"
+  ],
+  "win": {
+    "target": [
+      {
+        "target": "nsis",
+        "arch": ["x64"]
+      },
+      {
+        "target": "portable",
+        "arch": ["x64"]
+      }
+    ],
+    "icon": "../public/favicon.ico"
+  },
+  "nsis": {
+    "oneClick": false,
+    "allowToChangeInstallationDirectory": true,
+    "createDesktopShortcut": true
+  },
+  "extraResources": [
+    {
+      "filter": ["**/*"],
+      "from": "../.next/standalone",
+      "to": ".next/standalone"
+    },
+    {
+      "to": "ai/ollama.exe",
+      "from": "resources/ai/ollama.exe"
+    }
+  ]
+}

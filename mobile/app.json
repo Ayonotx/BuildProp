@@ -1,0 +1,27 @@
+{
+  "expo": {
+    "name": "BuildProp",
+    "slug": "buildprop",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "splash": {
+      "backgroundColor": "#1a73e8"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.buildprop.mobile"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#1a73e8"
+      },
+      "package": "com.buildprop.mobile"
+    },
+    "plugins": [
+      "expo-router"
+    ]
+  }
+}

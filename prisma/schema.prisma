@@ -1,0 +1,776 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(uuid())
+  email         String    @unique
+  passwordHash  String    @map("password_hash")
+  firstName     String    @map("first_name")
+  lastName      String    @map("last_name")
+  phone         String?
+  avatarUrl     String?   @map("avatar_url")
+  roleId        String    @map("role_id")
+  role          Role      @relation(fields: [roleId], references: [id])
+  isActive      Boolean   @default(true) @map("is_active")
+  lastLoginAt   DateTime? @map("last_login_at")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+  auditLogs     AuditLog[]
+  @@map("users")
+}
+
+model Role {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  description String?
+  level       Int      @default(0)
+  isSystem    Boolean  @default(false) @map("is_system")
+  users       User[]
+  permissions RolePermission[]
+  @@map("roles")
+}
+
+model Permission {
+  id       String   @id @default(uuid())
+  module   String
+  action   String
+  resource String?
+  roles    RolePermission[]
+  @@unique([module, action, resource])
+  @@map("permissions")
+}
+
+model RolePermission {
+  roleId       String     @map("role_id")
+  role         Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permissionId String     @map("permission_id")
+  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+  @@id([roleId, permissionId])
+  @@map("role_permissions")
+}
+
+model AuditLog {
+  id         String   @id @default(uuid())
+  userId     String   @map("user_id")
+  user       User     @relation(fields: [userId], references: [id])
+  action     String
+  entityType String   @map("entity_type")
+  entityId   String   @map("entity_id")
+  oldValues  String?  @map("old_values")
+  newValues  String?  @map("new_values")
+  ipAddress  String?  @map("ip_address")
+  createdAt  DateTime @default(now()) @map("created_at")
+  @@map("audit_logs")
+}
+
+model Project {
+  id                   String   @id @default(uuid())
+  name                 String
+  code                 String   @unique
+  description          String?
+  projectType          String   @map("project_type")
+  status               String   @default("planning")
+  priority             String   @default("medium")
+  startDate            DateTime? @map("start_date")
+  endDate              DateTime? @map("end_date")
+  estimatedBudget      Decimal  @default(0) @map("estimated_budget")
+  actualCost           Decimal  @default(0) @map("actual_cost")
+  completionPercentage Decimal  @default(0) @map("completion_percentage")
+  location             String?
+  latitude             Decimal?
+  longitude            Decimal?
+  projectManagerId     String   @map("project_manager_id")
+  createdAt            DateTime @default(now()) @map("created_at")
+  updatedAt            DateTime @updatedAt @map("updated_at")
+  members              ProjectMember[]
+  milestones           ProjectMilestone[]
+  tasks                ProjectTask[]
+  documents            ProjectDocument[]
+  changeOrders         ChangeOrder[]
+  budgets              Budget[]
+  purchaseOrders       PurchaseOrder[]
+  @@map("projects")
+}
+
+model ProjectMember {
+  id        String   @id @default(uuid())
+  projectId String   @map("project_id")
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  userId    String   @map("user_id")
+  role      String
+  joinedAt  DateTime @default(now()) @map("joined_at")
+  @@unique([projectId, userId])
+  @@map("project_members")
+}
+
+model ProjectMilestone {
+  id              String   @id @default(uuid())
+  projectId       String   @map("project_id")
+  project         Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  name            String
+  description     String?
+  dueDate         DateTime? @map("due_date")
+  completedDate   DateTime? @map("completed_date")
+  status          String   @default("pending")
+  budgetAllocated Decimal? @map("budget_allocated")
+  budgetSpent     Decimal? @map("budget_spent")
+  sortOrder       Int      @default(0) @map("sort_order")
+  tasks           ProjectTask[]
+  @@map("project_milestones")
+}
+
+model ProjectTask {
+  id             String    @id @default(uuid())
+  projectId      String    @map("project_id")
+  project        Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  milestoneId    String?   @map("milestone_id")
+  milestone      ProjectMilestone? @relation(fields: [milestoneId], references: [id])
+  title          String
+  description    String?
+  status         String    @default("todo")
+  priority       String    @default("medium")
+  assignedTo     String?   @map("assigned_to")
+  estimatedHours Decimal?  @map("estimated_hours")
+  actualHours    Decimal?  @map("actual_hours")
+  startDate      DateTime? @map("start_date")
+  dueDate        DateTime? @map("due_date")
+  completedDate  DateTime? @map("completed_date")
+  createdAt      DateTime  @default(now()) @map("created_at")
+  @@map("project_tasks")
+}
+
+model ProjectDocument {
+  id         String   @id @default(uuid())
+  projectId  String   @map("project_id")
+  project    Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  name       String
+  fileUrl    String   @map("file_url")
+  fileType   String   @map("file_type")
+  fileSize   Int      @map("file_size")
+  category   String
+  uploadedBy String   @map("uploaded_by")
+  createdAt  DateTime @default(now()) @map("created_at")
+  @@map("project_documents")
+}
+
+model ChangeOrder {
+  id                 String   @id @default(uuid())
+  projectId          String   @map("project_id")
+  project            Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  title              String
+  description        String?
+  costImpact         Decimal  @default(0) @map("cost_impact")
+  scheduleImpactDays Int      @default(0) @map("schedule_impact_days")
+  status             String   @default("pending")
+  requestedBy        String   @map("requested_by")
+  approvedBy         String?  @map("approved_by")
+  requestedAt        DateTime @default(now()) @map("requested_at")
+  resolvedAt         DateTime? @map("resolved_at")
+  @@map("change_orders")
+}
+
+model Property {
+  id           String   @id @default(uuid())
+  name         String
+  slug         String   @unique
+  description  String?
+  propertyType String   @map("property_type")
+  status       String   @default("available")
+  price        Decimal
+  rentalPrice  Decimal? @map("rental_price")
+  areaSqft     Decimal? @map("area_sqft")
+  bedrooms     Int?
+  bathrooms    Int?
+  address      String?
+  city         String?
+  state        String?
+  latitude     Decimal?
+  longitude    Decimal?
+  features     String?  @default("{}")
+  images       String   @default("[]")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+  units        PropertyUnit[]
+  leases       Lease[]
+  @@map("properties")
+}
+
+model PropertyUnit {
+  id         String   @id @default(uuid())
+  propertyId String   @map("property_id")
+  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  unitNumber String   @map("unit_number")
+  floor      Int?
+  type       String?
+  areaSqft   Decimal? @map("area_sqft")
+  price      Decimal
+  status     String   @default("available")
+  @@map("property_units")
+}
+
+model Lease {
+  id              String   @id @default(uuid())
+  propertyId      String   @map("property_id")
+  property        Property @relation(fields: [propertyId], references: [id])
+  unitId          String?  @map("unit_id")
+  tenantId        String   @map("tenant_id")
+  startDate       DateTime @map("start_date")
+  endDate         DateTime @map("end_date")
+  rentAmount      Decimal  @map("rent_amount")
+  securityDeposit Decimal  @map("security_deposit")
+  paymentDay      Int      @map("payment_day")
+  status          String   @default("active")
+  autoRenew       Boolean  @default(false) @map("auto_renew")
+  createdAt       DateTime @default(now()) @map("created_at")
+  payments        LeasePayment[]
+  @@map("leases")
+}
+
+model LeasePayment {
+  id            String   @id @default(uuid())
+  leaseId       String   @map("lease_id")
+  lease         Lease    @relation(fields: [leaseId], references: [id])
+  amount        Decimal
+  dueDate       DateTime @map("due_date")
+  paidDate      DateTime? @map("paid_date")
+  status        String   @default("pending")
+  @@map("lease_payments")
+}
+
+model LandRecord {
+  id                String   @id @default(uuid())
+  title             String
+  surveyNumber      String?  @map("survey_number")
+  areaAcres         Decimal? @map("area_acres")
+  areaSqft          Decimal? @map("area_sqft")
+  landType          String   @map("land_type")
+  marketValue       Decimal  @map("market_value")
+  address           String?
+  city              String?
+  ownerName         String?  @map("owner_name")
+  ownershipType     String?  @map("ownership_type")
+  encumbranceStatus String   @default("clear") @map("encumbrance_status")
+  status            String   @default("available")
+  images            String   @default("[]")
+  createdAt         DateTime @default(now()) @map("created_at")
+  updatedAt         DateTime @updatedAt @map("updated_at")
+  transactions      LandTransaction[]
+  @@map("land_records")
+}
+
+model LandTransaction {
+  id                String   @id @default(uuid())
+  landRecordId      String   @map("land_record_id")
+  landRecord        LandRecord @relation(fields: [landRecordId], references: [id])
+  transactionType   String   @map("transaction_type")
+  fromParty         String?  @map("from_party")
+  toParty           String?  @map("to_party")
+  amount            Decimal?
+  transactionDate   DateTime @map("transaction_date")
+  status            String   @default("initiated")
+  createdAt         DateTime @default(now()) @map("created_at")
+  @@map("land_transactions")
+}
+
+model Account {
+  id        String   @id @default(uuid())
+  code      String   @unique
+  name      String
+  type      String
+  subType   String?  @map("sub_type")
+  parentId  String?  @map("parent_id")
+  parent    Account? @relation("AccountHierarchy", fields: [parentId], references: [id])
+  children  Account[] @relation("AccountHierarchy")
+  balance   Decimal  @default(0)
+  isActive  Boolean  @default(true) @map("is_active")
+  @@map("accounts")
+}
+
+model Transaction {
+  id                String   @id @default(uuid())
+  transactionNumber String   @unique @map("transaction_number")
+  date              DateTime
+  type              String
+  category          String?
+  description       String?
+  totalAmount       Decimal  @map("total_amount")
+  status            String   @default("draft")
+  createdBy         String   @map("created_by")
+  createdAt         DateTime @default(now()) @map("created_at")
+  lines             TransactionLine[]
+  @@map("transactions")
+}
+
+model TransactionLine {
+  id            String      @id @default(uuid())
+  transactionId String      @map("transaction_id")
+  transaction   Transaction @relation(fields: [transactionId], references: [id], onDelete: Cascade)
+  accountId     String      @map("account_id")
+  debit         Decimal     @default(0)
+  credit        Decimal     @default(0)
+  description   String?
+  @@map("transaction_lines")
+}
+
+model Invoice {
+  id             String   @id @default(uuid())
+  invoiceNumber  String   @unique @map("invoice_number")
+  type           String
+  contactId      String   @map("contact_id")
+  issueDate      DateTime @map("issue_date")
+  dueDate        DateTime @map("due_date")
+  subtotal       Decimal
+  taxAmount      Decimal  @default(0) @map("tax_amount")
+  totalAmount    Decimal  @map("total_amount")
+  paidAmount     Decimal  @default(0) @map("paid_amount")
+  status         String   @default("draft")
+  createdBy      String   @map("created_by")
+  createdAt      DateTime @default(now()) @map("created_at")
+  items          InvoiceItem[]
+  @@map("invoices")
+}
+
+model InvoiceItem {
+  id          String  @id @default(uuid())
+  invoiceId   String  @map("invoice_id")
+  invoice     Invoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  description String
+  quantity    Decimal
+  unitPrice   Decimal @map("unit_price")
+  amount      Decimal
+  @@map("invoice_items")
+}
+
+model Payment {
+  id            String   @id @default(uuid())
+  paymentNumber String   @unique @map("payment_number")
+  type          String
+  contactId     String   @map("contact_id")
+  invoiceId     String?  @map("invoice_id")
+  amount        Decimal
+  paymentMethod String   @map("payment_method")
+  paymentDate   DateTime @map("payment_date")
+  createdBy     String   @map("created_by")
+  createdAt     DateTime @default(now()) @map("created_at")
+  @@map("payments")
+}
+
+model Budget {
+  id             String  @id @default(uuid())
+  projectId      String  @map("project_id")
+  project        Project @relation(fields: [projectId], references: [id])
+  category       String
+  budgetedAmount Decimal @map("budgeted_amount")
+  spentAmount    Decimal @default(0) @map("spent_amount")
+  fiscalYear     Int?    @map("fiscal_year")
+  @@map("budgets")
+}
+
+model Department {
+  id       String      @id @default(uuid())
+  name     String
+  code     String      @unique
+  parentId String?     @map("parent_id")
+  parent   Department? @relation("DeptHierarchy", fields: [parentId], references: [id])
+  children Department[] @relation("DeptHierarchy")
+  employees Employee[]
+  @@map("departments")
+}
+
+model Employee {
+  id             String   @id @default(uuid())
+  userId         String?  @map("user_id")
+  employeeId     String   @unique @map("employee_id")
+  departmentId   String   @map("department_id")
+  department     Department @relation(fields: [departmentId], references: [id])
+  designation    String
+  employmentType String   @default("full_time") @map("employment_type")
+  dateOfJoining  DateTime @map("date_of_joining")
+  salary         Decimal
+  status         String   @default("active")
+  createdAt      DateTime @default(now()) @map("created_at")
+  attendance     Attendance[]
+  leaveRequests  LeaveRequest[]
+  payroll        Payroll[]
+  @@map("employees")
+}
+
+model Attendance {
+  id          String   @id @default(uuid())
+  employeeId  String   @map("employee_id")
+  employee    Employee @relation(fields: [employeeId], references: [id])
+  date        DateTime
+  clockIn     DateTime? @map("clock_in")
+  clockOut    DateTime? @map("clock_out")
+  status      String   @default("present")
+  @@unique([employeeId, date])
+  @@map("attendance")
+}
+
+model LeaveRequest {
+  id         String   @id @default(uuid())
+  employeeId String   @map("employee_id")
+  employee   Employee @relation(fields: [employeeId], references: [id])
+  leaveType  String   @map("leave_type")
+  startDate  DateTime @map("start_date")
+  endDate    DateTime @map("end_date")
+  days       Int
+  reason     String?
+  status     String   @default("pending")
+  createdAt  DateTime @default(now()) @map("created_at")
+  @@map("leave_requests")
+}
+
+model Payroll {
+  id          String   @id @default(uuid())
+  employeeId  String   @map("employee_id")
+  employee    Employee @relation(fields: [employeeId], references: [id])
+  periodStart DateTime @map("period_start")
+  periodEnd   DateTime @map("period_end")
+  basicSalary Decimal  @map("basic_salary")
+  allowances  Decimal  @default(0)
+  deductions  Decimal  @default(0)
+  netPay      Decimal  @map("net_pay")
+  status      String   @default("draft")
+  paidDate    DateTime? @map("paid_date")
+  @@map("payroll")
+}
+
+model InventoryCategory {
+  id       String              @id @default(uuid())
+  name     String
+  parentId String?             @map("parent_id")
+  parent   InventoryCategory?  @relation("CategoryHierarchy", fields: [parentId], references: [id])
+  children InventoryCategory[] @relation("CategoryHierarchy")
+  items    InventoryItem[]
+  @@map("inventory_categories")
+}
+
+model InventoryItem {
+  id            String            @id @default(uuid())
+  sku           String            @unique
+  name          String
+  description   String?
+  categoryId    String            @map("category_id")
+  category      InventoryCategory @relation(fields: [categoryId], references: [id])
+  unitOfMeasure String            @map("unit_of_measure")
+  minStock      Decimal           @default(0) @map("min_stock")
+  maxStock      Decimal           @default(0) @map("max_stock")
+  currentStock  Decimal           @default(0) @map("current_stock")
+  unitCost      Decimal           @map("unit_cost")
+  isActive      Boolean           @default(true) @map("is_active")
+  transactions  InventoryTransaction[]
+  warehouseStock WarehouseStock[]
+  @@map("inventory_items")
+}
+
+model InventoryTransaction {
+  id         String        @id @default(uuid())
+  itemId     String        @map("item_id")
+  item       InventoryItem @relation(fields: [itemId], references: [id])
+  type       String
+  quantity   Decimal
+  unitCost   Decimal       @map("unit_cost")
+  projectId  String?       @map("project_id")
+  notes      String?
+  createdBy  String        @map("created_by")
+  createdAt  DateTime      @default(now()) @map("created_at")
+  @@map("inventory_transactions")
+}
+
+model Warehouse {
+  id       String   @id @default(uuid())
+  name     String
+  address  String?
+  status   String   @default("active")
+  stock    WarehouseStock[]
+  @@map("warehouses")
+}
+
+model WarehouseStock {
+  id          String      @id @default(uuid())
+  warehouseId String      @map("warehouse_id")
+  warehouse   Warehouse   @relation(fields: [warehouseId], references: [id])
+  itemId      String      @map("item_id")
+  item        InventoryItem @relation(fields: [itemId], references: [id])
+  quantity    Decimal
+  @@unique([warehouseId, itemId])
+  @@map("warehouse_stock")
+}
+
+model Supplier {
+  id            String   @id @default(uuid())
+  name          String
+  contactPerson String?  @map("contact_person")
+  email         String?
+  phone         String?
+  address       String?
+  category      String   @default("materials")
+  paymentTerms  String?  @map("payment_terms")
+  rating        Decimal?
+  status        String   @default("active")
+  purchaseOrders PurchaseOrder[]
+  @@map("suppliers")
+}
+
+model PurchaseOrder {
+  id               String   @id @default(uuid())
+  poNumber         String   @unique @map("po_number")
+  supplierId       String   @map("supplier_id")
+  supplier         Supplier @relation(fields: [supplierId], references: [id])
+  projectId        String?  @map("project_id")
+  project          Project? @relation(fields: [projectId], references: [id])
+  orderDate        DateTime @map("order_date")
+  expectedDelivery DateTime? @map("expected_delivery")
+  totalAmount      Decimal  @map("total_amount")
+  status           String   @default("draft")
+  createdBy        String   @map("created_by")
+  createdAt        DateTime @default(now()) @map("created_at")
+  items            PurchaseOrderItem[]
+  @@map("purchase_orders")
+}
+
+model PurchaseOrderItem {
+  id          String        @id @default(uuid())
+  poId        String        @map("po_id")
+  po          PurchaseOrder @relation(fields: [poId], references: [id], onDelete: Cascade)
+  itemId      String?       @map("item_id")
+  description String?
+  quantity    Decimal
+  unitPrice   Decimal       @map("unit_price")
+  amount      Decimal
+  receivedQty Decimal       @default(0) @map("received_qty")
+  @@map("purchase_order_items")
+}
+
+model Contact {
+  id            String   @id @default(uuid())
+  type          String
+  firstName     String   @map("first_name")
+  lastName      String   @map("last_name")
+  email         String?
+  phone         String?
+  company       String?
+  address       String?
+  notes         String?
+  source        String?
+  leadStatus    String?  @map("lead_status")
+  status        String   @default("active")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+  communications Communication[]
+  appointments  Appointment[]
+  complaints    Complaint[]
+  @@map("contacts")
+}
+
+model Communication {
+  id        String   @id @default(uuid())
+  contactId String   @map("contact_id")
+  contact   Contact  @relation(fields: [contactId], references: [id], onDelete: Cascade)
+  type      String
+  direction String
+  subject   String?
+  content   String?
+  createdBy String   @map("created_by")
+  createdAt DateTime @default(now()) @map("created_at")
+  @@map("communications")
+}
+
+model Appointment {
+  id          String   @id @default(uuid())
+  contactId   String   @map("contact_id")
+  contact     Contact  @relation(fields: [contactId], references: [id], onDelete: Cascade)
+  title       String
+  description String?
+  startTime   DateTime @map("start_time")
+  endTime     DateTime @map("end_time")
+  status      String   @default("scheduled")
+  createdBy   String   @map("created_by")
+  createdAt   DateTime @default(now()) @map("created_at")
+  @@map("appointments")
+}
+
+model Complaint {
+  id          String   @id @default(uuid())
+  contactId   String   @map("contact_id")
+  contact     Contact  @relation(fields: [contactId], references: [id], onDelete: Cascade)
+  subject     String
+  description String?
+  priority    String   @default("medium")
+  status      String   @default("open")
+  resolution  String?
+  createdAt   DateTime @default(now()) @map("created_at")
+  resolvedAt  DateTime? @map("resolved_at")
+  @@map("complaints")
+}
+
+model Sale {
+  id              String   @id @default(uuid())
+  saleNumber      String   @unique @map("sale_number")
+  propertyId      String   @map("property_id")
+  contactId       String   @map("contact_id")
+  salePrice       Decimal  @map("sale_price")
+  commissionRate  Decimal  @default(0) @map("commission_rate")
+  commissionAmount Decimal @default(0) @map("commission_amount")
+  saleDate        DateTime @map("sale_date")
+  status          String   @default("quotation")
+  paymentStatus   String   @default("pending") @map("payment_status")
+  notes           String?
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+  @@map("sales")
+}
+
+model Document {
+  id         String   @id @default(uuid())
+  name       String
+  fileUrl    String   @map("file_url")
+  fileType   String   @map("file_type")
+  fileSize   Int      @map("file_size")
+  category   String
+  entityId   String?  @map("entity_id")
+  entityType String?  @map("entity_type")
+  uploadedBy String   @map("uploaded_by")
+  version    Int      @default(1)
+  createdAt  DateTime @default(now()) @map("created_at")
+  @@map("documents")
+}
+
+model Notification {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  type      String
+  title     String
+  message   String?
+  link      String?
+  isRead    Boolean  @default(false) @map("is_read")
+  createdAt DateTime @default(now()) @map("created_at")
+  @@map("notifications")
+}
+
+model Asset {
+  id              String   @id @default(uuid())
+  name            String
+  assetCode       String   @unique @map("asset_code")
+  category        String
+  purchaseDate    DateTime @map("purchase_date")
+  purchasePrice   Decimal  @map("purchase_price")
+  currentValue    Decimal  @map("current_value")
+  status          String   @default("active")
+  location        String?
+  insuranceExpiry DateTime? @map("insurance_expiry")
+  createdAt       DateTime @default(now()) @map("created_at")
+  maintenanceRecords MaintenanceRecord[]
+  @@map("assets")
+}
+
+model MaintenanceRecord {
+  id          String   @id @default(uuid())
+  assetId     String   @map("asset_id")
+  asset       Asset    @relation(fields: [assetId], references: [id])
+  type        String
+  description String?
+  cost        Decimal?
+  performedAt DateTime @map("performed_at")
+  @@map("maintenance_records")
+}
+
+model Vehicle {
+  id            String   @id @default(uuid())
+  name          String
+  make          String
+  model         String
+  year          Int
+  licensePlate  String   @unique
+  status        String   @default("active")
+  fuelType      String   @default("diesel")
+  mileage       Int      @default(0)
+  assignedTo    String?
+  branchId      String?
+  branch        Branch?  @relation(fields: [branchId], references: [id])
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  @@map("vehicles")
+}
+
+model Branch {
+  id            String   @id @default(uuid())
+  name          String
+  code          String   @unique
+  address       String
+  city          String
+  phone         String?
+  email         String?
+  manager       String?
+  status        String   @default("active")
+  vehicles      Vehicle[]
+  contracts     Contract[]
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  @@map("branches")
+}
+
+model Contract {
+  id            String   @id @default(uuid())
+  title         String
+  type          String
+  partyName     String
+  value         Float    @default(0)
+  status        String   @default("active")
+  startDate     String
+  endDate       String
+  branchId      String?
+  branch        Branch?  @relation(fields: [branchId], references: [id])
+  notes         String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  @@map("contracts")
+}
+
+model ComplianceItem {
+  id            String   @id @default(uuid())
+  title         String
+  description   String?
+  category      String
+  status        String   @default("pending")
+  dueDate       String?
+  completedDate String?
+  assignedTo    String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  @@map("compliance_items")
+}
+
+model InstallmentPlan {
+  id                String       @id @default(cuid())
+  saleId            String
+  totalAmount       Decimal
+  numberOfPayments  Int
+  frequency         String
+  startDate         DateTime
+  status            String       @default("active")
+  createdAt         DateTime     @default(now())
+  installments      Installment[]
+  @@map("installment_plans")
+}
+
+model Installment {
+  id                String    @id @default(cuid())
+  planId            String
+  installmentNumber Int
+  amount            Decimal
+  dueDate           DateTime
+  paidDate          DateTime?
+  paidAmount        Decimal   @default(0)
+  status            String    @default("pending")
+  notes             String?
+  plan              InstallmentPlan @relation(fields: [planId], references: [id])
+  @@map("installments")
+}

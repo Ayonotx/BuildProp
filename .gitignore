@@ -1,0 +1,55 @@
+# Dependencies
+node_modules/
+.next/
+.npm/
+
+# Build outputs
+dist-electron/
+dist-electron-standard/
+
+# Mobile build outputs
+mobile/dist/
+mobile/android/
+mobile/ios/
+mobile/.expo/
+mobile/web-build/
+
+# AI model blobs (too large for Git — 1.3 GB)
+electron/resources/ai/models/blobs/
+
+# Environment files
+.env
+.env.local
+.env.production
+
+# OS files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
+# IDE
+.vscode/
+.idea/
+*.sublime-*
+
+# Logs
+*.log
+npm-debug.log*
+
+# Database journals
+*.db-journal
+*.db-wal
+*.db-shm
+prisma/*.db-journal
+prisma/*.db-wal
+prisma/*.db-shm
+
+# Backup data
+data/backups/
+
+# Temp
+*.tmp
+# Large binaries (push to LFS instead)
+electron/resources/node.exe
+electron/resources/ai/ollama.exe

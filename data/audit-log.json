@@ -1,0 +1,1581 @@
+[
+  {
+    "id": "eeae3bc0-5ec5-4a50-82c2-91f211730f3b",
+    "timestamp": "2026-07-27T23:52:25.542Z",
+    "userId": "eac79436-75ee-444e-8194-fc3ab9ef33aa",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "57135332-190e-48fd-b61b-2827109decab",
+    "timestamp": "2026-07-28T00:35:35.067Z",
+    "userId": "eac79436-75ee-444e-8194-fc3ab9ef33aa",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "2b8c05f7-1db4-4b7f-b2d2-1f7ed69776f2",
+    "timestamp": "2026-07-28T00:42:13.155Z",
+    "userId": "eac79436-75ee-444e-8194-fc3ab9ef33aa",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "c1377c5f-90e1-4d90-b6d9-f23e98190356",
+    "timestamp": "2026-07-28T00:42:44.895Z",
+    "userId": "eac79436-75ee-444e-8194-fc3ab9ef33aa",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "d207e165-a5c3-4283-8c81-b67b6da95189",
+    "timestamp": "2026-07-28T00:43:21.396Z",
+    "userId": "eac79436-75ee-444e-8194-fc3ab9ef33aa",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "8b267e39-cfb4-4576-b37d-226b14ee406b",
+    "timestamp": "2026-07-28T00:43:53.705Z",
+    "userId": "eac79436-75ee-444e-8194-fc3ab9ef33aa",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "cb2f88c8-7124-41a6-b036-91db3b1ab24f",
+    "timestamp": "2026-07-28T00:44:34.940Z",
+    "userId": "eac79436-75ee-444e-8194-fc3ab9ef33aa",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "6ef657fa-f3e4-42f0-8b78-3ccd7713af7d",
+    "timestamp": "2026-07-28T00:45:05.647Z",
+    "userId": "eac79436-75ee-444e-8194-fc3ab9ef33aa",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "9487876d-fc0a-4e3d-9e33-ad2c32296fb1",
+    "timestamp": "2026-07-28T00:45:44.023Z",
+    "userId": "eac79436-75ee-444e-8194-fc3ab9ef33aa",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "67310a8c-35fd-4fab-968f-19e0e214aecb",
+    "timestamp": "2026-07-28T01:11:36.395Z",
+    "userId": "6d8081eb-c874-4c6c-9744-e40079687bbc",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "f529688e-0381-4e28-85f5-6cbb7e0394e4",
+    "timestamp": "2026-07-28T01:30:24.817Z",
+    "userId": "dbd7790c-78f7-406e-aed9-0047f108f0ad",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "6a1a595e-0045-4f72-875a-6bd91d962dad",
+    "timestamp": "2026-07-28T01:30:51.217Z",
+    "userId": "dbd7790c-78f7-406e-aed9-0047f108f0ad",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "a5cdd5f6-253e-44ec-8fa8-f8b5b6146c57",
+    "timestamp": "2026-07-28T01:42:39.644Z",
+    "userId": "8066f633-e22c-4228-b766-51de23a996de",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "c8b648e9-697f-4e55-8ad7-e95507278de8",
+    "timestamp": "2026-07-28T01:49:53.895Z",
+    "userId": "8066f633-e22c-4228-b766-51de23a996de",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "e8606771-f6b2-4c2e-a40c-1191153d6d06",
+    "timestamp": "2026-07-28T01:49:59.468Z",
+    "userId": "8066f633-e22c-4228-b766-51de23a996de",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "05be6ce4-b4a4-47b8-a1a3-939c1db2de29",
+    "timestamp": "2026-07-28T01:50:08.749Z",
+    "userId": "8066f633-e22c-4228-b766-51de23a996de",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "d36099fd-2910-4df8-996b-6c7efd10ad4c",
+    "timestamp": "2026-07-28T01:50:13.009Z",
+    "userId": "8066f633-e22c-4228-b766-51de23a996de",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "ef0b8adc-b7eb-4552-a14c-855f9c7ad9cb",
+    "timestamp": "2026-07-28T01:50:18.741Z",
+    "userId": "8066f633-e22c-4228-b766-51de23a996de",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "3e035996-536f-4f62-b9d7-b0b5877034cc",
+    "timestamp": "2026-07-28T01:50:24.046Z",
+    "userId": "8066f633-e22c-4228-b766-51de23a996de",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "09710b15-4090-4991-be06-3beebcd05532",
+    "timestamp": "2026-07-28T01:50:24.479Z",
+    "userId": "8066f633-e22c-4228-b766-51de23a996de",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "8f83898c-cc20-46a7-b4ea-3e41d92b29e8",
+    "timestamp": "2026-07-28T01:50:28.377Z",
+    "userId": "8066f633-e22c-4228-b766-51de23a996de",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "9f27260e-f949-4715-bce8-f2d6c251971b",
+    "timestamp": "2026-07-28T01:50:54.517Z",
+    "userId": "8066f633-e22c-4228-b766-51de23a996de",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "dec85cd3-4b22-453d-80a7-1755ba842dff",
+    "timestamp": "2026-07-28T01:50:57.182Z",
+    "userId": "8066f633-e22c-4228-b766-51de23a996de",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "564f1bea-f880-482d-9616-c8280dc5af80",
+    "timestamp": "2026-07-28T01:51:13.837Z",
+    "userId": "8066f633-e22c-4228-b766-51de23a996de",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "fa9e6bc9-2dc0-4a75-a15d-fc7298f98ba9",
+    "timestamp": "2026-07-28T01:51:16.507Z",
+    "userId": "8066f633-e22c-4228-b766-51de23a996de",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "6f4fb60c-7b34-4132-99e1-65390e730d9d",
+    "timestamp": "2026-07-28T01:51:18.128Z",
+    "userId": "8066f633-e22c-4228-b766-51de23a996de",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "e5f27f27-1b87-40af-aaff-516cabb2e810",
+    "timestamp": "2026-07-28T01:51:25.611Z",
+    "userId": "8066f633-e22c-4228-b766-51de23a996de",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "137b40d4-f480-47ec-847d-b8f6638173ea",
+    "timestamp": "2026-07-28T01:51:25.710Z",
+    "userId": "8066f633-e22c-4228-b766-51de23a996de",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "080d60b0-b4f7-497c-a7c4-cdbbcafc482a",
+    "timestamp": "2026-07-28T01:51:25.737Z",
+    "userId": "system",
+    "action": "settings_change",
+    "resource": "settings",
+    "details": "System settings were updated"
+  },
+  {
+    "id": "30627230-df92-4878-8184-680766f3201e",
+    "timestamp": "2026-07-28T01:51:33.639Z",
+    "userId": "8066f633-e22c-4228-b766-51de23a996de",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "8ef0cad9-dfbf-4ddf-a250-17aa7308b283",
+    "timestamp": "2026-07-28T01:51:45.864Z",
+    "userId": "8066f633-e22c-4228-b766-51de23a996de",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "81787a58-5541-4f62-807f-a4558e2d0bc4",
+    "timestamp": "2026-07-28T01:51:48.906Z",
+    "userId": "8066f633-e22c-4228-b766-51de23a996de",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "1e54c2b1-1396-4beb-98f0-099b6565f652",
+    "timestamp": "2026-07-28T01:51:55.619Z",
+    "userId": "8066f633-e22c-4228-b766-51de23a996de",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "2812fecc-bd80-4fe6-a4bf-ae7be738a167",
+    "timestamp": "2026-07-28T01:52:15.577Z",
+    "userId": "8066f633-e22c-4228-b766-51de23a996de",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "650ee75e-da7a-436e-85b3-8a025c04b9b2",
+    "timestamp": "2026-07-28T01:52:17.097Z",
+    "userId": "8066f633-e22c-4228-b766-51de23a996de",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "5dd8695e-8393-487a-a3a1-24bc419638e0",
+    "timestamp": "2026-07-28T01:52:19.014Z",
+    "userId": "8066f633-e22c-4228-b766-51de23a996de",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "1174f6ee-d13b-49ba-b3d6-022ec4ef468a",
+    "timestamp": "2026-07-28T01:52:21.241Z",
+    "userId": "8066f633-e22c-4228-b766-51de23a996de",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "f9bbedbc-103e-41ab-8c52-1a6bcafb9fa2",
+    "timestamp": "2026-07-28T01:52:32.745Z",
+    "userId": "8066f633-e22c-4228-b766-51de23a996de",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "78457dce-65d6-4126-92fd-ec1d36eb071a",
+    "timestamp": "2026-07-28T01:52:37.389Z",
+    "userId": "8066f633-e22c-4228-b766-51de23a996de",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "428a83a9-a8e5-4cfc-abbc-4f59b8db34d6",
+    "timestamp": "2026-07-28T01:52:38.594Z",
+    "userId": "8066f633-e22c-4228-b766-51de23a996de",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "e1f9c45f-fa1a-4864-b73a-d18e770061b5",
+    "timestamp": "2026-07-28T01:52:49.670Z",
+    "userId": "8066f633-e22c-4228-b766-51de23a996de",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "c5dfa632-3502-4117-865a-ab3c2c7cf0d9",
+    "timestamp": "2026-07-28T01:52:55.943Z",
+    "userId": "8066f633-e22c-4228-b766-51de23a996de",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "48ab0685-7d26-41dd-a288-0e70b6c59ed6",
+    "timestamp": "2026-07-28T01:53:04.627Z",
+    "userId": "8066f633-e22c-4228-b766-51de23a996de",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "632dfa97-dead-4815-8f98-4c30e398638b",
+    "timestamp": "2026-07-28T01:53:09.265Z",
+    "userId": "8066f633-e22c-4228-b766-51de23a996de",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "f7da5fda-aaf3-4e97-9350-3c2652311850",
+    "timestamp": "2026-07-28T01:53:11.597Z",
+    "userId": "8066f633-e22c-4228-b766-51de23a996de",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "de1f384c-b67b-43f8-8cac-53e0acc581ef",
+    "timestamp": "2026-07-28T01:53:20.459Z",
+    "userId": "8066f633-e22c-4228-b766-51de23a996de",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "c3a100ff-7216-47c2-b971-25bf0a408479",
+    "timestamp": "2026-07-28T01:53:28.850Z",
+    "userId": "8066f633-e22c-4228-b766-51de23a996de",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "98c19f70-5297-4890-b778-56742ec37d44",
+    "timestamp": "2026-07-28T01:53:40.814Z",
+    "userId": "8066f633-e22c-4228-b766-51de23a996de",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "ed3161b7-f7f9-4130-b71d-306bfb4d7bbf",
+    "timestamp": "2026-07-28T01:53:51.359Z",
+    "userId": "8066f633-e22c-4228-b766-51de23a996de",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "428234df-3418-44bd-ac7c-600456d7615a",
+    "timestamp": "2026-07-28T01:54:11.539Z",
+    "userId": "8066f633-e22c-4228-b766-51de23a996de",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "fed8c097-662a-4bd4-8b12-d2f2f9d151c5",
+    "timestamp": "2026-07-28T01:54:17.064Z",
+    "userId": "8066f633-e22c-4228-b766-51de23a996de",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "d8514129-5a1b-4ae2-addf-d00de424ad63",
+    "timestamp": "2026-07-28T01:54:25.942Z",
+    "userId": "8066f633-e22c-4228-b766-51de23a996de",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "5b3e8a55-0e61-4c88-b546-b2ea4d34a8b2",
+    "timestamp": "2026-07-28T01:54:40.295Z",
+    "userId": "8066f633-e22c-4228-b766-51de23a996de",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "85a5bd32-8378-4954-9240-bb57098a9abc",
+    "timestamp": "2026-07-28T01:54:47.734Z",
+    "userId": "8066f633-e22c-4228-b766-51de23a996de",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "7b6a8d0b-aff6-4b8c-92c0-db485edfea01",
+    "timestamp": "2026-07-28T01:54:54.433Z",
+    "userId": "8066f633-e22c-4228-b766-51de23a996de",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "dd31b6e6-8b3c-4a91-ba3f-c980746d502d",
+    "timestamp": "2026-07-28T01:55:07.626Z",
+    "userId": "8066f633-e22c-4228-b766-51de23a996de",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "ee75ba60-fa29-46e6-a412-2a609ade620d",
+    "timestamp": "2026-07-28T01:55:08.309Z",
+    "userId": "system",
+    "action": "settings_change",
+    "resource": "settings",
+    "details": "System settings were updated"
+  },
+  {
+    "id": "3c804f18-6532-4b17-9f6c-b1aace6d31b2",
+    "timestamp": "2026-07-28T01:55:08.500Z",
+    "userId": "system",
+    "action": "settings_change",
+    "resource": "settings",
+    "details": "System settings were updated"
+  },
+  {
+    "id": "fc8cd69d-e8bd-4d8a-bb79-1a5e8b0787c4",
+    "timestamp": "2026-07-28T01:55:08.799Z",
+    "userId": "8066f633-e22c-4228-b766-51de23a996de",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "1f759a48-8b7d-4b49-b93a-21be426699b8",
+    "timestamp": "2026-07-28T01:55:14.429Z",
+    "userId": "8066f633-e22c-4228-b766-51de23a996de",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "5dddb24f-946a-49bb-93f9-8ceef081d0d8",
+    "timestamp": "2026-07-28T01:55:21.146Z",
+    "userId": "8066f633-e22c-4228-b766-51de23a996de",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "fa88b723-5651-499e-804d-a62278df8789",
+    "timestamp": "2026-07-28T01:55:22.256Z",
+    "userId": "8066f633-e22c-4228-b766-51de23a996de",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "bf870681-a5c7-4309-8bb6-c35ef52c1397",
+    "timestamp": "2026-07-28T01:55:30.306Z",
+    "userId": "8066f633-e22c-4228-b766-51de23a996de",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "fa85b367-c75d-4873-aa25-5b8fbd039e44",
+    "timestamp": "2026-07-28T01:55:31.511Z",
+    "userId": "8066f633-e22c-4228-b766-51de23a996de",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "b357e48e-be94-4e34-ba0c-da8d9124c02e",
+    "timestamp": "2026-07-28T01:55:37.337Z",
+    "userId": "8066f633-e22c-4228-b766-51de23a996de",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "86967e81-f044-47e5-9d81-49ac5219fa18",
+    "timestamp": "2026-07-28T01:55:37.391Z",
+    "userId": "8066f633-e22c-4228-b766-51de23a996de",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "702949fe-807c-4bf0-bc04-8baa3e8933b3",
+    "timestamp": "2026-07-28T01:56:16.713Z",
+    "userId": "8066f633-e22c-4228-b766-51de23a996de",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "80964d04-600d-4172-8716-ff4d88ebb1ca",
+    "timestamp": "2026-07-28T01:56:36.745Z",
+    "userId": "8066f633-e22c-4228-b766-51de23a996de",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "9ae24f66-397f-42f1-9c51-f037412ec77c",
+    "timestamp": "2026-07-28T01:57:08.480Z",
+    "userId": "8066f633-e22c-4228-b766-51de23a996de",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "d0d75c0b-8538-43c2-9f89-caf38ea98c29",
+    "timestamp": "2026-07-28T01:57:11.523Z",
+    "userId": "8066f633-e22c-4228-b766-51de23a996de",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "ff170bb4-827f-4fd6-bb27-0491ef9adaa8",
+    "timestamp": "2026-07-28T01:57:17.276Z",
+    "userId": "8066f633-e22c-4228-b766-51de23a996de",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "f5be08e8-811f-46ec-b781-710c86f3547e",
+    "timestamp": "2026-07-28T01:57:42.620Z",
+    "userId": "8066f633-e22c-4228-b766-51de23a996de",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "6e3cfbdc-a1e1-4f47-a9ad-9400e30d781b",
+    "timestamp": "2026-07-28T01:57:43.551Z",
+    "userId": "system",
+    "action": "backup",
+    "resource": "database",
+    "details": "Backup created: buildprop-backup-2026.07.28.01.57.43.db"
+  },
+  {
+    "id": "3651540a-9faa-4e34-abab-d52ae5b9fbd6",
+    "timestamp": "2026-07-28T01:57:43.803Z",
+    "userId": "system",
+    "action": "backup",
+    "resource": "database",
+    "details": "Backup created: buildprop-backup-2026.07.28.01.57.43.db"
+  },
+  {
+    "id": "5281afc8-bdc8-4223-b206-ef9b9d7b905d",
+    "timestamp": "2026-07-28T01:57:57.505Z",
+    "userId": "8066f633-e22c-4228-b766-51de23a996de",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "0232a194-0e44-497a-87d1-374419571491",
+    "timestamp": "2026-07-28T01:58:16.966Z",
+    "userId": "8066f633-e22c-4228-b766-51de23a996de",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "01ff7c34-e9f1-48b2-bc45-9d314190d859",
+    "timestamp": "2026-07-28T01:59:01.498Z",
+    "userId": "8066f633-e22c-4228-b766-51de23a996de",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "b1af9008-1628-4677-bc57-28a66100571e",
+    "timestamp": "2026-07-28T01:59:39.000Z",
+    "userId": "8066f633-e22c-4228-b766-51de23a996de",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "65c62491-a5a0-45b5-a06a-d2d615408beb",
+    "timestamp": "2026-07-28T02:07:30.592Z",
+    "userId": "abd3ab7e-3551-4e93-982f-900411918232",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "d1946622-b4fe-4524-9abe-42f8f37b9fd5",
+    "timestamp": "2026-07-28T02:07:54.253Z",
+    "userId": "abd3ab7e-3551-4e93-982f-900411918232",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "d8630b2c-e964-4f02-acd7-e98b5769e247",
+    "timestamp": "2026-07-28T02:18:05.115Z",
+    "userId": "d9ec6111-6e14-499b-b9db-b0ca0440b995",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "523200df-c3b9-419f-9d4e-2af05d1c5e8c",
+    "timestamp": "2026-07-28T02:18:06.660Z",
+    "userId": "d9ec6111-6e14-499b-b9db-b0ca0440b995",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "231d7137-a53b-4293-ae78-668cc416f98a",
+    "timestamp": "2026-07-28T02:18:07.036Z",
+    "userId": "d9ec6111-6e14-499b-b9db-b0ca0440b995",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "09b3274f-5ef7-448a-95ac-5f60ce3b7d7c",
+    "timestamp": "2026-07-28T02:18:07.647Z",
+    "userId": "d9ec6111-6e14-499b-b9db-b0ca0440b995",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "9abd87fd-0114-4516-980e-964a4aa2c3a4",
+    "timestamp": "2026-07-28T02:18:14.690Z",
+    "userId": "d9ec6111-6e14-499b-b9db-b0ca0440b995",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "0bce5425-5067-4aea-99ed-46d0665ff9bd",
+    "timestamp": "2026-07-28T02:18:21.059Z",
+    "userId": "d9ec6111-6e14-499b-b9db-b0ca0440b995",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "d976bc77-1eb9-46e4-853d-972644e959bd",
+    "timestamp": "2026-07-28T02:18:24.743Z",
+    "userId": "d9ec6111-6e14-499b-b9db-b0ca0440b995",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "fb0faa4e-d59d-4a56-af34-0c6ccc1cc545",
+    "timestamp": "2026-07-28T02:18:24.973Z",
+    "userId": "d9ec6111-6e14-499b-b9db-b0ca0440b995",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "b3aa6bda-5134-4a94-aaaf-67b4a26d33eb",
+    "timestamp": "2026-07-28T02:18:29.170Z",
+    "userId": "d9ec6111-6e14-499b-b9db-b0ca0440b995",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "1fe3a98b-5e7f-4c11-8072-a968cb619238",
+    "timestamp": "2026-07-28T02:18:36.124Z",
+    "userId": "d9ec6111-6e14-499b-b9db-b0ca0440b995",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "e27989af-9c60-4dde-a3dd-3193ddc8c795",
+    "timestamp": "2026-07-28T02:19:22.364Z",
+    "userId": "d9ec6111-6e14-499b-b9db-b0ca0440b995",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "8f993e41-316d-4075-abc4-a38c16298af0",
+    "timestamp": "2026-07-28T02:19:26.072Z",
+    "userId": "d9ec6111-6e14-499b-b9db-b0ca0440b995",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "5bf731b9-1e35-40d3-a7ee-b48680583d7e",
+    "timestamp": "2026-07-28T02:19:42.435Z",
+    "userId": "d9ec6111-6e14-499b-b9db-b0ca0440b995",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "facdf88a-b472-42e1-8453-c5b8b44f437d",
+    "timestamp": "2026-07-28T02:19:51.156Z",
+    "userId": "d9ec6111-6e14-499b-b9db-b0ca0440b995",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "31d09064-35ad-4b93-8a42-dd0ff15568f4",
+    "timestamp": "2026-07-28T02:20:03.762Z",
+    "userId": "d9ec6111-6e14-499b-b9db-b0ca0440b995",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "5d4569f0-b972-4f0a-b864-34bc9473a3b0",
+    "timestamp": "2026-07-28T02:20:04.106Z",
+    "userId": "d9ec6111-6e14-499b-b9db-b0ca0440b995",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "72cfceac-bebe-48e0-b243-f82aa0406ecf",
+    "timestamp": "2026-07-28T02:20:05.141Z",
+    "userId": "d9ec6111-6e14-499b-b9db-b0ca0440b995",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "8a74b3e8-e183-4b19-8901-15c59b2858d6",
+    "timestamp": "2026-07-28T02:20:05.863Z",
+    "userId": "d9ec6111-6e14-499b-b9db-b0ca0440b995",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "4e335f68-4f32-4f5b-b16d-6a1d204127fe",
+    "timestamp": "2026-07-28T02:20:06.710Z",
+    "userId": "d9ec6111-6e14-499b-b9db-b0ca0440b995",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "63d8dd7a-b82a-40cf-a3c7-8b07cbaa34f1",
+    "timestamp": "2026-07-28T02:20:07.048Z",
+    "userId": "d9ec6111-6e14-499b-b9db-b0ca0440b995",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "6de0e3bb-6c77-4e95-85cb-e4e2703160da",
+    "timestamp": "2026-07-28T02:20:33.703Z",
+    "userId": "d9ec6111-6e14-499b-b9db-b0ca0440b995",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "d7b0d6e4-3008-401f-bcb3-aa19e2776067",
+    "timestamp": "2026-07-28T02:20:49.217Z",
+    "userId": "d9ec6111-6e14-499b-b9db-b0ca0440b995",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "91661e76-5280-4716-bb70-23286b8c70ab",
+    "timestamp": "2026-07-28T02:21:02.704Z",
+    "userId": "d9ec6111-6e14-499b-b9db-b0ca0440b995",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "d9703aa3-5261-4ddf-821b-46bd2fa399b6",
+    "timestamp": "2026-07-28T02:21:23.883Z",
+    "userId": "d9ec6111-6e14-499b-b9db-b0ca0440b995",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "65dbd88c-396c-4369-ab3c-b6ade56e3159",
+    "timestamp": "2026-07-28T02:21:44.222Z",
+    "userId": "d9ec6111-6e14-499b-b9db-b0ca0440b995",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "eaf20298-a6a8-48c2-9f9f-1c6b6a695ba7",
+    "timestamp": "2026-07-28T02:21:52.265Z",
+    "userId": "d9ec6111-6e14-499b-b9db-b0ca0440b995",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "eea9b84f-507f-4660-b214-860c50c5fe3a",
+    "timestamp": "2026-07-28T02:21:54.066Z",
+    "userId": "d9ec6111-6e14-499b-b9db-b0ca0440b995",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "d0b37a3f-28c5-46a9-9cd8-84a7ae4d285c",
+    "timestamp": "2026-07-28T02:22:00.249Z",
+    "userId": "d9ec6111-6e14-499b-b9db-b0ca0440b995",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "19760835-41f0-4456-bd6e-34c7841ee9f2",
+    "timestamp": "2026-07-28T02:22:02.637Z",
+    "userId": "d9ec6111-6e14-499b-b9db-b0ca0440b995",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "935e08cd-6751-48c6-80c2-e21367c33f49",
+    "timestamp": "2026-07-28T02:22:04.586Z",
+    "userId": "d9ec6111-6e14-499b-b9db-b0ca0440b995",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "e497766d-75fb-42f9-839e-b5798f002652",
+    "timestamp": "2026-07-28T02:22:23.664Z",
+    "userId": "d9ec6111-6e14-499b-b9db-b0ca0440b995",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "ccb426a8-eaef-4869-8987-f6ecf2f89fe3",
+    "timestamp": "2026-07-28T02:22:34.265Z",
+    "userId": "d9ec6111-6e14-499b-b9db-b0ca0440b995",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "61b8dda6-d8cc-4058-9249-4de03d15a6ef",
+    "timestamp": "2026-07-28T02:22:46.252Z",
+    "userId": "d9ec6111-6e14-499b-b9db-b0ca0440b995",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "bde591cd-9959-422d-8056-96dacbfb19a9",
+    "timestamp": "2026-07-28T02:22:54.786Z",
+    "userId": "d9ec6111-6e14-499b-b9db-b0ca0440b995",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "de1d207c-1b61-4e11-94d8-2a4763fcd544",
+    "timestamp": "2026-07-28T02:22:57.785Z",
+    "userId": "d9ec6111-6e14-499b-b9db-b0ca0440b995",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "afa69c36-2ed7-4f73-9acc-88a04ceefb9d",
+    "timestamp": "2026-07-28T02:23:04.783Z",
+    "userId": "d9ec6111-6e14-499b-b9db-b0ca0440b995",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "413486d2-8cf4-4a1d-ba1f-6fe913507895",
+    "timestamp": "2026-07-28T02:23:27.020Z",
+    "userId": "d9ec6111-6e14-499b-b9db-b0ca0440b995",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "7eb5846a-5b52-4692-bec7-ce66803d194d",
+    "timestamp": "2026-07-28T02:23:38.563Z",
+    "userId": "d9ec6111-6e14-499b-b9db-b0ca0440b995",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "5e73dfe3-e358-415a-b97e-e4fcf37c29e7",
+    "timestamp": "2026-07-28T02:23:48.964Z",
+    "userId": "d9ec6111-6e14-499b-b9db-b0ca0440b995",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "3ff63f30-6998-47c9-b4bd-4db1e7adb48d",
+    "timestamp": "2026-07-28T02:23:53.428Z",
+    "userId": "d9ec6111-6e14-499b-b9db-b0ca0440b995",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "d3d3b0bb-a743-4a4a-894f-21d795e94285",
+    "timestamp": "2026-07-28T02:24:08.608Z",
+    "userId": "d9ec6111-6e14-499b-b9db-b0ca0440b995",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "0e8462fe-c6ea-4f1d-ac05-01fead9500f2",
+    "timestamp": "2026-07-28T02:24:28.266Z",
+    "userId": "d9ec6111-6e14-499b-b9db-b0ca0440b995",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "3f3fea21-618b-43cd-919c-d1b3479b5d39",
+    "timestamp": "2026-07-28T02:24:35.712Z",
+    "userId": "d9ec6111-6e14-499b-b9db-b0ca0440b995",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "63864f36-c5e4-4bca-b8d0-3734e1386a17",
+    "timestamp": "2026-07-28T02:24:43.111Z",
+    "userId": "d9ec6111-6e14-499b-b9db-b0ca0440b995",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "aba310da-fe84-4271-a05e-6f2ee0067794",
+    "timestamp": "2026-07-28T02:24:54.709Z",
+    "userId": "d9ec6111-6e14-499b-b9db-b0ca0440b995",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "775b238e-65f2-49cd-a686-8d9ddc853a08",
+    "timestamp": "2026-07-28T02:24:55.788Z",
+    "userId": "d9ec6111-6e14-499b-b9db-b0ca0440b995",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "f6fc5e15-7fd4-4337-b6fa-bbc315965f85",
+    "timestamp": "2026-07-28T02:25:06.937Z",
+    "userId": "d9ec6111-6e14-499b-b9db-b0ca0440b995",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "4e28e042-ca23-4127-ab35-5460a1bc6744",
+    "timestamp": "2026-07-28T02:25:20.031Z",
+    "userId": "d9ec6111-6e14-499b-b9db-b0ca0440b995",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "3ebfec7d-65ee-4fc0-a2f9-531e3cc3c489",
+    "timestamp": "2026-07-28T02:25:41.022Z",
+    "userId": "d9ec6111-6e14-499b-b9db-b0ca0440b995",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "5e02e8ed-a07a-4059-aa3e-0ba849b9aa4d",
+    "timestamp": "2026-07-28T02:26:11.549Z",
+    "userId": "d9ec6111-6e14-499b-b9db-b0ca0440b995",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "b1d9ad24-6cee-464c-915e-60541f554277",
+    "timestamp": "2026-07-28T02:26:28.469Z",
+    "userId": "d9ec6111-6e14-499b-b9db-b0ca0440b995",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "d34d7485-6c81-4ef3-8d03-18b1bd55a8ee",
+    "timestamp": "2026-07-28T02:26:43.737Z",
+    "userId": "d9ec6111-6e14-499b-b9db-b0ca0440b995",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "3b8fafe7-33b6-473c-818c-f9a70c489c50",
+    "timestamp": "2026-07-28T02:26:54.209Z",
+    "userId": "d9ec6111-6e14-499b-b9db-b0ca0440b995",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "81e65a60-7426-489f-b91c-e788f86217cf",
+    "timestamp": "2026-07-28T02:27:06.570Z",
+    "userId": "d9ec6111-6e14-499b-b9db-b0ca0440b995",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "4ee19fe6-07d0-41ba-b1aa-26a53d1906b6",
+    "timestamp": "2026-07-28T02:27:10.803Z",
+    "userId": "d9ec6111-6e14-499b-b9db-b0ca0440b995",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "9bd03a88-08d2-4e43-a6f3-fa689e78e56b",
+    "timestamp": "2026-07-28T02:27:11.234Z",
+    "userId": "d9ec6111-6e14-499b-b9db-b0ca0440b995",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "fe883cd0-8ea4-4950-89ec-96aa31e5e0b6",
+    "timestamp": "2026-07-28T02:27:19.065Z",
+    "userId": "d9ec6111-6e14-499b-b9db-b0ca0440b995",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "c47d3c6b-9d71-4b16-b0db-530b8d45315c",
+    "timestamp": "2026-07-28T02:27:39.817Z",
+    "userId": "d9ec6111-6e14-499b-b9db-b0ca0440b995",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "08c28b6c-60f6-4268-a9e0-b1ced2ba7c69",
+    "timestamp": "2026-07-28T02:27:52.932Z",
+    "userId": "d9ec6111-6e14-499b-b9db-b0ca0440b995",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "8a9b8e1f-6821-422d-97bb-d4001ab6a52e",
+    "timestamp": "2026-07-28T02:28:13.476Z",
+    "userId": "d9ec6111-6e14-499b-b9db-b0ca0440b995",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "68a5121f-8c16-473c-8ee9-4f3c1af912b1",
+    "timestamp": "2026-07-28T02:28:19.709Z",
+    "userId": "d9ec6111-6e14-499b-b9db-b0ca0440b995",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "9d2e22bd-d778-4ff2-8426-a9e7affcec53",
+    "timestamp": "2026-07-28T02:28:59.848Z",
+    "userId": "d9ec6111-6e14-499b-b9db-b0ca0440b995",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "fae3b4aa-5e5b-4268-b3d3-f7287b0fee85",
+    "timestamp": "2026-07-28T02:29:05.758Z",
+    "userId": "d9ec6111-6e14-499b-b9db-b0ca0440b995",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "fb9ecc31-0c7d-43cd-b129-2ef849e53994",
+    "timestamp": "2026-07-28T02:29:44.307Z",
+    "userId": "d9ec6111-6e14-499b-b9db-b0ca0440b995",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "cb427242-0c31-4fe9-b37f-29f5fd8a2cd5",
+    "timestamp": "2026-07-28T02:30:13.500Z",
+    "userId": "d9ec6111-6e14-499b-b9db-b0ca0440b995",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "e0cb54a0-2365-45dd-bdf9-9f437b7b4e2c",
+    "timestamp": "2026-07-28T02:30:33.550Z",
+    "userId": "d9ec6111-6e14-499b-b9db-b0ca0440b995",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "f7cecc4b-0b22-4877-ae17-497750f3b949",
+    "timestamp": "2026-07-28T02:32:35.624Z",
+    "userId": "d9ec6111-6e14-499b-b9db-b0ca0440b995",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "72a83d45-0d31-45da-b582-95c5ebd97a32",
+    "timestamp": "2026-07-28T02:32:35.925Z",
+    "userId": "d9ec6111-6e14-499b-b9db-b0ca0440b995",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "09a75276-a0f1-4ca9-887c-28c373a5c638",
+    "timestamp": "2026-07-28T02:33:47.603Z",
+    "userId": "d9ec6111-6e14-499b-b9db-b0ca0440b995",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "2321a8f8-0a3c-47f7-bcf4-c65a89269fd0",
+    "timestamp": "2026-07-28T02:35:07.681Z",
+    "userId": "d9ec6111-6e14-499b-b9db-b0ca0440b995",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "499ee8c8-e26b-4940-8962-1a4f6ff4dbb3",
+    "timestamp": "2026-07-28T02:35:42.645Z",
+    "userId": "d9ec6111-6e14-499b-b9db-b0ca0440b995",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "3aaf610a-1fd6-436b-bdab-fefa3e7d5a02",
+    "timestamp": "2026-07-28T02:36:15.185Z",
+    "userId": "d9ec6111-6e14-499b-b9db-b0ca0440b995",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "0b391c0a-1ec0-44d6-a314-7f26bf739bc0",
+    "timestamp": "2026-07-28T02:42:29.463Z",
+    "userId": "f32a09ed-3cea-420b-aeaf-7a11c4aeb724",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "51ca3d8f-ca80-4b59-9bf0-e7518bd6cc73",
+    "timestamp": "2026-07-28T08:46:44.015Z",
+    "userId": "f32a09ed-3cea-420b-aeaf-7a11c4aeb724",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "c1d42634-15ed-4361-8c8d-d0be2152eb1a",
+    "timestamp": "2026-07-28T08:46:47.372Z",
+    "userId": "f32a09ed-3cea-420b-aeaf-7a11c4aeb724",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "9d8a9a85-f939-48f5-a6b2-34d934593b98",
+    "timestamp": "2026-07-28T16:20:17.298Z",
+    "userId": "f712496b-27a6-424f-9dc1-55e830286a81",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "cb233393-49a2-4066-8e73-318cf977de56",
+    "timestamp": "2026-07-28T16:20:19.866Z",
+    "userId": "f712496b-27a6-424f-9dc1-55e830286a81",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "d70f109d-a63d-44c1-87a9-8251ce1b6089",
+    "timestamp": "2026-07-28T16:20:21.178Z",
+    "userId": "f712496b-27a6-424f-9dc1-55e830286a81",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "1ca80a7a-8bf4-4e38-be7f-4d9c36d2bd81",
+    "timestamp": "2026-07-28T16:20:36.622Z",
+    "userId": "f712496b-27a6-424f-9dc1-55e830286a81",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "73cfc1a6-7e92-4b6a-a35c-a05951db1342",
+    "timestamp": "2026-07-28T16:26:24.743Z",
+    "userId": "f712496b-27a6-424f-9dc1-55e830286a81",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "b67e94fc-394a-4d5b-865b-d04257c41b51",
+    "timestamp": "2026-07-28T16:26:30.607Z",
+    "userId": "f712496b-27a6-424f-9dc1-55e830286a81",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "7877ca0c-e3fe-4b6f-bda9-6324330a29d8",
+    "timestamp": "2026-07-28T16:26:36.091Z",
+    "userId": "f712496b-27a6-424f-9dc1-55e830286a81",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "a2ad1b17-2b8f-45a4-b511-48b40c309107",
+    "timestamp": "2026-07-28T16:26:36.470Z",
+    "userId": "c5ed1b3f-99d1-4881-b272-78737e71385b",
+    "action": "login",
+    "resource": "auth",
+    "details": "User manager@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "c50e722f-98c1-4a8c-a5e3-efdd8bfb7219",
+    "timestamp": "2026-07-28T16:26:36.876Z",
+    "userId": "587ae97b-8359-42f8-95d4-b440c68f249f",
+    "action": "login",
+    "resource": "auth",
+    "details": "User account@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "341ae7be-4bf3-4406-93ae-8731f8e4e1f2",
+    "timestamp": "2026-07-28T16:26:37.288Z",
+    "userId": "b68e323e-13d7-43c2-a19b-197cc461f028",
+    "action": "login",
+    "resource": "auth",
+    "details": "User engineer@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "3755b71e-1282-4646-a023-4dd2e66998ce",
+    "timestamp": "2026-07-28T16:26:37.602Z",
+    "userId": "3e78e0a8-db80-4196-a2c3-212fd4fa8c97",
+    "action": "login",
+    "resource": "auth",
+    "details": "User sales@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "9258660f-91b1-4f07-ad2f-8742b38fa59b",
+    "timestamp": "2026-07-28T16:26:37.965Z",
+    "userId": "6c195f1e-4b88-4971-a1a0-31a93808e38d",
+    "action": "login",
+    "resource": "auth",
+    "details": "User hr@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "5e7a0b02-8dd1-404f-8cd9-3fb0eb3f36d1",
+    "timestamp": "2026-07-28T16:27:40.581Z",
+    "userId": "f712496b-27a6-424f-9dc1-55e830286a81",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "88017211-807a-4197-9cde-af2e0baa549e",
+    "timestamp": "2026-07-28T16:27:58.241Z",
+    "userId": "f712496b-27a6-424f-9dc1-55e830286a81",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "0367fa99-5031-4537-9593-daf6c4005a82",
+    "timestamp": "2026-07-28T16:29:24.125Z",
+    "userId": "f712496b-27a6-424f-9dc1-55e830286a81",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "286b21dd-3f92-4523-b8dc-ad663df79d5d",
+    "timestamp": "2026-07-28T16:34:07.716Z",
+    "userId": "f712496b-27a6-424f-9dc1-55e830286a81",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::ffff:127.0.0.1"
+  },
+  {
+    "id": "90f1bce8-01cf-4cbb-b85f-886032efac45",
+    "timestamp": "2026-07-28T16:34:44.082Z",
+    "userId": "f712496b-27a6-424f-9dc1-55e830286a81",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::ffff:127.0.0.1"
+  },
+  {
+    "id": "e78a6efb-269c-4a99-bb30-8049297698c0",
+    "timestamp": "2026-07-28T16:35:02.931Z",
+    "userId": "f712496b-27a6-424f-9dc1-55e830286a81",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "8f41c71b-e5de-4726-90eb-4685d960e05b",
+    "timestamp": "2026-07-28T16:35:04.072Z",
+    "userId": "f712496b-27a6-424f-9dc1-55e830286a81",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::ffff:127.0.0.1"
+  },
+  {
+    "id": "b19cfdbb-3520-4a15-8e33-dde2734a06ff",
+    "timestamp": "2026-07-28T16:36:09.354Z",
+    "userId": "f712496b-27a6-424f-9dc1-55e830286a81",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  },
+  {
+    "id": "f1689e67-2f29-44c6-bdfb-81214ca2948a",
+    "timestamp": "2026-07-28T16:37:04.731Z",
+    "userId": "f712496b-27a6-424f-9dc1-55e830286a81",
+    "action": "login",
+    "resource": "auth",
+    "details": "User admin@buildprop.com logged in",
+    "ipAddress": "::1"
+  }
+]
