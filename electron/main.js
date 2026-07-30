@@ -29,6 +29,44 @@ function getOllamaDataDir() {
   return path.join(app.getPath('appData'), 'BuildProp', 'ollama-data')
 }
 
+function resolveDatabaseUrl(envPath, url) {
+  if (!url || !url.startsWith('file:')) return url
+  // Only resolve relative paths (./ or ../)
+  const filePart = url.slice(5)
+  if (filePart.startsWith('./') || filePart.startsWith('../') || filePart.startsWith('.\\') || filePart.startsWith('..\\')) {
+    const dir = require('path').dirname(envPath)
+    const abs = require('path').resolve(dir, filePart)
+    return 'file:' + abs
+  }
+  return url
+}
+
+function loadEnv() {
+  const envPath = path.join(getServerDir(), '.env')
+  try {
+    if (fs.existsSync(envPath)) {
+      const data = fs.readFileSync(envPath, 'utf-8')
+      for (const line of data.split('\n')) {
+        const trimmed = line.trim()
+        if (!trimmed || trimmed.startsWith('#')) continue
+        const eqIdx = trimmed.indexOf('=')
+        if (eqIdx > 0) {
+          const key = trimmed.slice(0, eqIdx).trim()
+          const val = trimmed.slice(eqIdx + 1).trim().replace(/^['"](.*)['"]$/, '$1')
+          if (key && !process.env[key]) {
+            if (key === 'DATABASE_URL') {
+              val = resolveDatabaseUrl(envPath, val)
+            }
+            process.env[key] = val
+          }
+        }
+      }
+    }
+  } catch (e) {
+    console.warn('[main] Could not load .env:', e.message)
+  }
+}
+
 async function waitForPort(port, host, timeoutMs) {
   const start = Date.now()
   while (Date.now() - start < timeoutMs) {
@@ -71,13 +109,13 @@ function setupOllamaData() {
   const modelsDir = path.join(ollamaData, 'models')
   if (fs.existsSync(modelsDir)) return true
   try {
-    console.log('Setting up offline AI model (one-time copy)...')
+    console.log('[main] Setting up offline AI model (one-time copy)...')
     fs.mkdirSync(ollamaData, { recursive: true })
     copyFolderSync(bundledModels, modelsDir)
-    console.log('Offline AI model ready')
+    console.log('[main] Offline AI model ready')
     return true
   } catch (e) {
-    console.error('Failed to copy AI model:', e.message)
+    console.error('[main] Failed to copy AI model:', e.message)
     return false
   }
 }
@@ -86,19 +124,18 @@ function startNextServer() {
   return new Promise(async (resolve) => {
     const serverDir = getServerDir()
     if (!fs.existsSync(path.join(serverDir, 'server.js'))) {
-      console.error('Server not found at:', serverDir)
+      console.error('[main] Server not found at:', serverDir)
       resolve(false)
       return
     }
 
-    // Resolve wrapper.js path (handle asar packaging)
+    // Resolve wrapper.js path
     let wrapperJs = path.join(__dirname, 'wrapper.js')
     if (app.isPackaged) {
-      // Copy wrapper.js out of asar so fork() can use it
       const target = path.join(serverDir, 'wrapper.js')
       if (!fs.existsSync(target)) {
         try { fs.copyFileSync(wrapperJs, target) } catch (e) {
-          console.error('Failed to copy wrapper.js:', e.message)
+          console.error('[main] Failed to copy wrapper.js:', e.message)
         }
       }
       wrapperJs = target
@@ -120,7 +157,7 @@ function startNextServer() {
       })
 
       if (!serverProcess) {
-        console.error('[main] fork() returned null')
+        console.error('[main] spawn() returned null')
         resolve(false)
         return
       }
@@ -147,16 +184,26 @@ function startNextServer() {
 }
 
 function startOllama() {
+  const aiMode = process.env.AI_MODE || 'disabled'
   const aiDir = getAiDir()
   const ollamaExe = path.join(aiDir, 'ollama.exe')
-  if (!fs.existsSync(ollamaExe)) {
-    console.log('[main] Ollama not bundled - AI uses Groq cloud')
+
+  // Only start Ollama in hybrid/premium mode AND if ollama.exe is bundled
+  if (aiMode !== 'hybrid') {
+    console.log('[main] AI mode: ' + aiMode + ' - Ollama not started')
     return false
   }
+
+  if (!fs.existsSync(ollamaExe)) {
+    console.log('[main] Ollama not bundled in this edition')
+    return false
+  }
+
   const ollamaData = getOllamaDataDir()
   const modelsDir = path.join(ollamaData, 'models')
   if (!fs.existsSync(modelsDir)) setupOllamaData()
-  console.log('[main] Starting Ollama AI engine...')
+
+  console.log('[main] Starting Ollama AI engine (backup)...')
   ollamaProcess = spawn(ollamaExe, ['serve'], {
     cwd: ollamaData,
     env: { ...process.env, OLLAMA_HOST: '127.0.0.1:' + OLLAMA_PORT, OLLAMA_MODELS: modelsDir },
@@ -190,7 +237,13 @@ function createWindow() {
 
 // === App Lifecycle ===
 app.on('ready', async () => {
+    loadEnv()
+    // Force absolute DATABASE_URL - Prisma engine cannot resolve relative file: paths
+    if (!process.env.DATABASE_URL || process.env.DATABASE_URL.startsWith("file:")) {
+      process.env.DATABASE_URL = "file:" + path.join(getServerDir(), "prisma", "dev.db")
+    }
   console.log('[main] BuildProp starting up...')
+  console.log('[main] AI_MODE=' + (process.env.AI_MODE || 'not-set'))
 
   const serverStarted = await startNextServer()
   if (!serverStarted) {
@@ -217,6 +270,3 @@ app.on('before-quit', () => {
   if (ollamaProcess) { ollamaProcess.kill(); ollamaProcess = null }
   if (serverProcess) { serverProcess.kill(); serverProcess = null }
 })
-
-
-

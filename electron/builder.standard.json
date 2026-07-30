@@ -2,7 +2,7 @@
     "appId":  "com.buildprop.app",
     "productName":  "BuildProp",
     "directories":  {
-                        "output":  "../dist-electron-standard"
+                        "output":  "../dist/standard"
                     },
     "files":  [
                   "main.js",
@@ -13,10 +13,6 @@
                 "target":  [
                                {
                                    "target":  "nsis",
-                                   "arch":  "x64"
-                               },
-                               {
-                                   "target":  "portable",
                                    "arch":  "x64"
                                }
                            ],
@@ -34,10 +30,6 @@
                                           ],
                                "from":  "../.next/standalone",
                                "to":  ".next/standalone"
-                           },
-                           {
-                               "to":  "ai/ollama.exe",
-                               "from":  "resources/ai/ollama.exe"
                            }
                        ]
 }

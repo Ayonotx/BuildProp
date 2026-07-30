@@ -7,12 +7,16 @@ set "BUILD_TYPE=%~1"
 if "%BUILD_TYPE%"=="" set "BUILD_TYPE=premium"
 if /i "%BUILD_TYPE%"=="premium" (
     set "CONFIG_FILE=builder.premium.json"
-    set "OUTPUT_DIR=dist-electron"
+    set "OUTPUT_DIR=dist\premium"
+    set "ENV_FILE=.env.premium"
     set "BUILD_LABEL=PREMIUM"
+    set "NEXT_BUILD_SCRIPT=build:premium"
 ) else if /i "%BUILD_TYPE%"=="standard" (
     set "CONFIG_FILE=builder.standard.json"
-    set "OUTPUT_DIR=dist-electron-standard"
+    set "OUTPUT_DIR=dist\standard"
+    set "ENV_FILE=.env.standard"
     set "BUILD_LABEL=STANDARD"
+    set "NEXT_BUILD_SCRIPT=build:standard"
 ) else (
     echo  [ERROR] Unknown build type: %BUILD_TYPE%
     echo  Usage: %~nx0 [premium^|standard]
@@ -37,56 +41,43 @@ if %errorlevel% neq 0 (
 
 cd /d "%~dp0"
 
-:: Check for existing standalone build
-set "SKIP_BUILD="
-if exist ".next\standalone\server.js" (
-    echo  A previous standalone build was found at .next\standalone\server.js
-    set /p "SKIP_BUILD=Rebuild Next.js? (y/N): "
-    if /i "!SKIP_BUILD!"=="Y" (
-        set "SKIP_BUILD="
-    ) else (
-        set "SKIP_BUILD=1"
-        echo  Skipping Next.js build, using existing standalone output.
-    )
-)
-
-:: Regenerate the icon from source (ensures consistency)
-echo  [0/6] Generating application icon...
-if exist "scripts\generate-ico.js" (
-    node scripts\generate-ico.js
-    if %errorlevel% neq 0 (
-        echo  [WARN] Icon generation failed, using existing favicon.ico
-    )
-) else (
-    echo  [SKIP] Icon generation script not found.
-)
-
 :: Install root dependencies if needed
 if not exist "node_modules" (
-    echo  [1/6] Installing root dependencies...
+    echo  [1/5] Installing root dependencies...
     call npm install
 ) else (
-    echo  [1/6] Root dependencies found.
+    echo  [1/5] Root dependencies found.
 )
 
-if not defined SKIP_BUILD (
-    :: Build Next.js for production (creates standalone output)
-    echo.
-    echo  [2/6] Building Next.js application...
-    call npm run build
-    if %errorlevel% neq 0 (
-        echo  [ERROR] Next.js build failed!
-        pause
-        exit /b 1
-    )
+:: Build Next.js for production (creates standalone output + copies .env)
+echo.
+echo  [2/5] Building Next.js application...
+call npm run %NEXT_BUILD_SCRIPT%
+if %errorlevel% neq 0 (
+    echo  [ERROR] Next.js build failed!
+    pause
+    exit /b 1
+)
+
+:: Verify .env was copied
+if exist ".next\standalone\.env" (
+    echo  [OK] .env file placed in standalone
 ) else (
-    echo.
-    echo  [2/6] Skipping Next.js build (using existing output).
+    echo  [WARN] .env not found in standalone - copying manually
+    copy /Y "electron\%ENV_FILE%" ".next\standalone\.env"
+)
+
+:: Ensure correct .env for this edition (in case previous build overwrote it)
+copy /Y "electron\%ENV_FILE%" ".next\standalone\.env" >nul 2>nul
+if exist ".next\standalone\.env" (
+    echo  [OK] .env configured for %BUILD_LABEL% edition
+) else (
+    echo  [WARN] .env not found
 )
 
 :: Copy static assets into standalone folder
 echo.
-echo  [3/6] Copying static assets into standalone build...
+echo  [3/5] Copying static assets into standalone build...
 if not exist ".next\standalone\.next" mkdir ".next\standalone\.next"
 if not exist ".next\standalone\.next\static" mkdir ".next\standalone\.next\static"
 if exist ".next\static" (
@@ -105,14 +96,9 @@ if exist "data\settings.json" (
     copy /Y "data\settings.json" ".next\standalone\data\settings.json" >nul
 )
 
-if exist "src\app" (
-    copy /Y "public\favicon.ico" "src\app\favicon.ico" >nul 2>nul
-)
-echo  Done.
-
 :: Install Electron dependencies
 echo.
-echo  [4/6] Installing Electron build tools...
+echo  [4/5] Installing Electron build tools...
 cd electron
 call npm install
 if %errorlevel% neq 0 (
@@ -125,7 +111,7 @@ cd /d "%~dp0"
 
 :: Build Electron app
 echo.
-echo  [5/6] Packaging desktop application (%BUILD_LABEL%)...
+echo  [5/5] Packaging desktop application (%BUILD_LABEL%)...
 cd electron
 call npx.cmd electron-builder --win --x64 --config %CONFIG_FILE% --config.win.signAndEditExecutable=false
 if %errorlevel% neq 0 (
@@ -137,19 +123,6 @@ if %errorlevel% neq 0 (
 cd /d "%~dp0"
 
 :: Verify output
-echo.
-echo  [6/6] Verifying build output...
-if exist "%OUTPUT_DIR%" (
-    dir /b "%OUTPUT_DIR%\*.exe" 2>nul | findstr /i "setup" >nul
-    if !errorlevel! equ 0 (
-        echo  Found installer executable in %OUTPUT_DIR%.
-    ) else (
-        echo  [WARN] No setup EXE found in %OUTPUT_DIR%. See above for details.
-    )
-) else (
-    echo  [WARN] %OUTPUT_DIR% folder not found. Check for errors above.
-)
-
 echo.
 echo  ========================================
 echo    Build Complete! (%BUILD_LABEL%)

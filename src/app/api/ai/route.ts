@@ -221,10 +221,7 @@ async function queryGroq(prompt: string, systemPrompt: string | undefined, confi
 async function queryAI(prompt: string, systemPrompt: string | undefined, config: AIProviderConfig, modelTier?: string): Promise<string> {
   const providerName: string = config.activeProvider
 
-  if (providerName === 'ollama') {
-    return queryOllama(prompt, systemPrompt, config, modelTier)
-  }
-
+  // Try the selected provider first
   let response: string
   switch (providerName) {
     case 'groq':
@@ -243,26 +240,35 @@ async function queryAI(prompt: string, systemPrompt: string | undefined, config:
       response = await queryAnthropic(prompt, systemPrompt, config)
       if (!response.toLowerCase().includes('error')) return response
       break
+    case 'ollama':
+      response = await queryOllama(prompt, systemPrompt, config, modelTier)
+      return response
+    default:
+      return 'AI provider not configured. Please go to Settings > AI Configuration to set up a provider.'
   }
 
-  try {
-    const ollamaResponse = await queryOllama(prompt, systemPrompt, config, modelTier)
-    if (!ollamaResponse.toLowerCase().includes('error') && !ollamaResponse.toLowerCase().includes('unavailable')) {
-      return ollamaResponse + "\n\n_(Using local AI fallback)_"
-    }
-  } catch {}
-
-  switch (providerName) {
-    case 'groq': return queryGroq(prompt, systemPrompt, config)
-    case 'openai': return queryOpenAI(prompt, systemPrompt, config)
-    case 'gemini': return queryGemini(prompt, systemPrompt, config)
-    case 'anthropic': return queryAnthropic(prompt, systemPrompt, config)
-    default: return queryOllama(prompt, systemPrompt, config, modelTier)
+  // Cloud provider failed - fall back to Ollama (local AI) if available
+  if (process.env.AI_MODE === 'hybrid') {
+    try {
+      const ollamaResponse = await queryOllama(prompt, systemPrompt, config, modelTier)
+      if (!ollamaResponse.toLowerCase().includes('error') && !ollamaResponse.toLowerCase().includes('unavailable')) {
+        return ollamaResponse + '\n\n_(Using local AI fallback)_'
+      }
+    } catch {}
   }
+
+  // If no fallback worked, return the original error
+  return response || 'AI is currently unavailable. Please check your AI provider settings.'
 }
 
 export async function POST(request: Request) {
   try {
+    // Check if AI is enabled for this edition
+    const aiMode = process.env.AI_MODE || 'disabled'
+    if (aiMode === 'disabled') {
+      return Response.json({ error: 'AI is not available in this edition', available: false }, { status: 403 })
+    }
+
     const { action, data: requestData } = await request.json()
     const config = await getAISettings()
 
@@ -449,6 +455,12 @@ Provide practical, actionable insights.`
 
 export async function GET(request: Request) {
   try {
+    // Check if AI is enabled for this edition
+    const aiMode = process.env.AI_MODE || 'disabled'
+    if (aiMode === 'disabled') {
+      return Response.json({ available: false, model: null, models: [], error: 'AI is not available in this edition' })
+    }
+
     const settings = await getAISettings()
     const { searchParams } = new URL(request.url)
     const ollamaUrl = settings.ollama?.url || searchParams.get('ollamaUrl') || DEFAULT_OLLAMA_URL

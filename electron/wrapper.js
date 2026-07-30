@@ -88,10 +88,12 @@ function createProxy() {
       method: req.method,
       headers: { ...req.headers },
     }
+    // Don't compress - localhost proxy doesn't need it
+    delete options.headers['accept-encoding']
 
     const proxyReq = http.request(options, (proxyRes) => {
       const headers = { ...proxyRes.headers }
-      delete headers['content-encoding']
+      // Keep content-encoding intact so browsers can decompress
       res.writeHead(proxyRes.statusCode, headers)
       proxyRes.pipe(res)
     })

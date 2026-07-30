@@ -2,7 +2,7 @@
     "appId":  "com.buildprop.app",
     "productName":  "BuildProp",
     "directories":  {
-                        "output":  "../dist-electron"
+                        "output":  "../dist/premium"
                     },
     "files":  [
                   "main.js",
@@ -13,10 +13,6 @@
                 "target":  [
                                {
                                    "target":  "nsis",
-                                   "arch":  "x64"
-                               },
-                               {
-                                   "target":  "portable",
                                    "arch":  "x64"
                                }
                            ],
