@@ -21,7 +21,8 @@
       "package": "com.buildprop.mobile"
     },
     "plugins": [
-      "expo-router"
+      "expo-asset",
+      "expo-font"
     ]
   }
 }

@@ -1,5 +1,5 @@
 const { app, BrowserWindow, dialog } = require('electron')
-const { fork, spawn } = require('child_process')
+const { spawn } = require('child_process')
 const path = require('path')
 const fs = require('fs')
 const net = require('net')
@@ -10,7 +10,6 @@ let ollamaProcess = null
 
 const PORT = 3456
 const OLLAMA_PORT = 11434
-const OLLAMA_MODEL = 'llama3.2:1b'
 
 function getServerDir() {
   if (app.isPackaged) {
@@ -59,9 +58,7 @@ function copyFolderSync(src, dest) {
     if (entry.isDirectory()) {
       copyFolderSync(srcPath, destPath)
     } else {
-      if (!fs.existsSync(destPath)) {
-        fs.copyFileSync(srcPath, destPath)
-      }
+      if (!fs.existsSync(destPath)) fs.copyFileSync(srcPath, destPath)
     }
   }
 }
@@ -70,20 +67,14 @@ function setupOllamaData() {
   const aiDir = getAiDir()
   const bundledModels = path.join(aiDir, 'models')
   if (!fs.existsSync(bundledModels)) return false
-
   const ollamaData = getOllamaDataDir()
   const modelsDir = path.join(ollamaData, 'models')
-
-  if (fs.existsSync(modelsDir)) {
-    // Already set up
-    return true
-  }
-
+  if (fs.existsSync(modelsDir)) return true
   try {
     console.log('Setting up offline AI model (one-time copy)...')
     fs.mkdirSync(ollamaData, { recursive: true })
     copyFolderSync(bundledModels, modelsDir)
-    console.log('✅ Offline AI model ready')
+    console.log('Offline AI model ready')
     return true
   } catch (e) {
     console.error('Failed to copy AI model:', e.message)
@@ -94,36 +85,61 @@ function setupOllamaData() {
 function startNextServer() {
   return new Promise(async (resolve) => {
     const serverDir = getServerDir()
-    const serverJs = path.join(serverDir, 'server.js')
-
-    if (!fs.existsSync(serverJs)) {
-      console.error('Server not found at:', serverJs)
+    if (!fs.existsSync(path.join(serverDir, 'server.js'))) {
+      console.error('Server not found at:', serverDir)
       resolve(false)
       return
     }
 
-    console.log('Starting BuildProp server...')
-    serverProcess = fork(serverJs, [], {
-      cwd: serverDir,
-      env: {
-        ...process.env,
-        PORT: String(PORT),
-        HOSTNAME: '127.0.0.1',
-        NODE_ENV: 'production',
-      },
-      stdio: ['ignore', 'pipe', 'pipe'],
-    })
+    // Resolve wrapper.js path (handle asar packaging)
+    let wrapperJs = path.join(__dirname, 'wrapper.js')
+    if (app.isPackaged) {
+      // Copy wrapper.js out of asar so fork() can use it
+      const target = path.join(serverDir, 'wrapper.js')
+      if (!fs.existsSync(target)) {
+        try { fs.copyFileSync(wrapperJs, target) } catch (e) {
+          console.error('Failed to copy wrapper.js:', e.message)
+        }
+      }
+      wrapperJs = target
+    }
 
-    serverProcess.stdout.on('data', (d) => {
-      const msg = d.toString().trim()
-      if (msg) console.log('[server] ' + msg)
-    })
-    serverProcess.stderr.on('data', (d) => {
-      const msg = d.toString().trim()
-      if (msg) console.log('[server] ' + msg)
-    })
-    serverProcess.on('error', (err) => console.error('[server]', err.message))
-    serverProcess.on('exit', (code) => { serverProcess = null })
+    console.log('[main] Starting BuildProp server (wrapper)...')
+    try {
+      serverProcess = spawn(process.execPath, [wrapperJs], {
+        cwd: serverDir,
+        env: {
+          ...process.env,
+          ELECTRON_RUN_AS_NODE: '1',
+          PORT: String(PORT),
+          HOSTNAME: '127.0.0.1',
+          SERVER_DIR: serverDir,
+          NODE_ENV: 'production',
+        },
+        stdio: ['ignore', 'pipe', 'pipe'],
+      })
+
+      if (!serverProcess) {
+        console.error('[main] fork() returned null')
+        resolve(false)
+        return
+      }
+
+      serverProcess.stdout.on('data', (d) => {
+        const msg = d.toString().trim()
+        if (msg) console.log('[server] ' + msg)
+      })
+      serverProcess.stderr.on('data', (d) => {
+        const msg = d.toString().trim()
+        if (msg) console.log('[server] ' + msg)
+      })
+      serverProcess.on('error', (err) => console.error('[server]', err.message))
+      serverProcess.on('exit', (code) => { serverProcess = null })
+    } catch (e) {
+      console.error('[main] Failed to start server:', e.message)
+      resolve(false)
+      return
+    }
 
     const ready = await waitForPort(PORT, '127.0.0.1', 30000)
     resolve(ready)
@@ -133,66 +149,49 @@ function startNextServer() {
 function startOllama() {
   const aiDir = getAiDir()
   const ollamaExe = path.join(aiDir, 'ollama.exe')
-
   if (!fs.existsSync(ollamaExe)) {
-    console.log('Ollama not bundled — AI uses Groq cloud')
+    console.log('[main] Ollama not bundled - AI uses Groq cloud')
     return false
   }
-
   const ollamaData = getOllamaDataDir()
   const modelsDir = path.join(ollamaData, 'models')
-
-  if (!fs.existsSync(modelsDir)) {
-    setupOllamaData()
-  }
-
-  console.log('Starting Ollama AI engine...')
+  if (!fs.existsSync(modelsDir)) setupOllamaData()
+  console.log('[main] Starting Ollama AI engine...')
   ollamaProcess = spawn(ollamaExe, ['serve'], {
     cwd: ollamaData,
-    env: {
-      ...process.env,
-      OLLAMA_HOST: '127.0.0.1:' + OLLAMA_PORT,
-      OLLAMA_MODELS: modelsDir,
-    },
-    stdio: ['ignore', 'pipe', 'pipe'],
+    env: { ...process.env, OLLAMA_HOST: '127.0.0.1:' + OLLAMA_PORT, OLLAMA_MODELS: modelsDir },
   })
-
-  ollamaProcess.stdout.on('data', (d) => {
-    const msg = d.toString().trim()
-    if (msg) console.log('[AI] ' + msg)
-  })
-  ollamaProcess.stderr.on('data', (d) => {
-    const msg = d.toString().trim()
-    if (msg) console.log('[AI] ' + msg)
-  })
+  ollamaProcess.stdout.on('data', (d) => { const msg = d.toString().trim(); if (msg) console.log('[AI] ' + msg) })
+  ollamaProcess.stderr.on('data', (d) => { const msg = d.toString().trim(); if (msg) console.log('[AI] ' + msg) })
   ollamaProcess.on('error', (err) => console.error('[AI]', err.message))
   ollamaProcess.on('exit', (code) => { ollamaProcess = null })
-
   return true
 }
 
 function createWindow() {
-  mainWindow = new BrowserWindow({
-    width: 1400,
-    height: 900,
-    minWidth: 1024,
-    minHeight: 700,
-    icon: path.join(__dirname, '..', 'public', 'favicon.ico'),
-    webPreferences: {
-      nodeIntegration: false,
-      contextIsolation: true,
-    },
-  })
-
-  mainWindow.setTitle('BuildProp ERP — Construction & Real Estate')
-  mainWindow.loadURL('http://127.0.0.1:' + PORT + '/login')
-  mainWindow.on('closed', () => { mainWindow = null })
+  try {
+    mainWindow = new BrowserWindow({
+      width: 1400,
+      height: 900,
+      minWidth: 1024,
+      minHeight: 700,
+      show: true,
+      backgroundColor: '#0f172a',
+      webPreferences: { nodeIntegration: false, contextIsolation: true },
+    })
+    mainWindow.setTitle('BuildProp - Construction & Real Estate Management')
+    mainWindow.loadURL('http://127.0.0.1:' + PORT + '/login')
+    mainWindow.on('closed', () => { mainWindow = null })
+    mainWindow.on('ready-to-show', () => { mainWindow.show(); mainWindow.focus() })
+  } catch (e) {
+    console.error('[main] Window error:', e)
+  }
 }
 
+// === App Lifecycle ===
 app.on('ready', async () => {
-  console.log('BuildProp starting up...')
+  console.log('[main] BuildProp starting up...')
 
-  // Step 1: Start Next.js production server
   const serverStarted = await startNextServer()
   if (!serverStarted) {
     dialog.showErrorBox('Server Error',
@@ -201,11 +200,9 @@ app.on('ready', async () => {
     return
   }
 
-  // Step 2: Start bundled Ollama AI engine (non-blocking)
-  startOllama()
-
-  // Step 3: Open the app window
+  // Show window immediately, AI in background
   createWindow()
+  setTimeout(() => startOllama(), 2000)
 })
 
 app.on('window-all-closed', () => {
@@ -214,11 +211,12 @@ app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') app.quit()
 })
 
-app.on('activate', () => {
-  if (mainWindow === null) createWindow()
-})
+app.on('activate', () => { if (mainWindow === null) createWindow() })
 
 app.on('before-quit', () => {
   if (ollamaProcess) { ollamaProcess.kill(); ollamaProcess = null }
   if (serverProcess) { serverProcess.kill(); serverProcess = null }
 })
+
+
+
