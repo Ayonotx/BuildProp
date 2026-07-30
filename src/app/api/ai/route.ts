@@ -306,7 +306,7 @@ export async function POST(request: Request) {
       }
 
       case 'chat': {
-        const { message } = requestData
+        const { message, conversationId } = requestData
         if (!message || typeof message !== 'string') {
           return Response.json({ error: 'Message is required' }, { status: 400 })
         }
@@ -315,12 +315,12 @@ export async function POST(request: Request) {
           return Response.json({ error: 'Message is empty after sanitization' }, { status: 400 })
         }
 
-        // Try to execute as an action first
         const cookieStore = await cookies()
         const token = cookieStore.get('buildprop_token')?.value
         const payload = token ? verifyToken(token) : null
         const userId = payload?.userId || 'system'
 
+        // Try to execute as an action first
         const actionResult = await executeAIAction(sanitized, userId)
         if (actionResult) {
           return Response.json({
@@ -343,7 +343,31 @@ export async function POST(request: Request) {
         const totalRevenue = Number(dashPayments._sum.amount || 0)
         const totalOutstanding = dashInvoices.reduce((s, i) => s + Number(i.totalAmount) - Number(i.paidAmount), 0)
 
-        const systemPrompt = `You are BuildProp AI Assistant for a construction & real estate company in Ghana. Currency is GHS (GH₵). Current date: ${new Date().toLocaleDateString('en-GB')}
+        // Load conversation history if conversationId is provided
+        let conversationHistory = ''
+        let activeConversationId = conversationId
+        if (activeConversationId && userId !== 'system') {
+          const conversation = await prisma.aiConversation.findFirst({
+            where: { id: activeConversationId, userId },
+            include: {
+              messages: {
+                orderBy: { createdAt: 'desc' },
+                take: 10,
+                select: { role: true, content: true },
+              },
+            },
+          })
+
+          if (conversation) {
+            const history = conversation.messages.reverse()
+            if (history.length > 0) {
+              conversationHistory = '\n\nPREVIOUS CONVERSATION CONTEXT:\n' +
+                history.map((m: { role: string; content: string }) => `${m.role === 'user' ? 'User' : 'Assistant'}: ${m.content}`).join('\n')
+            }
+          }
+        }
+
+        let systemPrompt = `You are BuildProp AI Assistant for a construction & real estate company in Ghana. Currency is GHS (GH₵). Current date: ${new Date().toLocaleDateString('en-GB')}
 
 REAL BUSINESS DATA (use ONLY these numbers, never fabricate):
 - Projects: ${dashProjects.map(p => `${p.name} (${p.status}, ${p.completionPercentage}% complete, Budget: GH₵${Number(p.estimatedBudget).toLocaleString()})`).join('; ') || 'None'}
@@ -360,9 +384,42 @@ RULES:
 - Be concise and actionable
 - If asked about something not in the data, say "I don't have that data" rather than making it up`
 
+        if (conversationHistory) {
+          systemPrompt += conversationHistory
+        }
+
         const modelTier = requestData?.model as string | undefined
         const response = await queryAI(sanitized, systemPrompt, config, modelTier)
-        return Response.json({ response, provider: config.activeProvider })
+
+        // Save messages to conversation if conversationId was provided
+        if (activeConversationId && userId !== 'system') {
+          await Promise.all([
+            prisma.aiMessage.create({
+              data: {
+                conversationId: activeConversationId,
+                role: 'user',
+                content: sanitized,
+              },
+            }),
+            prisma.aiMessage.create({
+              data: {
+                conversationId: activeConversationId,
+                role: 'assistant',
+                content: response,
+              },
+            }),
+            prisma.aiConversation.update({
+              where: { id: activeConversationId },
+              data: { title: requestData?.title || undefined },
+            }),
+          ])
+        }
+
+        return Response.json({
+          response,
+          provider: config.activeProvider,
+          conversationId: activeConversationId || undefined,
+        })
       }
 
       case 'insights': {

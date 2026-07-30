@@ -52,7 +52,7 @@ function loadEnv() {
         const eqIdx = trimmed.indexOf('=')
         if (eqIdx > 0) {
           const key = trimmed.slice(0, eqIdx).trim()
-          const val = trimmed.slice(eqIdx + 1).trim().replace(/^['"](.*)['"]$/, '$1')
+          let val = trimmed.slice(eqIdx + 1).trim().replace(/^['"](.*)['"]$/, '$1')
           if (key && !process.env[key]) {
             if (key === 'DATABASE_URL') {
               val = resolveDatabaseUrl(envPath, val)

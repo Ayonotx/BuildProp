@@ -774,3 +774,38 @@ model Installment {
   plan              InstallmentPlan @relation(fields: [planId], references: [id])
   @@map("installments")
 }
+
+model AiConversation {
+  id          String      @id @default(cuid())
+  userId      String
+  title       String      @default("New conversation")
+  model       String?
+  provider    String?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  messages    AiMessage[]
+  @@map("ai_conversations")
+}
+
+model AiMessage {
+  id             String         @id @default(cuid())
+  conversationId String
+  conversation   AiConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  role           String
+  content        String
+  metadata       String?
+  createdAt      DateTime       @default(now())
+  @@map("ai_messages")
+}
+
+model AiKnowledgeDocument {
+  id          String   @id @default(cuid())
+  title       String
+  content     String
+  category    String   @default("general")
+  tags        String?
+  userId      String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  @@map("ai_knowledge_documents")
+}
