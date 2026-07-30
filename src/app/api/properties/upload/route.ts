@@ -1,16 +1,14 @@
 export const dynamic = 'force-dynamic'
 
-import { NextRequest } from 'next/server'
 import { writeFile, mkdir } from 'fs/promises'
 import path from 'path'
 
-export async function POST(request: NextRequest) {
+export async function POST(request: Request) {
   try {
-    const formData = await request.formData()
-    const files = formData.getAll('files') as File[]
+    const { files } = await request.json()
 
-    if (!files || files.length === 0) {
-      return Response.json({ error: 'No files uploaded' }, { status: 400 })
+    if (!files || !Array.isArray(files) || files.length === 0) {
+      return Response.json({ error: 'No files uploaded. Send JSON with { files: [{ name, data, type }] }' }, { status: 400 })
     }
 
     const uploadDir = path.join(process.cwd(), 'data', 'uploads', 'properties')
@@ -19,19 +17,28 @@ export async function POST(request: NextRequest) {
     const uploadedFiles: { filename: string; url: string; size: number }[] = []
 
     for (const file of files) {
-      const bytes = await file.arrayBuffer()
-      const buffer = Buffer.from(bytes)
-      const filename = `${Date.now()}-${Math.random().toString(36).slice(2)}-${file.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`
+      const { name, data, type } = file
+      if (!name || !data) continue
+
+      const safeName = name.replace(/[^a-zA-Z0-9.-]/g, '_')
+      const filename = Date.now() + '-' + Math.random().toString(36).slice(2) + '-' + safeName
+
+      // data is base64 encoded
+      const base64Data = data.includes(',') ? data.split(',')[1] : data
+      const buffer = Buffer.from(base64Data, 'base64')
+
       await writeFile(path.join(uploadDir, filename), buffer)
       uploadedFiles.push({
         filename,
-        url: `/api/properties/image/${filename}`,
-        size: file.size,
+        url: '/api/properties/image/' + filename,
+        size: buffer.length,
       })
     }
 
     return Response.json({ files: uploadedFiles })
   } catch (error) {
-    return Response.json({ error: 'Upload failed' }, { status: 500 })
+    const message = error instanceof Error ? error.message : 'Unknown error'
+    console.error('[upload] Error:', message, error instanceof Error ? error.stack : '')
+    return Response.json({ error: 'Upload failed: ' + message }, { status: 500 })
   }
 }

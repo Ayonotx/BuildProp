@@ -61,11 +61,21 @@ function getPropertyImages(images: string | null): string[] {
 }
 
 async function uploadImages(files: FileList): Promise<string[]> {
-  const formData = new FormData()
+  const fileData: { name: string; data: string; type: string }[] = []
   for (let i = 0; i < files.length; i++) {
-    formData.append("files", files[i])
+    const file = files[i]
+    const base64 = await new Promise<string>((resolve) => {
+      const reader = new FileReader()
+      reader.onload = () => resolve(reader.result as string)
+      reader.readAsDataURL(file)
+    })
+    fileData.push({ name: file.name, data: base64, type: file.type })
   }
-  const res = await fetch("/api/properties/upload", { method: "POST", body: formData })
+  const res = await fetch("/api/properties/upload", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ files: fileData })
+  })
   const data = await res.json()
   if (!res.ok) throw new Error(data.error || "Upload failed")
   return data.files.map((f: { url: string }) => f.url)
