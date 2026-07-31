@@ -734,7 +734,7 @@ export default function SettingsPage() {
                   Create a snapshot of your current database. This copies the SQLite database file and exports table data as JSON.
                 </p>
                 <div className="flex items-center gap-3">
-                  <Button onClick={handleCreateBackup} disabled={backingUp} className="bg-blue-600 hover:bg-blue-700 text-white">
+                  <Button onClick={handleCreateBackup} disabled={backingUp} className="bg-orange-500 hover:bg-orange-600 text-white">
                     <Download className="h-4 w-4 mr-2" />
                     {backingUp ? "Creating Backup..." : "Create Backup"}
                   </Button>
@@ -746,7 +746,7 @@ export default function SettingsPage() {
                   )}
                 </div>
                 {lastBackup && (
-                  <div className="rounded-lg bg-blue-50 border border-blue-200 p-3 text-sm">
+                  <div className="rounded-lg bg-orange-50 border border-orange-200 p-3 text-sm">
                     <p className="font-medium text-blue-800">Backup created successfully</p>
                     <p className="text-blue-600 mt-1">File: {lastBackup.filename} ({lastBackup.sizeFormatted})</p>
                   </div>

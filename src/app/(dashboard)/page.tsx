@@ -190,7 +190,7 @@ export default function DashboardPage() {
         <p className="text-sm text-slate-500">{error || "Unknown error"}</p>
         <button
           onClick={() => window.location.reload()}
-          className="rounded-lg bg-slate-900 px-4 py-2 text-sm text-white hover:bg-slate-800"
+          className="rounded-lg bg-orange-500 px-4 py-2 text-sm text-white hover:bg-orange-600"
         >
           Retry
         </button>

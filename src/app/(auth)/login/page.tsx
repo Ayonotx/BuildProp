@@ -41,10 +41,10 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen flex">
-      <div className="hidden lg:flex lg:w-1/2 bg-[#0f172a] relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-[#0f172a] via-[#1e293b] to-[#0f172a]" />
+      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-[#ea580c] via-[#c2410c] to-[#7c2d12] relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-[#ea580c]/20 via-[#c2410c]/10 to-[#431407]/60" />
         <div className="absolute top-0 left-0 w-96 h-96 bg-orange-500/10 rounded-full -translate-x-1/2 -translate-y-1/2" />
-        <div className="absolute bottom-0 right-0 w-96 h-96 bg-blue-500/10 rounded-full translate-x-1/2 translate-y-1/2" />
+        <div className="absolute bottom-0 right-0 w-96 h-96 bg-orange-300/10 rounded-full translate-x-1/2 translate-y-1/2" />
 
         <div className="relative z-10 flex flex-col justify-center px-16">
           <div className="flex items-center gap-3 mb-8">
@@ -53,16 +53,16 @@ export default function LoginPage() {
             </div>
             <div>
               <h1 className="text-3xl font-bold text-white">BuildProp</h1>
-              <p className="text-sm text-slate-400">Management System</p>
+              <p className="text-sm text-orange-100/80">Management System</p>
             </div>
           </div>
 
           <h2 className="text-4xl font-bold text-white mb-4 leading-tight">
             Construction & Real Estate<br />
-            <span className="text-orange-400">Management Platform</span>
+            <span className="text-amber-300">Management Platform</span>
           </h2>
 
-          <p className="text-slate-400 text-lg max-w-md leading-relaxed">
+          <p className="text-orange-50/90 text-lg max-w-md leading-relaxed">
             End-to-end solution for managing administrative operations, construction projects,
             real estate sales, land records, finances, and human resources.
           </p>
@@ -74,9 +74,9 @@ export default function LoginPage() {
               { value: "100%", label: "Secure" },
               { value: "8", label: "Scalable" },
             ].map((stat) => (
-              <div key={stat.label} className="p-4 rounded-xl bg-white/5 border border-white/10">
-                <p className="text-2xl font-bold text-orange-400">{stat.value}</p>
-                <p className="text-sm text-slate-400">{stat.label}</p>
+              <div key={stat.label} className="p-4 rounded-xl bg-black/10 border border-white/20">
+                <p className="text-2xl font-bold text-amber-300">{stat.value}</p>
+                <p className="text-sm text-orange-50/80">{stat.label}</p>
               </div>
             ))}
           </div>
@@ -153,7 +153,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full rounded-xl bg-[#0f172a] py-3 text-white font-medium hover:bg-slate-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              className="w-full rounded-xl bg-orange-500 py-3 text-white font-medium hover:bg-orange-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg shadow-orange-500/25"
             >
               {loading ? (
                 <>

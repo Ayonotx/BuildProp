@@ -681,7 +681,7 @@ export default function AIPage() {
                   <div key={i} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
                     <div className={`max-w-[80%] rounded-2xl px-4 py-3 ${
                       msg.role === "user"
-                        ? "bg-slate-900 text-white"
+                        ? "bg-orange-500 text-white"
                         : "bg-slate-100 text-slate-900"
                     }`}>
                       {msg.role === "assistant" && (

@@ -95,10 +95,10 @@ export default function SetupPage() {
   return (
     <div className="min-h-screen flex">
       {/* Left branding panel */}
-      <div className="hidden lg:flex lg:w-1/2 bg-[#0f172a] relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-[#0f172a] via-[#1e293b] to-[#0f172a]" />
+      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-[#ea580c] via-[#c2410c] to-[#7c2d12] relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-[#ea580c]/20 via-[#c2410c]/10 to-[#431407]/60" />
         <div className="absolute top-0 left-0 w-96 h-96 bg-orange-500/10 rounded-full -translate-x-1/2 -translate-y-1/2" />
-        <div className="absolute bottom-0 right-0 w-96 h-96 bg-blue-500/10 rounded-full translate-x-1/2 translate-y-1/2" />
+        <div className="absolute bottom-0 right-0 w-96 h-96 bg-orange-300/10 rounded-full translate-x-1/2 translate-y-1/2" />
 
         <div className="relative z-10 flex flex-col justify-center px-16">
           <div className="flex items-center gap-3 mb-8">
@@ -475,7 +475,7 @@ export default function SetupPage() {
             <button
               onClick={() => setStep((s) => s + 1)}
               disabled={!canNext()}
-              className="flex items-center gap-2 rounded-xl bg-[#0f172a] px-6 py-3 text-sm font-medium text-white hover:bg-slate-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex items-center gap-2 rounded-xl bg-orange-500 px-6 py-3 text-sm font-medium text-white hover:bg-orange-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Next
               <ArrowRight className="h-4 w-4" />

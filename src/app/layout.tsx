@@ -15,7 +15,7 @@ export const metadata: Metadata = {
   },
   manifest: "/manifest.json",
   other: {
-    "msapplication-TileColor": "#0f172a",
+    "msapplication-TileColor": "#c2410c",
     "apple-mobile-web-app-capable": "yes",
     "apple-mobile-web-app-status-bar-style": "black-translucent",
   },

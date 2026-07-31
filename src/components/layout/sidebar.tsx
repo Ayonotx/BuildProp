@@ -137,9 +137,9 @@ function Sidebar({ collapsed = false, onToggle }: SidebarProps) {
   const [mobileOpen, setMobileOpen] = useState(false)
 
   const sidebarContent = (
-    <div data-tutorial-sidebar className="flex h-full flex-col bg-[#0f172a] text-white">
+    <div data-tutorial-sidebar className="flex h-full flex-col bg-[#431407] text-white">
       {/* Logo */}
-      <div className="flex h-16 items-center justify-between px-4 border-b border-slate-700/50">
+      <div className="flex h-16 items-center justify-between px-4 border-b border-orange-900/60">
         {!collapsed && (
           <div className="flex items-center gap-3">
             <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-orange-500">
@@ -150,14 +150,14 @@ function Sidebar({ collapsed = false, onToggle }: SidebarProps) {
               {AI_ENABLED ? (
                 <span className="block text-[10px] text-purple-400 -mt-1">Premium <span className="inline-flex items-center rounded-md bg-purple-500/20 px-1.5 py-0.5 text-[9px] font-semibold text-purple-300 ring-1 ring-inset ring-purple-500/30 ml-0.5">AI</span></span>
               ) : (
-                <span className="block text-[10px] text-slate-400 -mt-1">Standard</span>
+                <span className="block text-[10px] text-orange-200/60 -mt-1">Standard</span>
               )}
             </div>
           </div>
         )}
         <button
           onClick={() => setMobileOpen(false)}
-          className="lg:hidden text-slate-400 hover:text-white"
+          className="lg:hidden text-orange-200/60 hover:text-white"
         >
           <X className="h-5 w-5" />
         </button>
@@ -168,7 +168,7 @@ function Sidebar({ collapsed = false, onToggle }: SidebarProps) {
         {navigation.map((group) => (
           <div key={group.title}>
             {!collapsed && (
-              <h3 className="px-3 mb-2 text-[10px] font-semibold uppercase tracking-wider text-slate-500">
+              <h3 className="px-3 mb-2 text-[10px] font-semibold uppercase tracking-wider text-orange-200/40">
                 {group.title}
               </h3>
             )}
@@ -186,7 +186,7 @@ function Sidebar({ collapsed = false, onToggle }: SidebarProps) {
                       "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all",
                       isActive
                         ? "bg-orange-500/10 text-orange-400"
-                        : "text-slate-400 hover:bg-slate-800 hover:text-white",
+                        : "text-orange-100/60 hover:bg-orange-900/40 hover:text-white",
                       collapsed && "justify-center px-2"
                     )}
                   >
@@ -201,10 +201,10 @@ function Sidebar({ collapsed = false, onToggle }: SidebarProps) {
       </nav>
 
       {/* Collapse toggle - desktop only */}
-      <div className="hidden lg:flex border-t border-slate-700/50 p-3">
+      <div className="hidden lg:flex border-t border-orange-900/60 p-3">
         <button
           onClick={onToggle}
-          className="flex w-full items-center justify-center gap-2 rounded-lg px-3 py-2 text-sm text-slate-400 hover:bg-slate-800 hover:text-white transition-colors"
+          className="flex w-full items-center justify-center gap-2 rounded-lg px-3 py-2 text-sm text-orange-100/60 hover:bg-orange-900/40 hover:text-white transition-colors"
         >
           <ChevronLeft className={cn("h-4 w-4 transition-transform", collapsed && "rotate-180")} />
           {!collapsed && <span>Collapse</span>}
@@ -218,7 +218,7 @@ function Sidebar({ collapsed = false, onToggle }: SidebarProps) {
       {/* Mobile toggle */}
       <button
         onClick={() => setMobileOpen(true)}
-        className="fixed top-4 left-4 z-50 lg:hidden flex h-10 w-10 items-center justify-center rounded-lg bg-[#0f172a] text-white shadow-lg"
+        className="fixed top-4 left-4 z-50 lg:hidden flex h-10 w-10 items-center justify-center rounded-lg bg-[#431407] text-white shadow-lg"
       >
         <Menu className="h-5 w-5" />
       </button>
