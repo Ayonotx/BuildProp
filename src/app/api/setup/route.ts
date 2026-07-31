@@ -1,44 +1,35 @@
 export const dynamic = 'force-dynamic'
-import { readFile, writeFile, mkdir } from 'fs/promises'
+import { readFile } from 'fs/promises'
 import { join } from 'path'
 import { prisma } from '@/lib/prisma'
 
 const settingsPath = join(process.cwd(), 'data', 'settings.json')
 
+// Side-effect free: this handler MUST NOT write any files or return demo data.
+// configured = settings.json has a companyName OR the DB has at least one user.
 export async function GET() {
+  let configured = false
+
   try {
     const content = await readFile(settingsPath, 'utf-8')
     const settings = JSON.parse(content)
-    if (settings.companyName) {
-      return Response.json({ configured: true })
+    if (settings && settings.companyName) {
+      configured = true
     }
   } catch {
-    // File doesn't exist
+    // settings.json missing or unreadable — fall through to DB check
   }
 
-  try {
-    const userCount = await prisma.user.count()
-    if (userCount > 0) {
-      const dir = join(process.cwd(), 'data')
-      await mkdir(dir, { recursive: true })
-      const defaultSettings = {
-        companyName: "BuildProp Construction",
-        address: "123 Airport Road, Accra, Ghana",
-        phone: "+233 24 123 4567",
-        email: "info@buildprop.com",
-        website: "https://buildprop.com",
-        timezone: "Africa/Accra",
-        currency: "GHS",
-        dateFormat: "DD/MM/YYYY",
-        adminName: "Admin",
-        adminEmail: "admin@buildprop.com",
+  if (!configured) {
+    try {
+      const userCount = await prisma.user.count()
+      if (userCount > 0) {
+        configured = true
       }
-      await writeFile(settingsPath, JSON.stringify(defaultSettings, null, 2))
-      return Response.json({ configured: true })
+    } catch {
+      // DB might not be available — keep current configured state
     }
-  } catch {
-    // DB might not be available
   }
 
-  return Response.json({ configured: false })
+  return Response.json({ configured })
 }

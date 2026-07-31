@@ -28,6 +28,13 @@ export function proxy(request: NextRequest) {
     return NextResponse.next()
   }
 
+  // The setup wizard must POST company + admin details to /api/settings before
+  // any user exists (fresh install, no session yet). The route handler itself
+  // enforces RBAC: on a populated DB only Super Admin/Admin may save settings.
+  if (pathname === '/api/settings' && request.method === 'POST') {
+    return NextResponse.next()
+  }
+
   const token = request.cookies.get('buildprop_token')?.value
 
   if (!token || !verifyToken(token)) {

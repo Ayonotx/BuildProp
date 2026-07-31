@@ -2,9 +2,22 @@ export const dynamic = 'force-dynamic'
 import { prisma } from '@/lib/prisma'
 import { hashPassword } from '@/lib/auth-utils'
 import { handleApiError } from '@/lib/api-errors'
+import { getCurrentUser } from '@/lib/current-user'
+import { isAdminRole } from '@/lib/permissions'
+
+// Guard: user management is Super Admin/Admin only.
+async function requireAdmin(): Promise<Response | null> {
+  const currentUser = await getCurrentUser()
+  if (!currentUser) return Response.json({ error: 'Authentication required' }, { status: 401 })
+  if (!isAdminRole(currentUser.role.name)) return Response.json({ error: 'Forbidden' }, { status: 403 })
+  return null
+}
 
 export async function GET() {
   try {
+    const guard = await requireAdmin()
+    if (guard) return guard
+
     const users = await prisma.user.findMany({
       select: {
         id: true,
@@ -33,6 +46,9 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
+    const guard = await requireAdmin()
+    if (guard) return guard
+
     const body = await request.json()
     const { firstName, lastName, email, phone, roleId, password } = body
 

@@ -1,14 +1,34 @@
 "use client"
 
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
+import { useRouter } from "next/navigation"
 import { HardHat, Eye, EyeOff, Lock, Mail } from "lucide-react"
 
 export default function LoginPage() {
+  const router = useRouter()
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
+  // On a fresh install (empty DB / no settings) bounce straight to the setup
+  // wizard. /setup is a public path and only redirects back when configured,
+  // so this cannot loop.
+  useEffect(() => {
+    let cancelled = false
+    fetch("/api/setup")
+      .then((r) => r.json())
+      .then((json) => {
+        if (!cancelled && json && json.configured === false) {
+          router.replace("/setup")
+        }
+      })
+      .catch(() => {})
+    return () => {
+      cancelled = true
+    }
+  }, [router])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -165,39 +185,6 @@ export default function LoginPage() {
               )}
             </button>
           </form>
-
-          <div className="mt-6">
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-slate-200" />
-              </div>
-              <div className="relative flex justify-center text-sm">
-                <span className="bg-white px-4 text-slate-500">Demo Accounts</span>
-              </div>
-            </div>
-
-            <div className="mt-4 grid grid-cols-2 gap-3">
-              {[
-                { role: "Admin", email: "admin@buildprop.com" },
-                { role: "Manager", email: "manager@buildprop.com" },
-                { role: "Accountant", email: "account@buildprop.com" },
-                { role: "Engineer", email: "engineer@buildprop.com" },
-              ].map((demo) => (
-                <button
-                  key={demo.role}
-                  onClick={() => {
-                    setEmail(demo.email)
-                    setPassword("demo123")
-                    setError(null)
-                  }}
-                  className="rounded-lg border border-slate-200 p-3 text-left hover:bg-slate-50 transition-colors"
-                >
-                  <p className="text-sm font-medium text-slate-900">{demo.role}</p>
-                  <p className="text-xs text-slate-500 truncate">{demo.email}</p>
-                </button>
-              ))}
-            </div>
-          </div>
         </div>
       </div>
     </div>

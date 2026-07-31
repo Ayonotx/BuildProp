@@ -16,7 +16,7 @@ import { useToast } from "@/components/dashboard/toast"
 import { printDocument } from "@/lib/print"
 import { exportToCSV } from "@/lib/export-csv"
 import { exportToPdf } from "@/lib/pdf-export"
-import { downloadHTML, generateInvoicePDF } from "@/lib/pdf-generator"
+import { generateInvoicePDF } from "@/lib/pdf-generator"
 import { formatCurrency, formatDate, statusVariant, statusLabel, toNum } from "@/lib/utils"
 
 interface InvoiceItem {
@@ -203,8 +203,7 @@ export default function InvoicesPage() {
   }
 
   function downloadInvoicePDF(inv: Invoice) {
-    const html = generateInvoicePDF(inv, inv.items || [], "BuildProp")
-    downloadHTML(`Invoice-${inv.invoiceNumber}.html`, html)
+    generateInvoicePDF(inv, inv.items || [], "BuildProp")
   }
 
   const columns: Column<Invoice>[] = [

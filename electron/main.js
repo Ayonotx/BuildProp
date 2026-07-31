@@ -101,6 +101,68 @@ function copyFolderSync(src, dest) {
   }
 }
 
+function getTimestampDirName() {
+  const d = new Date()
+  const pad = (n) => String(n).padStart(2, '0')
+  return d.getFullYear() + pad(d.getMonth() + 1) + pad(d.getDate()) + '_' +
+    pad(d.getHours()) + pad(d.getMinutes()) + pad(d.getSeconds())
+}
+
+// Safety-net backup of the SQLite DB + small JSON configs, run shortly after startup.
+// Never throws/crashes the app — any failure is caught and logged.
+function runAutoBackup() {
+  const BACKUP_KEEP = 10
+  try {
+    const serverDir = getServerDir()
+    const dataDir = path.join(serverDir, 'data')
+    const dbPath = path.join(serverDir, 'prisma', 'dev.db')
+    const autoRoot = path.join(serverDir, 'backups', 'auto')
+    const backupDir = path.join(autoRoot, getTimestampDirName())
+
+    fs.mkdirSync(backupDir, { recursive: true })
+
+    let copied = 0
+
+    // SQLite database
+    if (fs.existsSync(dbPath)) {
+      fs.copyFileSync(dbPath, path.join(backupDir, 'dev.db'))
+      copied++
+    } else {
+      console.warn('[main] Auto-backup: database not found at ' + dbPath)
+    }
+
+    // Small JSON config files (skip backups/ and uploads/ which can be large)
+    if (fs.existsSync(dataDir)) {
+      const entries = fs.readdirSync(dataDir, { withFileTypes: true })
+      for (const entry of entries) {
+        if (!entry.isFile()) continue
+        if (!entry.name.toLowerCase().endsWith('.json')) continue
+        fs.copyFileSync(path.join(dataDir, entry.name), path.join(backupDir, entry.name))
+        copied++
+      }
+    }
+
+    console.log('[main] Auto-backup created: ' + backupDir + ' (' + copied + ' file(s))')
+
+    // Rotation: keep only the most recent BACKUP_KEEP auto-backups (timestamps sort lexically)
+    if (fs.existsSync(autoRoot)) {
+      const dirs = fs.readdirSync(autoRoot)
+        .filter((name) => {
+          try { return fs.statSync(path.join(autoRoot, name)).isDirectory() } catch { return false }
+        })
+        .sort()
+        .reverse()
+      while (dirs.length > BACKUP_KEEP) {
+        const oldest = dirs.pop()
+        fs.rmSync(path.join(autoRoot, oldest), { recursive: true, force: true })
+        console.log('[main] Auto-backup rotation: removed ' + oldest)
+      }
+    }
+  } catch (e) {
+    console.error('[main] Auto-backup failed:', e.message)
+  }
+}
+
 function setupOllamaData() {
   const aiDir = getAiDir()
   const bundledModels = path.join(aiDir, 'models')
@@ -256,6 +318,8 @@ app.on('ready', async () => {
   // Show window immediately, AI in background
   createWindow()
   setTimeout(() => startOllama(), 2000)
+  // Safety-net auto-backup shortly after the server is up (non-blocking, never crashes startup)
+  setTimeout(() => runAutoBackup(), 1500)
 })
 
 app.on('window-all-closed', () => {

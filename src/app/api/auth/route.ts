@@ -52,6 +52,13 @@ export const POST = withValidation(loginSchema, async (request, data) => {
       }
     }
 
+    if (!user.isActive) {
+      return Response.json(
+        { error: "Your account has been deactivated. Contact your administrator." },
+        { status: 401 }
+      )
+    }
+
     await prisma.user.update({
       where: { id: user.id },
       data: { lastLoginAt: new Date() },

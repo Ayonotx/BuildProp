@@ -88,13 +88,14 @@ if exist "public" (
     xcopy /E /Y /Q "public\*" ".next\standalone\public\" >nul
 )
 if not exist ".next\standalone\prisma" mkdir ".next\standalone\prisma"
-if exist "prisma\dev.db" (
-    copy /Y "prisma\dev.db" ".next\standalone\prisma\dev.db" >nul
+if exist "prisma\production.db" (
+    copy /Y "prisma\production.db" ".next\standalone\prisma\dev.db" >nul
+    echo  [OK] Shipped empty production database (prisma\production.db as dev.db)
+) else (
+    echo  [WARN] prisma\production.db not found - installer will ship without a database
 )
-if not exist ".next\standalone\data" mkdir ".next\standalone\data"
-if exist "data\settings.json" (
-    copy /Y "data\settings.json" ".next\standalone\data\settings.json" >nul
-)
+:: NOTE: data\settings.json is intentionally NOT shipped so every fresh install
+:: starts unconfigured and shows the company setup wizard before login.
 
 :: Install Electron dependencies
 echo.

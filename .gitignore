@@ -34,3 +34,9 @@ npm-debug.log*
 # Backup temp files
 data/backups/
 *.tmp
+
+# Large model binaries (kept local for packaging, not in git)
+electron/resources/ai/models/blobs/
+electron/resources/node.exe
+mobile/.expo/
+*.tsbuildinfo

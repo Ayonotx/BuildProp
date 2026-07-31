@@ -52,7 +52,7 @@ export default function SetupPage() {
         adminFirstName.trim().length > 0 &&
         adminLastName.trim().length > 0 &&
         adminEmail.trim().length > 0 &&
-        adminPassword.length >= 6 &&
+        adminPassword.length >= 8 &&
         adminPassword === confirmPassword
       )
     }
@@ -378,7 +378,7 @@ export default function SetupPage() {
                     </div>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-1.5">Password * (min 6 characters)</label>
+                    <label className="block text-sm font-medium text-slate-700 mb-1.5">Password * (min 8 characters)</label>
                     <div className="relative">
                       <Lock className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" />
                       <input
@@ -387,7 +387,7 @@ export default function SetupPage() {
                         onChange={(e) => setAdminPassword(e.target.value)}
                         placeholder="Enter a strong password"
                         className={inputClass + " pl-11"}
-                        minLength={6}
+                        minLength={8}
                         required
                       />
                     </div>

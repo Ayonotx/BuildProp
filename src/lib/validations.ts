@@ -113,6 +113,11 @@ export const settingsSchema = z.object({
   requireNumbers: z.boolean().optional(),
   twoFactorEnabled: z.boolean().optional(),
   sessionTimeout: z.number().optional(),
+  // First-run admin account fields (only sent by the setup wizard)
+  adminFirstName: z.string().min(1, 'Admin first name is required').max(100, 'Admin first name must be under 100 characters').optional(),
+  adminLastName: z.string().min(1, 'Admin last name is required').max(100, 'Admin last name must be under 100 characters').optional(),
+  adminEmail: z.string().email('Invalid admin email format').optional(),
+  adminPassword: z.string().min(8, 'Admin password must be at least 8 characters').optional(),
 })
 
 export type SettingsInput = z.infer<typeof settingsSchema>

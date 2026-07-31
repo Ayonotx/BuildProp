@@ -15,7 +15,7 @@ import { useToast } from "@/components/dashboard/toast"
 import { printDocument } from "@/lib/print"
 import { exportToCSV } from "@/lib/export-csv"
 import { exportToPdf } from "@/lib/pdf-export"
-import { downloadHTML, generateReceiptPDF } from "@/lib/pdf-generator"
+import { generateReceiptPDF } from "@/lib/pdf-generator"
 import { formatCurrency, formatDate, toNum } from "@/lib/utils"
 
 interface InvoiceSummary {
@@ -74,8 +74,7 @@ function printReceipt(p: Payment) {
 }
 
 function downloadReceipt(p: Payment) {
-  const html = generateReceiptPDF(p, "BuildProp")
-  downloadHTML(`Receipt-${p.paymentNumber}.html`, html)
+  generateReceiptPDF(p, "BuildProp")
 }
 
 export default function PaymentsPage() {

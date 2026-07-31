@@ -2,12 +2,25 @@ export const dynamic = 'force-dynamic'
 import { prisma } from '@/lib/prisma'
 import { hashPassword } from '@/lib/auth-utils'
 import { handleApiError } from '@/lib/api-errors'
+import { getCurrentUser } from '@/lib/current-user'
+import { isAdminRole } from '@/lib/permissions'
+
+// Guard: user management is Super Admin/Admin only.
+async function requireAdmin(): Promise<Response | null> {
+  const currentUser = await getCurrentUser()
+  if (!currentUser) return Response.json({ error: 'Authentication required' }, { status: 401 })
+  if (!isAdminRole(currentUser.role.name)) return Response.json({ error: 'Forbidden' }, { status: 403 })
+  return null
+}
 
 export async function GET(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const guard = await requireAdmin()
+    if (guard) return guard
+
     const { id } = await params
     const user = await prisma.user.findUnique({
       where: { id },
@@ -40,6 +53,9 @@ export async function PUT(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const guard = await requireAdmin()
+    if (guard) return guard
+
     const { id } = await params
     const body = await request.json()
     const { firstName, lastName, email, phone, roleId, password, isActive } = body
@@ -84,6 +100,9 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const guard = await requireAdmin()
+    if (guard) return guard
+
     const { id } = await params
     await prisma.user.delete({ where: { id } })
     return Response.json({ success: true })

@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useCallback } from "react"
 import { ChevronLeft, ChevronRight, X } from "lucide-react"
+import { AI_ENABLED } from "@/lib/features"
 
 const TUTORIAL_KEY = "buildprop_tutorial_done"
 
@@ -9,105 +10,239 @@ interface TutorialStep {
   title: string
   description: string
   icon: string
+  /** "center" | "sidebar" | "header" | CSS selector for a nav item (e.g. [data-tutorial-nav][href="/projects"]) */
   highlight: string
 }
 
-const steps: TutorialStep[] = [
+const ALL_STEPS: TutorialStep[] = [
   {
     title: "Welcome to BuildProp!",
-    description: "Let's give you a quick tour of your construction and real estate management system.",
+    description:
+      "Welcome! This is your all-in-one construction and real estate management platform. Let's take a quick tour so you know exactly where everything lives and what you can do.",
     icon: "👋",
     highlight: "center",
   },
   {
     title: "Dashboard",
-    description: "This is your dashboard with key metrics, charts, and AI insights at a glance.",
+    description:
+      "Your command center. KPI cards track active projects, revenue, available properties, and outstanding balances. Charts, recent activity, and upcoming tasks are all right here at a glance.",
     icon: "📊",
-    highlight: "sidebar-dashboard",
+    highlight: '[data-tutorial-nav][href="/"]',
   },
   {
     title: "Sidebar Navigation",
-    description: "Use the sidebar to navigate between 28+ modules covering every aspect of your business.",
+    description:
+      "Every module lives in this sidebar, organized into Operations, Finance, Resources, People, and System groups. Click any item to jump straight in — no hunting through menus.",
     icon: "🧭",
     highlight: "sidebar",
   },
   {
+    title: "Search & Notifications",
+    description:
+      "Search projects, properties, and clients from the top bar. Notifications keep you on top of payments, deadlines, and stock alerts, and the help icon reopens this tour anytime.",
+    icon: "🔍",
+    highlight: "header",
+  },
+  {
     title: "Projects",
-    description: "Manage construction projects from planning to completion with budget tracking and milestones.",
+    description:
+      "Create construction projects, set budgets and milestones, assign teams, and track progress from planning to handover. Profitability is measured automatically so you always know how each build is doing.",
     icon: "🏗️",
-    highlight: "sidebar-projects",
+    highlight: '[data-tutorial-nav][href="/projects"]',
   },
   {
     title: "Properties",
-    description: "Track your real estate portfolio, listings, and property management tasks.",
+    description:
+      "Manage your real estate portfolio — listings, availability, owners, and maintenance. Keep every unit's status current so sales always see accurate inventory.",
     icon: "🏢",
-    highlight: "sidebar-properties",
+    highlight: '[data-tutorial-nav][href="/properties"]',
   },
   {
-    title: "Finance",
-    description: "Handle invoicing, payments, accounting, and financial reports in one place.",
+    title: "Sales & CRM",
+    description:
+      "Track your sales pipeline and deals, then manage follow-ups with the built-in CRM. Contacts, leads, and client communications flow in one place so no opportunity slips away.",
+    icon: "🤝",
+    highlight: '[data-tutorial-nav][href="/sales"]',
+  },
+  {
+    title: "Finance & Accounting",
+    description:
+      "The heart of your books — general ledger, chart of accounts, and journal entries. Record transactions and reconcile everything from one dashboard.",
     icon: "💰",
-    highlight: "sidebar-finance",
+    highlight: '[data-tutorial-nav][href="/finance"]',
+  },
+  {
+    title: "Invoices",
+    description:
+      "Create and send invoices, track their status, and know exactly what's outstanding. Payments you record link back to invoices automatically.",
+    icon: "🧾",
+    highlight: '[data-tutorial-nav][href="/invoices"]',
+  },
+  {
+    title: "Payments & Installments",
+    description:
+      "Record incoming and outgoing payments and manage installment schedules for property sales. Every payment updates your financial reports in real time.",
+    icon: "💳",
+    highlight: '[data-tutorial-nav][href="/payments"]',
+  },
+  {
+    title: "Inventory & Procurement",
+    description:
+      "Keep stock levels in check and raise purchase orders for materials and supplies. Reorder alerts help make sure your sites never run dry.",
+    icon: "📦",
+    highlight: '[data-tutorial-nav][href="/inventory"]',
+  },
+  {
+    title: "HR & Payroll",
+    description:
+      "Manage employees, attendance, and payroll in one place. Run payslips and keep personnel records organized without jumping between tools.",
+    icon: "👥",
+    highlight: '[data-tutorial-nav][href="/hr"]',
+  },
+  {
+    title: "Tasks & Calendar",
+    description:
+      "Assign tasks, set priorities and deadlines, and see everything on the shared calendar. Stay on top of what's due across all your projects.",
+    icon: "📅",
+    highlight: '[data-tutorial-nav][href="/tasks"]',
+  },
+  {
+    title: "Reports",
+    description:
+      "Generate P&L statements, A/R aging, and other business reports. Export or print them for stakeholders in a couple of clicks.",
+    icon: "📈",
+    highlight: '[data-tutorial-nav][href="/reports"]',
   },
   {
     title: "AI Assistant",
-    description: "Get AI-powered insights using Ollama or cloud AI providers for smarter decisions.",
+    description:
+      "Ask questions in plain language and get AI-powered insights from your own data — summaries, forecasts, and automation that save you hours each week.",
     icon: "🤖",
-    highlight: "sidebar-ai",
+    highlight: '[data-tutorial-nav][href="/ai"]',
   },
   {
     title: "Settings",
-    description: "Configure your company, users, backups, and integrations to fit your workflow.",
+    description:
+      "Configure your company details, backups, AI providers, and integrations. This is where you tailor BuildProp to the way your business works.",
     icon: "⚙️",
-    highlight: "sidebar-settings",
+    highlight: '[data-tutorial-nav][href="/settings"]',
+  },
+  {
+    title: "Users & Roles",
+    description:
+      "Invite teammates and control what each person can see and do with role-based permissions. Keep sensitive data safe while giving your team what they need.",
+    icon: "🛡️",
+    highlight: '[data-tutorial-nav][href="/users"]',
   },
   {
     title: "You're All Set!",
-    description: "You're ready to start. Explore and make BuildProp yours! You can re-open this tutorial anytime from the header.",
+    description:
+      "That's the tour! You're ready to build. If you ever need a refresher, click the help icon in the header to replay this tutorial anytime.",
     icon: "🎉",
     highlight: "center",
   },
 ]
 
-function getHighlightPosition(highlight: string): { top: string; left: string; width: string; height: string } | null {
-  if (highlight === "center") return null
+interface Rect {
+  top: number
+  left: number
+  width: number
+  height: number
+}
 
-  const sidebar = document.querySelector("[data-tutorial-sidebar]")
-  const navItems = document.querySelectorAll("[data-tutorial-nav]")
-
-  if (!sidebar) return null
-
-  const sidebarRect = sidebar.getBoundingClientRect()
-
-  const itemMap: Record<string, number> = {
-    "sidebar-dashboard": 0,
-    "sidebar-projects": 1,
-    "sidebar-properties": 2,
-    "sidebar-ai": 17,
-    "sidebar-settings": 27,
+/** Returns the first match that is actually rendered/visible (handles the duplicated mobile + desktop sidebars). */
+function findVisibleElement(selector: string): HTMLElement | null {
+  const matches = Array.from(document.querySelectorAll<HTMLElement>(selector))
+  for (const el of matches) {
+    const style = window.getComputedStyle(el)
+    if (style.display === "none" || style.visibility === "hidden") continue
+    const rect = el.getBoundingClientRect()
+    if (rect.width === 0 || rect.height === 0) continue
+    // Skip elements translated off-screen (e.g. the closed mobile sidebar)
+    if (rect.right <= 0 || rect.left >= window.innerWidth) continue
+    return el
   }
-
-  if (highlight === "sidebar") {
-    return {
-      top: `${sidebarRect.top}px`,
-      left: `${sidebarRect.left}px`,
-      width: `${sidebarRect.width}px`,
-      height: `${sidebarRect.height}px`,
-    }
-  }
-
-  const idx = itemMap[highlight]
-  if (idx !== undefined && navItems[idx]) {
-    const rect = navItems[idx].getBoundingClientRect()
-    return {
-      top: `${rect.top - 4}px`,
-      left: `${rect.left - 4}px`,
-      width: `${rect.width + 8}px`,
-      height: `${rect.height + 8}px`,
-    }
-  }
-
   return null
+}
+
+/** Resolve a step's highlight to the element it should spotlight (or null for centered). */
+function resolveHighlight(highlight: string): HTMLElement | null {
+  if (highlight === "center") return null
+  if (highlight === "sidebar") return findVisibleElement("[data-tutorial-sidebar]")
+  if (highlight === "header") return findVisibleElement("[data-tutorial-header]")
+  return findVisibleElement(highlight)
+}
+
+/** Filter steps down to what actually exists in this installation (AI gating, Users not in sidebar, etc.). */
+function buildSteps(): TutorialStep[] {
+  return ALL_STEPS.filter((step) => {
+    if (step.highlight === "center") return true
+    if (step.highlight.includes('href="/ai"') && !AI_ENABLED) return false
+    if (step.highlight === "sidebar" || step.highlight === "header") return true
+    return !!findVisibleElement(step.highlight)
+  })
+}
+
+function getHighlightPosition(highlight: string): Rect | null {
+  if (highlight === "center") return null
+  const el = resolveHighlight(highlight)
+  if (!el) return null
+
+  // Scroll off-screen sidebar items into view before measuring position
+  if (el.hasAttribute("data-tutorial-nav")) {
+    el.scrollIntoView({ block: "center" })
+  }
+
+  const rect = el.getBoundingClientRect()
+  return {
+    top: rect.top - 4,
+    left: rect.left - 4,
+    width: rect.width + 8,
+    height: rect.height + 8,
+  }
+}
+
+const TOOLTIP_WIDTH = 380
+const TOOLTIP_HEIGHT_EST = 250
+const VIEWPORT_MARGIN = 12
+const GAP = 12
+
+function getTooltipStyle(pos: Rect | null): React.CSSProperties {
+  if (!pos) {
+    return { top: "50%", left: "50%", transform: "translate(-50%, -50%)" }
+  }
+  const vw = window.innerWidth
+  const vh = window.innerHeight
+
+  const centerX = pos.left + pos.width / 2
+  const fitsRight = pos.left + pos.width + GAP + TOOLTIP_WIDTH <= vw - VIEWPORT_MARGIN
+  const fitsLeft = pos.left - GAP - TOOLTIP_WIDTH >= VIEWPORT_MARGIN
+
+  let top: number
+  let left: number
+
+  if (centerX < vw * 0.4 && fitsRight) {
+    // Target hugs the left edge (e.g. the sidebar) → tooltip beside it, vertically centered.
+    left = pos.left + pos.width + GAP
+    top = pos.top + pos.height / 2 - TOOLTIP_HEIGHT_EST / 2
+  } else if (centerX > vw * 0.6 && fitsLeft) {
+    // Target hugs the right edge → tooltip to its left.
+    left = pos.left - GAP - TOOLTIP_WIDTH
+    top = pos.top + pos.height / 2 - TOOLTIP_HEIGHT_EST / 2
+  } else {
+    // Centered targets → center horizontally, prefer below then above.
+    left = pos.left + pos.width / 2 - TOOLTIP_WIDTH / 2
+    top = pos.top + pos.height + GAP
+    if (top + TOOLTIP_HEIGHT_EST > vh - VIEWPORT_MARGIN) {
+      top = pos.top - TOOLTIP_HEIGHT_EST - GAP
+    }
+  }
+
+  // Clamp so the tooltip never overflows the viewport.
+  top = Math.max(VIEWPORT_MARGIN, Math.min(top, vh - TOOLTIP_HEIGHT_EST - VIEWPORT_MARGIN))
+  left = Math.max(VIEWPORT_MARGIN, Math.min(left, vw - TOOLTIP_WIDTH - VIEWPORT_MARGIN))
+
+  return { top: `${top}px`, left: `${left}px` }
 }
 
 interface TutorialOverlayProps {
@@ -115,16 +250,20 @@ interface TutorialOverlayProps {
 }
 
 export default function TutorialOverlay({ onComplete }: TutorialOverlayProps) {
+  const [steps] = useState<TutorialStep[]>(buildSteps)
   const [currentStep, setCurrentStep] = useState(0)
-  const [spotlight, setSpotlight] = useState<{ top: string; left: string; width: string; height: string } | null>(null)
+  const [spotlight, setSpotlight] = useState<Rect | null>(null)
+
+  const step = steps[Math.min(currentStep, steps.length - 1)]
 
   const updateSpotlight = useCallback(() => {
-    const pos = getHighlightPosition(steps[currentStep].highlight)
+    const pos = getHighlightPosition(step.highlight)
     setSpotlight(pos)
-  }, [currentStep])
+  }, [step])
 
   useEffect(() => {
-    const timer = setTimeout(updateSpotlight, 50)
+    // Small delay so scrollIntoView + layout settle before measuring.
+    const timer = setTimeout(updateSpotlight, 80)
     window.addEventListener("resize", updateSpotlight)
     return () => {
       clearTimeout(timer)
@@ -132,25 +271,46 @@ export default function TutorialOverlay({ onComplete }: TutorialOverlayProps) {
     }
   }, [updateSpotlight])
 
-  function handleNext() {
+  const handleComplete = useCallback(() => {
+    localStorage.setItem(TUTORIAL_KEY, "1")
+    onComplete()
+  }, [onComplete])
+
+  const handleNext = useCallback(() => {
     if (currentStep < steps.length - 1) {
       setCurrentStep(currentStep + 1)
     } else {
-      onComplete()
+      handleComplete()
     }
-  }
+  }, [currentStep, steps.length, handleComplete])
 
-  function handlePrev() {
+  const handlePrev = useCallback(() => {
     if (currentStep > 0) setCurrentStep(currentStep - 1)
-  }
+  }, [currentStep])
 
-  const step = steps[currentStep]
+  // Keyboard support: arrows navigate, Escape completes/skips the tour.
+  useEffect(() => {
+    function onKeyDown(e: KeyboardEvent) {
+      if (e.key === "ArrowRight") {
+        e.preventDefault()
+        handleNext()
+      } else if (e.key === "ArrowLeft") {
+        e.preventDefault()
+        handlePrev()
+      } else if (e.key === "Escape") {
+        handleComplete()
+      }
+    }
+    window.addEventListener("keydown", onKeyDown)
+    return () => window.removeEventListener("keydown", onKeyDown)
+  }, [handleNext, handlePrev, handleComplete])
+
+  if (!step) return null
+
   const isLast = currentStep === steps.length - 1
   const isFirst = currentStep === 0
-
-  const tooltipStyle = spotlight
-    ? { top: `${Math.min(parseInt(spotlight.top) + parseInt(spotlight.height) + 12, window.innerHeight - 220)}px`, left: `${Math.min(parseInt(spotlight.left), window.innerWidth - 400)}px` }
-    : { top: "50%", left: "50%", transform: "translate(-50%, -50%)" }
+  const progressPct = Math.round(((currentStep + 1) / steps.length) * 100)
+  const tooltipStyle = getTooltipStyle(spotlight)
 
   return (
     <div className="fixed inset-0 z-[9999]" onClick={(e) => e.stopPropagation()}>
@@ -173,12 +333,21 @@ export default function TutorialOverlay({ onComplete }: TutorialOverlayProps) {
         className="absolute bg-white rounded-2xl shadow-2xl w-[380px] max-w-[90vw] p-6 transition-all duration-500"
         style={tooltipStyle}
       >
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex items-start justify-between mb-4">
           <div className="flex items-center gap-3">
             <span className="text-3xl">{step.icon}</span>
-            <h3 className="text-lg font-bold text-slate-900">{step.title}</h3>
+            <div>
+              <h3 className="text-lg font-bold text-slate-900">{step.title}</h3>
+              <p className="text-xs text-slate-400 mt-0.5">
+                Step {currentStep + 1} of {steps.length}
+              </p>
+            </div>
           </div>
-          <button onClick={onComplete} className="p-1 hover:bg-slate-100 rounded-lg transition-colors">
+          <button
+            onClick={handleComplete}
+            aria-label="Close tutorial"
+            className="p-1 hover:bg-slate-100 rounded-lg transition-colors"
+          >
             <X className="h-4 w-4 text-slate-400" />
           </button>
         </div>
@@ -187,17 +356,6 @@ export default function TutorialOverlay({ onComplete }: TutorialOverlayProps) {
 
         <div className="flex items-center justify-between">
           <div className="flex gap-1.5">
-            {steps.map((_, i) => (
-              <div
-                key={i}
-                className={`h-1.5 rounded-full transition-all duration-300 ${
-                  i === currentStep ? "bg-orange-500 w-6" : i < currentStep ? "bg-orange-300 w-1.5" : "bg-slate-200 w-1.5"
-                }`}
-              />
-            ))}
-          </div>
-
-          <div className="flex items-center gap-2">
             {!isFirst && (
               <button
                 onClick={handlePrev}
@@ -207,6 +365,9 @@ export default function TutorialOverlay({ onComplete }: TutorialOverlayProps) {
                 Back
               </button>
             )}
+          </div>
+
+          <div className="flex items-center gap-2">
             <button
               onClick={handleNext}
               className="flex items-center gap-1 px-4 py-1.5 text-sm font-medium text-white bg-orange-500 hover:bg-orange-600 rounded-lg transition-colors"
@@ -219,15 +380,30 @@ export default function TutorialOverlay({ onComplete }: TutorialOverlayProps) {
 
         {!isLast && (
           <button
-            onClick={onComplete}
+            onClick={handleComplete}
             className="w-full mt-3 text-xs text-slate-400 hover:text-slate-600 transition-colors"
           >
             Skip tutorial
           </button>
         )}
+
+        {/* Progress bar at the bottom of the tooltip */}
+        <div className="mt-4">
+          <div className="flex items-center justify-between text-[11px] text-slate-400 mb-1">
+            <span className="font-medium">Progress</span>
+            <span className="font-semibold text-orange-500">{progressPct}%</span>
+          </div>
+          <div className="h-1.5 w-full rounded-full bg-slate-200 overflow-hidden">
+            <div
+              className="h-full rounded-full bg-orange-500 transition-all duration-300"
+              style={{ width: `${progressPct}%` }}
+            />
+          </div>
+          <p className="text-[10px] text-slate-300 mt-1.5 text-center">
+            Tip: use arrow keys to navigate, Esc to finish
+          </p>
+        </div>
       </div>
     </div>
   )
 }
-
-

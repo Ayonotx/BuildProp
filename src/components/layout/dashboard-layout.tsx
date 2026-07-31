@@ -16,14 +16,35 @@ function DashboardLayout({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const done = localStorage.getItem(TUTORIAL_KEY)
-    if (!done) {
-      const timer = setTimeout(() => setShowTutorial(true), 800)
-      return () => clearTimeout(timer)
+    if (done) return
+
+    let cancelled = false
+    let attempts = 0
+    let timer: ReturnType<typeof setTimeout> | undefined
+
+    // Show only after the page has actually finished loading (dashboard content rendered),
+    // so the spotlight/tooltip can anchor to real elements. Fall back to showing anyway
+    // after ~5s so slow machines or non-dashboard pages never get stuck.
+    const tryShow = () => {
+      if (cancelled) return
+      const contentReady = !!document.querySelector("main h1")
+      if (contentReady || attempts >= 25) {
+        setShowTutorial(true)
+        return
+      }
+      attempts += 1
+      timer = setTimeout(tryShow, 200)
+    }
+
+    timer = setTimeout(tryShow, 800)
+    return () => {
+      cancelled = true
+      if (timer) clearTimeout(timer)
     }
   }, [])
 
   const handleTutorialComplete = useCallback(() => {
-    localStorage.setItem(TUTORIAL_KEY, "true")
+    localStorage.setItem(TUTORIAL_KEY, "1")
     setShowTutorial(false)
   }, [])
 

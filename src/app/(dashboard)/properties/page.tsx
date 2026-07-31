@@ -14,7 +14,7 @@ import { Plus, Building2, Home, Store, MapPin, Pencil, Trash2, Download, X, Chev
 import { useToast } from "@/components/dashboard/toast"
 import { exportToCSV } from "@/lib/export-csv"
 import { exportToPdf } from "@/lib/pdf-export"
-import { downloadHTML, generatePropertyBrochurePDF } from "@/lib/pdf-generator"
+import { generatePropertyBrochurePDF } from "@/lib/pdf-generator"
 import { formatCurrency, statusVariant, statusLabel } from "@/lib/utils"
 
 interface Property {
@@ -610,10 +610,7 @@ export default function PropertiesPage() {
                 <Button onClick={() => { setDetailProperty(null); openEdit(detailProperty) }}>
                   <Pencil className="h-4 w-4 mr-2" />Edit Property
                 </Button>
-                <Button variant="outline" onClick={() => {
-                  const html = generatePropertyBrochurePDF(detailProperty, "BuildProp")
-                  downloadHTML(`${detailProperty.name}-Brochure.html`, html)
-                }}>
+                <Button variant="outline" onClick={() => generatePropertyBrochurePDF(detailProperty, "BuildProp")}>
                   <Download className="h-4 w-4 mr-2" />Download Brochure
                 </Button>
                 <Button variant="destructive" onClick={() => { setDetailProperty(null); handleDelete(detailProperty.id) }}>
