@@ -36,6 +36,9 @@ interface RoleRecord {
 
 const emptyUserForm = { firstName: "", lastName: "", email: "", phone: "", roleId: "", password: "" }
 
+const errMsg = (data: any, fallback: string) =>
+  Array.isArray(data?.details) && data.details.length > 0 ? data.details[0] : data?.error || fallback
+
 export default function SettingsPage() {
   const [activeTab, setActiveTab] = useState("general")
   const [loading, setLoading] = useState(true)
@@ -211,7 +214,7 @@ export default function SettingsPage() {
           body: JSON.stringify(userForm),
         })
         const data = await res.json()
-        if (!res.ok) { setUserError(data.error || "Failed to update user"); setSavingUser(false); return }
+        if (!res.ok) { setUserError(errMsg(data, "Failed to update user")); setSavingUser(false); return }
       } else {
         const res = await fetch("/api/settings/users", {
           method: "POST",
@@ -219,7 +222,7 @@ export default function SettingsPage() {
           body: JSON.stringify(userForm),
         })
         const data = await res.json()
-        if (!res.ok) { setUserError(data.error || "Failed to create user"); setSavingUser(false); return }
+        if (!res.ok) { setUserError(errMsg(data, "Failed to create user")); setSavingUser(false); return }
       }
       setShowUserModal(false)
       await fetchUsers()
@@ -257,7 +260,7 @@ export default function SettingsPage() {
       if (data.success) {
         setAiTestResult(prev => ({ ...prev, [provider]: { ok: true, msg: data.message || "Connected!" } }))
       } else {
-        setAiTestResult(prev => ({ ...prev, [provider]: { ok: false, msg: data.message || data.error || "Failed" } }))
+        setAiTestResult(prev => ({ ...prev, [provider]: { ok: false, msg: data.message || errMsg(data, "Failed") } }))
       }
     } catch {
       setAiTestResult(prev => ({ ...prev, [provider]: { ok: false, msg: "Connection failed" } }))
@@ -349,7 +352,7 @@ export default function SettingsPage() {
         setLastBackup({ filename: data.backup.filename, sizeFormatted: data.backup.sizeFormatted })
         await fetchBackups()
       } else {
-        setBackupError(data.error || "Backup failed")
+        setBackupError(errMsg(data, "Backup failed"))
       }
     } catch {
       setBackupError("Failed to create backup")
@@ -379,7 +382,7 @@ export default function SettingsPage() {
         setShowToast(true)
         setTimeout(() => setShowToast(false), 4000)
       } else {
-        setBackupError(data.error || "Restore failed")
+        setBackupError(errMsg(data, "Restore failed"))
       }
     } catch {
       setBackupError("Failed to restore backup")
@@ -418,7 +421,7 @@ export default function SettingsPage() {
           setRestoreFile(null)
           setTimeout(() => setShowToast(false), 4000)
         } else {
-          setBackupError(data.error || "Restore failed")
+          setBackupError(errMsg(data, "Restore failed"))
         }
       } else {
         setBackupError("Failed to upload backup file")

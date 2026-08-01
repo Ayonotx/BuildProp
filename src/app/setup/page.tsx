@@ -68,16 +68,20 @@ export default function SetupPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          companyName, logo, address, phone, email, website,
+          companyName, logo, address, phone, email: email.trim(), website,
           currency, timezone, fiscalYearStart,
-          adminEmail, adminPassword, adminFirstName, adminLastName,
+          adminEmail: adminEmail.trim(), adminPassword, adminFirstName, adminLastName,
         }),
       })
 
       const data = await res.json()
 
       if (!res.ok || data.error) {
-        setError(data.error || "Setup failed")
+        const message =
+          Array.isArray(data.details) && data.details.length > 0
+            ? data.details[0]
+            : data.error || "Setup failed"
+        setError(message)
         setLoading(false)
         return
       }

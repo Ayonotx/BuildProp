@@ -33,6 +33,9 @@ interface MeResponse {
 
 const emptyForm = { firstName: "", lastName: "", email: "", roleId: "", password: "" }
 
+const errMsg = (data: any, fallback: string) =>
+  Array.isArray(data?.details) && data.details.length > 0 ? data.details[0] : data?.error || fallback
+
 export default function UsersPage() {
   const router = useRouter()
   const { toast } = useToast()
@@ -81,7 +84,7 @@ export default function UsersPage() {
       const res = await fetch("/api/users")
       const data = await res.json()
       if (res.ok && Array.isArray(data.users)) setUsers(data.users)
-      else if (data.error) toast({ title: "Failed to load users", description: data.error, variant: "error" })
+      else if (data.error) toast({ title: "Failed to load users", description: errMsg(data, "Failed to load users"), variant: "error" })
     } catch {
       toast({ title: "Failed to load users", description: "Network error", variant: "error" })
     }
@@ -156,7 +159,7 @@ export default function UsersPage() {
         })
         const data = await res.json()
         if (!res.ok) {
-          setFormError(data.error || "Failed to update user")
+          setFormError(errMsg(data, "Failed to update user"))
           setSaving(false)
           return
         }
@@ -176,7 +179,7 @@ export default function UsersPage() {
         })
         const data = await res.json()
         if (!res.ok) {
-          setFormError(data.error || "Failed to create user")
+          setFormError(errMsg(data, "Failed to create user"))
           setSaving(false)
           return
         }
@@ -203,7 +206,7 @@ export default function UsersPage() {
       })
       const data = await res.json()
       if (!res.ok) {
-        toast({ title: "Action failed", description: data.error || "Something went wrong", variant: "error" })
+        toast({ title: "Action failed", description: errMsg(data, "Something went wrong"), variant: "error" })
         return
       }
       toast({ title: user.isActive ? "User deactivated" : "User reactivated", description: user.email, variant: "success" })

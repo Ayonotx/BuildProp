@@ -40,13 +40,17 @@ export default function LoginPage() {
       const res = await fetch("/api/auth", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email: email.trim(), password }),
       })
 
       const data = await res.json()
 
       if (!res.ok || data.error) {
-        setError(data.error || `Login failed (${res.status})`)
+        const message =
+          Array.isArray(data.details) && data.details.length > 0
+            ? data.details[0]
+            : data.error || `Login failed (${res.status})`
+        setError(message)
         return
       }
 
