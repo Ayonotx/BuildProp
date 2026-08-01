@@ -53,7 +53,7 @@ export default function SettingsPage() {
 
   const [aiProviders, setAiProviders] = useState({
     activeProvider: "ollama",
-    ollama: { enabled: true, url: "http://localhost:11434", model: "llama3.2:latest" },
+    ollama: { enabled: true, url: "http://127.0.0.1:11435", model: "llama3.2:latest" },
     openai: { enabled: false, apiKey: "", model: "gpt-4o-mini" },
     gemini: { enabled: false, apiKey: "", model: "gemini-flash" },
     anthropic: { enabled: false, apiKey: "", model: "claude-3.5-sonnet" },
@@ -885,7 +885,7 @@ export default function SettingsPage() {
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div><label className="block text-xs font-medium text-slate-600 mb-1">Server URL</label>
-                    <input value={aiProviders.ollama.url} onChange={(e) => setAiProviders(prev => ({ ...prev, ollama: { ...prev.ollama, url: e.target.value } }))} className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm" placeholder="http://localhost:11434" /></div>
+                    <input value={aiProviders.ollama.url} onChange={(e) => setAiProviders(prev => ({ ...prev, ollama: { ...prev.ollama, url: e.target.value } }))} className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm" placeholder="http://127.0.0.1:11435" /></div>
                   <div><label className="block text-xs font-medium text-slate-600 mb-1">Model</label>
                     <select value={aiProviders.ollama.model} onChange={(e) => setAiProviders(prev => ({ ...prev, ollama: { ...prev.ollama, model: e.target.value } }))} className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm">
                       <option value="llama3.2:3b">llama3.2:3b (Fast)</option>

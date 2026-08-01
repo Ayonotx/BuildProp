@@ -9,7 +9,7 @@ let serverProcess = null
 let ollamaProcess = null
 
 const PORT = 3456
-const OLLAMA_PORT = 11434
+const OLLAMA_PORT = 11435
 
 function getServerDir() {
   if (app.isPackaged) {
@@ -163,18 +163,71 @@ function runAutoBackup() {
   }
 }
 
+// Returns true only if EVERY digest referenced by EVERY manifest in modelsDir/manifests
+// has a matching blob file in modelsDir/blobs. A manifest without its config/layer blobs
+// would leave Ollama unable to register the model, so a partial dir must be repaired.
+function isModelBundleComplete(modelsDir) {
+  const manifestsDir = path.join(modelsDir, 'manifests')
+  if (!fs.existsSync(manifestsDir)) return false
+  const blobsDir = path.join(modelsDir, 'blobs')
+  const required = new Set()
+
+  const walk = (dir) => {
+    if (!fs.existsSync(dir)) return
+    const entries = fs.readdirSync(dir, { withFileTypes: true })
+    for (const entry of entries) {
+      const entryPath = path.join(dir, entry.name)
+      if (entry.isDirectory()) {
+        walk(entryPath)
+      } else if (entry.isFile()) {
+        try {
+          const manifest = JSON.parse(fs.readFileSync(entryPath, 'utf-8'))
+          if (manifest && typeof manifest.config?.digest === 'string') {
+            required.add(manifest.config.digest.replace(/^sha256:/, ''))
+          }
+          if (Array.isArray(manifest.layers)) {
+            for (const layer of manifest.layers) {
+              if (layer && typeof layer.digest === 'string') {
+                required.add(layer.digest.replace(/^sha256:/, ''))
+              }
+            }
+          }
+        } catch {
+          // Unparseable manifest - treat as incomplete (will be repaired)
+          required.add('__invalid__')
+        }
+      }
+    }
+  }
+
+  walk(manifestsDir)
+
+  if (required.size === 0) return false
+  for (const hex of required) {
+    if (hex === '__invalid__') return false
+    if (!fs.existsSync(path.join(blobsDir, 'sha256-' + hex))) return false
+  }
+  return true
+}
+
 function setupOllamaData() {
   const aiDir = getAiDir()
   const bundledModels = path.join(aiDir, 'models')
   if (!fs.existsSync(bundledModels)) return false
   const ollamaData = getOllamaDataDir()
   const modelsDir = path.join(ollamaData, 'models')
-  if (fs.existsSync(modelsDir)) return true
+  if (fs.existsSync(modelsDir) && isModelBundleComplete(modelsDir)) return true
   try {
+    let repaired = false
+    if (fs.existsSync(modelsDir)) {
+      // Partial/corrupt copy from an earlier interrupted run - start clean.
+      fs.rmSync(modelsDir, { recursive: true, force: true })
+      repaired = true
+    }
     console.log('[main] Setting up offline AI model (one-time copy)...')
     fs.mkdirSync(ollamaData, { recursive: true })
     copyFolderSync(bundledModels, modelsDir)
-    console.log('[main] Offline AI model ready')
+    console.log(repaired ? '[main] Offline AI model ready (repaired)' : '[main] Offline AI model ready')
     return true
   } catch (e) {
     console.error('[main] Failed to copy AI model:', e.message)
@@ -263,7 +316,8 @@ function startOllama() {
 
   const ollamaData = getOllamaDataDir()
   const modelsDir = path.join(ollamaData, 'models')
-  if (!fs.existsSync(modelsDir)) setupOllamaData()
+  // Runs the completeness check and repairs a partial/corrupt model dir if needed.
+  setupOllamaData()
 
   console.log('[main] Starting Ollama AI engine (backup)...')
   ollamaProcess = spawn(ollamaExe, ['serve'], {

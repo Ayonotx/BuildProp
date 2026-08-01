@@ -21,7 +21,7 @@ export interface AIProviderConfig {
 
 const DEFAULT_CONFIG: AIProviderConfig = {
   activeProvider: 'groq',
-  ollama: { enabled: true, url: 'http://localhost:11434' },
+  ollama: { enabled: true, url: 'http://127.0.0.1:11435' },
   openai: { enabled: false, apiKey: '', model: 'gpt-4o-mini' },
   gemini: { enabled: false, apiKey: '', model: 'gemini-flash' },
   anthropic: { enabled: false, apiKey: '', model: 'claude-3.5-sonnet' },
@@ -42,11 +42,14 @@ export function isValidOllamaUrl(url: string): boolean {
   }
 }
 
+const PLACEHOLDER_API_KEYS = ['your-groq-api-key-here']
+
 export async function getAISettings(): Promise<AIProviderConfig> {
+  let config: AIProviderConfig
   try {
     const raw = await fs.readFile(SETTINGS_FILE, 'utf-8')
     const parsed = JSON.parse(raw) as Partial<AIProviderConfig>
-    return {
+    config = {
       ...DEFAULT_CONFIG,
       ...parsed,
       ollama: {
@@ -62,8 +65,26 @@ export async function getAISettings(): Promise<AIProviderConfig> {
       groq: { ...DEFAULT_CONFIG.groq, ...parsed.groq },
     }
   } catch {
-    return { ...DEFAULT_CONFIG }
+    config = { ...DEFAULT_CONFIG }
   }
+
+  // Prefer real API keys from the environment over empty/placeholder stored values.
+  const envKeys: Record<string, string | undefined> = {
+    groq: process.env.GROQ_API_KEY,
+    openai: process.env.OPENAI_API_KEY,
+    gemini: process.env.GEMINI_API_KEY,
+    anthropic: process.env.ANTHROPIC_API_KEY,
+  }
+  for (const provider of ['groq', 'openai', 'gemini', 'anthropic'] as const) {
+    const envKey = envKeys[provider]?.trim()
+    if (!envKey) continue
+    const stored = config[provider].apiKey?.trim() || ''
+    if (!stored || PLACEHOLDER_API_KEYS.includes(stored)) {
+      config = { ...config, [provider]: { ...config[provider], apiKey: envKey } }
+    }
+  }
+
+  return config
 }
 
 export async function saveAISettings(config: AIProviderConfig): Promise<void> {

@@ -9,8 +9,8 @@
     "lint": "eslint",
     "desktop": "cd electron && npx electron .",
     "build-desktop": "build-desktop.bat",
-    "build:standard": "set NEXT_PUBLIC_AI_ENABLED=false && next build && copy /Y electron\\.env.standard .next\\standalone\\.env",
-    "build:premium": "set NEXT_PUBLIC_AI_ENABLED=true && next build && copy /Y electron\\.env.premium .next\\standalone\\.env"
+    "build:standard": "set \"NEXT_PUBLIC_AI_ENABLED=false\" && next build && copy /Y electron\\.env.standard .next\\standalone\\.env",
+    "build:premium": "set \"NEXT_PUBLIC_AI_ENABLED=true\" && next build && copy /Y electron\\.env.premium .next\\standalone\\.env"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.4.0",

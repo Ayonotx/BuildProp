@@ -8,13 +8,13 @@ import { executeAIAction } from '@/lib/ai-actions'
 
 export const dynamic = 'force-dynamic'
 
-const DEFAULT_OLLAMA_URL = 'http://localhost:11434'
+const DEFAULT_OLLAMA_URL = 'http://127.0.0.1:11435'
 const DEFAULT_OLLAMA_LIGHT_MODEL = 'llama3.2:1b'
 const DEFAULT_OLLAMA_HEAVY_MODEL = 'llama3.2:1b'
 
 const MAX_PROMPT_LENGTH = 10_000
 const BUNDLED_MODEL = 'llama3.2:1b'
-const BUNDLED_OLLAMA_PORT = 11434
+const BUNDLED_OLLAMA_PORT = 11435
 
 const ALLOWED_MODELS: Record<string, string[]> = {
   ollama: ['llama3.2:1b', 'llama3.2:3b', 'llama3.2:latest', 'llama3.1:8b', 'llama3.1:70b', 'codellama:7b', 'mistral:7b'],
@@ -50,7 +50,8 @@ async function verifyAdminAuth(): Promise<boolean> {
   if (!token) return false
   const payload = verifyToken(token)
   if (!payload) return false
-  return payload.role === 'admin'
+  const adminRoles = ['admin', 'Super Admin', 'Admin']
+  return payload.role ? adminRoles.includes(payload.role) : false
 }
 
 async function queryOllama(prompt: string, systemPrompt: string | undefined, config: AIProviderConfig, modelTier?: string): Promise<string> {
@@ -71,7 +72,7 @@ async function queryOllama(prompt: string, systemPrompt: string | undefined, con
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ model, messages, stream: false }),
-      signal: AbortSignal.timeout(30_000),
+      signal: AbortSignal.timeout(120_000),
     })
 
     if (!response.ok) throw new Error(`Ollama returned ${response.status}`)

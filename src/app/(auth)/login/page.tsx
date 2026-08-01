@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
-import { HardHat, Eye, EyeOff, Lock, Mail } from "lucide-react"
+import { HardHat, Eye, EyeOff, Lock, Mail, X, ShieldCheck, Users } from "lucide-react"
 
 export default function LoginPage() {
   const router = useRouter()
@@ -11,6 +11,7 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [showForgot, setShowForgot] = useState(false)
 
   // On a fresh install (empty DB / no settings) bounce straight to the setup
   // wizard. /setup is a public path and only redirects back when configured,
@@ -165,7 +166,7 @@ export default function LoginPage() {
             </div>
 
             <div className="flex items-center justify-end">
-              <button type="button" onClick={() => setError("Contact your administrator to reset your password")} className="text-sm text-orange-500 hover:text-orange-600 font-medium">
+              <button type="button" onClick={() => setShowForgot(true)} className="text-sm text-orange-500 hover:text-orange-600 font-medium">
                 Forgot password?
               </button>
             </div>
@@ -187,6 +188,65 @@ export default function LoginPage() {
           </form>
         </div>
       </div>
+
+      {showForgot && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onClick={() => setShowForgot(false)} />
+          <div className="relative w-full max-w-md rounded-2xl bg-white shadow-2xl overflow-hidden">
+            <div className="bg-gradient-to-br from-[#ea580c] via-[#c2410c] to-[#7c2d12] px-6 py-5 flex items-start justify-between">
+              <div>
+                <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                  <ShieldCheck className="h-5 w-5 text-amber-300" />
+                  Forgot your password?
+                </h3>
+                <p className="text-sm text-orange-100/90 mt-1">Here&apos;s how to get back into your account.</p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowForgot(false)}
+                className="text-orange-100 hover:text-white transition-colors"
+                aria-label="Close"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <div className="p-6 space-y-4">
+              <div className="rounded-xl border border-orange-100 bg-orange-50 p-4">
+                <h4 className="text-sm font-semibold text-slate-900 flex items-center gap-2">
+                  <Users className="h-4 w-4 text-orange-500" />
+                  For staff
+                </h4>
+                <p className="text-sm text-slate-600 mt-1.5 leading-relaxed">
+                  Your company&apos;s <span className="font-medium text-slate-900">Super Admin</span> can reset your
+                  password from the <span className="font-medium text-slate-900">Users &amp; Roles</span> page
+                  (sidebar → Settings area).
+                </p>
+              </div>
+
+              <div className="rounded-xl border border-orange-100 bg-orange-50 p-4">
+                <h4 className="text-sm font-semibold text-slate-900 flex items-center gap-2">
+                  <ShieldCheck className="h-4 w-4 text-orange-500" />
+                  For the Super Admin / owner
+                </h4>
+                <p className="text-sm text-slate-600 mt-1.5 leading-relaxed">
+                  Recovery options include restoring from the automatic backups the app creates on startup
+                  (<span className="font-medium text-slate-900">backups/auto</span> folder), or contact{" "}
+                  <span className="font-medium text-slate-900">BuildProp support</span>.
+                </p>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setShowForgot(false)}
+                className="w-full rounded-xl bg-orange-500 py-3 text-white font-medium hover:bg-orange-600 transition-colors shadow-lg shadow-orange-500/25"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
