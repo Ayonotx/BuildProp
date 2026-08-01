@@ -17,6 +17,7 @@ export default function SetupPage() {
   const [step, setStep] = useState(1)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [demoLoading, setDemoLoading] = useState(false)
 
   useEffect(() => {
     fetch("/api/setup")
@@ -90,6 +91,29 @@ export default function SetupPage() {
     } catch (err) {
       setError(err instanceof Error ? err.message : "Network error")
       setLoading(false)
+    }
+  }
+
+  const handleDemoLogin = async () => {
+    setError(null)
+    setDemoLoading(true)
+
+    try {
+      const res = await fetch("/api/auth/demo", { method: "POST" })
+      const data = await res.json()
+
+      if (!res.ok || data.error) {
+        setError(data.error || "Demo setup failed")
+        setDemoLoading(false)
+        return
+      }
+
+      localStorage.setItem("buildprop_user", JSON.stringify(data.user))
+      localStorage.setItem("buildprop_user_ui", "true")
+      window.location.href = "/"
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Network error")
+      setDemoLoading(false)
     }
   }
 
@@ -503,6 +527,29 @@ export default function SetupPage() {
               )}
             </button>
           )}
+        </div>
+
+        {/* Demo mode */}
+        <div className="px-8 pb-8 flex flex-col items-center gap-1.5">
+          <button
+            type="button"
+            onClick={handleDemoLogin}
+            disabled={demoLoading}
+            className="flex items-center gap-2 rounded-xl border border-orange-200 px-5 py-2.5 text-sm font-medium text-orange-600 hover:bg-orange-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {demoLoading ? (
+              <>
+                <div className="h-4 w-4 animate-spin rounded-full border-2 border-orange-500 border-t-transparent" />
+                Entering demo mode...
+              </>
+            ) : (
+              <>
+                <HardHat className="h-4 w-4" />
+                Skip setup — enter demo mode
+              </>
+            )}
+          </button>
+          <p className="text-xs text-slate-400">For demonstration only</p>
         </div>
       </div>
     </div>

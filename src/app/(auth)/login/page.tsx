@@ -12,6 +12,7 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [showForgot, setShowForgot] = useState(false)
+  const [demoLoading, setDemoLoading] = useState(false)
 
   // On a fresh install (empty DB / no settings) bounce straight to the setup
   // wizard. /setup is a public path and only redirects back when configured,
@@ -61,6 +62,29 @@ export default function LoginPage() {
       setError(err instanceof Error ? err.message : "Network error")
     } finally {
       setLoading(false)
+    }
+  }
+
+  const handleDemoLogin = async () => {
+    setDemoLoading(true)
+    setError(null)
+
+    try {
+      const res = await fetch("/api/auth/demo", { method: "POST" })
+      const data = await res.json()
+
+      if (!res.ok || data.error) {
+        setError(data.error || `Demo login failed (${res.status})`)
+        return
+      }
+
+      localStorage.setItem("buildprop_user", JSON.stringify(data.user))
+      localStorage.setItem("buildprop_user_ui", "true")
+      window.location.href = "/"
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Network error")
+    } finally {
+      setDemoLoading(false)
     }
   }
 
@@ -190,6 +214,23 @@ export default function LoginPage() {
               )}
             </button>
           </form>
+
+          <button
+            type="button"
+            onClick={handleDemoLogin}
+            disabled={demoLoading}
+            className="w-full mt-4 rounded-xl border border-orange-500 bg-white py-3 text-orange-500 font-medium hover:bg-orange-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+          >
+            {demoLoading ? (
+              <>
+                <div className="h-5 w-5 animate-spin rounded-full border-2 border-orange-500 border-t-transparent" />
+                Entering demo...
+              </>
+            ) : (
+              "Demo Login (quick access)"
+            )}
+          </button>
+          <p className="text-center text-xs text-slate-400 mt-2">For demonstration only</p>
         </div>
       </div>
 
