@@ -191,6 +191,7 @@ export default function AIPage() {
   const [chatInput, setChatInput] = useState("")
   const [chatLoading, setChatLoading] = useState(false)
   const chatEndRef = useRef<HTMLDivElement>(null)
+  const ollamaUrlRef = useRef<string>(DEFAULT_PROVIDERS.ollama.url)
 
   const [insights, setInsights] = useState<string>("")
   const [insightsLoading, setInsightsLoading] = useState(false)
@@ -228,7 +229,50 @@ export default function AIPage() {
   }, [loadProviders, loadModelTier])
 
   useEffect(() => {
-    fetchOllamaStatus()
+    ollamaUrlRef.current = providers?.ollama?.url || DEFAULT_PROVIDERS.ollama.url
+  }, [providers.ollama.url])
+
+  useEffect(() => {
+    let attempts = 0
+    let timer: ReturnType<typeof setInterval> | null = null
+
+    const check = async () => {
+      if (attempts >= 30) {
+        if (timer) clearInterval(timer)
+        return
+      }
+      attempts++
+      try {
+        const url = ollamaUrlRef.current || DEFAULT_PROVIDERS.ollama.url
+        const res = await fetch(`/api/ai?ollamaUrl=${encodeURIComponent(url)}`)
+        const data = await res.json()
+        setOllamaAvailable(data.available)
+        setOllamaModel(data.model)
+        setAvailableModels(data.models || [])
+        if (data.available === true && timer) {
+          clearInterval(timer)
+          timer = null
+        }
+      } catch {
+        setOllamaAvailable(false)
+      }
+    }
+
+    check()
+
+    const onVisibilityChange = () => {
+      if (document.visibilityState === "visible") {
+        check()
+      }
+    }
+    document.addEventListener("visibilitychange", onVisibilityChange)
+
+    timer = setInterval(check, 5000)
+
+    return () => {
+      if (timer) clearInterval(timer)
+      document.removeEventListener("visibilitychange", onVisibilityChange)
+    }
   }, [])
 
   useEffect(() => {
@@ -813,6 +857,12 @@ export default function AIPage() {
                         className="w-full rounded-lg border border-slate-200 pl-9 pr-3 py-2 text-sm outline-none focus:border-purple-400"
                       />
                     </div>
+                    {key === "groq" && !(providers[key] as ProviderConfig).apiKey && (
+                      <div className="flex items-center gap-1.5 text-xs text-slate-500 mt-1">
+                        <CheckCircle className="h-3.5 w-3.5 text-emerald-500 shrink-0" />
+                        Built-in key active — leave this blank. Key is stored securely on the server.
+                      </div>
+                    )}
                   </div>
                 ))}
 

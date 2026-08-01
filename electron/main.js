@@ -3,6 +3,7 @@ const { spawn } = require('child_process')
 const path = require('path')
 const fs = require('fs')
 const net = require('net')
+const http = require('http')
 
 let mainWindow = null
 let serverProcess = null
@@ -83,6 +84,20 @@ async function waitForPort(port, host, timeoutMs) {
     } catch {
       await new Promise(r => setTimeout(r, 500))
     }
+  }
+  return false
+}
+
+async function waitForHttp(url, timeoutMs, intervalMs) {
+  const start = Date.now()
+  while (Date.now() - start < timeoutMs) {
+    const ok = await new Promise((resolve) => {
+      const req = http.get(url, (res) => { res.resume(); resolve(true) })
+      req.on('error', () => resolve(false))
+      req.setTimeout(2000, () => { req.destroy(); resolve(false) })
+    })
+    if (ok) return true
+    await new Promise((r) => setTimeout(r, intervalMs))
   }
   return false
 }
@@ -331,6 +346,40 @@ function startOllama() {
   return true
 }
 
+// Pre-warms the bundled Ollama model so the first chat request is fast.
+// Runs entirely in the background; never crashes or blocks startup (all errors caught).
+async function prewarmOllama() {
+  const baseUrl = 'http://127.0.0.1:' + OLLAMA_PORT
+  try {
+    const up = await waitForHttp(baseUrl + '/api/tags', 60000, 2000)
+    if (!up) {
+      console.log('[AI] prewarm: skipped (Ollama did not come up in time)')
+      return
+    }
+    const body = JSON.stringify({ model: 'llama3.2:1b', prompt: 'hi', stream: false, keep_alive: '30m' })
+    const statusCode = await new Promise((resolve) => {
+      const req = http.request(baseUrl + '/api/generate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Content-Length': Buffer.byteLength(body),
+        },
+        timeout: 120000,
+      }, (res) => {
+        res.resume()
+        resolve(res.statusCode || 0)
+      })
+      req.on('timeout', () => { req.destroy() })
+      req.on('error', () => resolve(0))
+      req.write(body)
+      req.end()
+    })
+    console.log('[AI] prewarm: done (status ' + statusCode + ')')
+  } catch (e) {
+    console.log('[AI] prewarm: failed - ' + (e && e.message ? e.message : e))
+  }
+}
+
 function createWindow() {
   try {
     mainWindow = new BrowserWindow({
@@ -372,6 +421,7 @@ app.on('ready', async () => {
   // Show window immediately, AI in background
   createWindow()
   setTimeout(() => startOllama(), 2000)
+  setTimeout(() => prewarmOllama(), 4000)
   // Safety-net auto-backup shortly after the server is up (non-blocking, never crashes startup)
   setTimeout(() => runAutoBackup(), 1500)
 })
