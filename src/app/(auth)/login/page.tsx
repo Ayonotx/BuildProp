@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { HardHat, Eye, EyeOff, Lock, Mail, X, ShieldCheck, Users } from "lucide-react"
+import { DEMO_MODE } from "@/lib/features"
 
 export default function LoginPage() {
   const router = useRouter()
@@ -215,22 +216,29 @@ export default function LoginPage() {
             </button>
           </form>
 
-          <button
-            type="button"
-            onClick={handleDemoLogin}
-            disabled={demoLoading}
-            className="w-full mt-4 rounded-xl border border-orange-500 bg-white py-3 text-orange-500 font-medium hover:bg-orange-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-          >
-            {demoLoading ? (
-              <>
-                <div className="h-5 w-5 animate-spin rounded-full border-2 border-orange-500 border-t-transparent" />
-                Entering demo...
-              </>
-            ) : (
-              "Demo Login (quick access)"
-            )}
-          </button>
-          <p className="text-center text-xs text-slate-400 mt-2">For demonstration only</p>
+          {DEMO_MODE && (
+            <>
+              <button
+                type="button"
+                onClick={handleDemoLogin}
+                disabled={demoLoading}
+                className="w-full mt-4 rounded-xl border border-orange-500 bg-white py-3 text-orange-500 font-medium hover:bg-orange-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              >
+                {demoLoading ? (
+                  <>
+                    <div className="h-5 w-5 animate-spin rounded-full border-2 border-orange-500 border-t-transparent" />
+                    Entering demo...
+                  </>
+                ) : (
+                  "Demo Login (quick access)"
+                )}
+              </button>
+              <p className="text-center text-xs text-orange-500 mt-2">
+                You are viewing the BuildProp Demo Edition with sample data.
+              </p>
+              <p className="text-center text-xs text-slate-400 mt-2">For demonstration only</p>
+            </>
+          )}
         </div>
       </div>
 

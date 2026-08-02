@@ -9,6 +9,16 @@ interface UseCrudOptions {
   onSuccess?: (action: "save" | "delete") => void
 }
 
+function extractList<T>(json: any): T[] {
+  if (Array.isArray(json)) return json
+  if (json && typeof json === 'object') {
+    for (const key of ['data', 'items', 'projects', 'tasks', 'contacts', 'invoices', 'payments', 'properties', 'inventory', 'employees', 'result']) {
+      if (Array.isArray(json[key])) return json[key] as T[]
+    }
+  }
+  return []
+}
+
 interface UseCrudReturn<T> {
   data: T[]
   setData: React.Dispatch<React.SetStateAction<T[]>>
@@ -45,7 +55,7 @@ export function useCrud<T = any>(
     try {
       const res = await fetch(apiPath)
       const json = await res.json()
-      if (Array.isArray(json)) setData(json as T[])
+      setData(extractList(json))
     } catch {
       setError("Failed to load data")
     } finally {
@@ -59,7 +69,7 @@ export function useCrud<T = any>(
       try {
         const res = await fetch(apiPath)
         const json = await res.json()
-        if (!cancelled && Array.isArray(json)) setData(json as T[])
+        if (!cancelled) setData(extractList(json))
       } catch {
         if (!cancelled) setError("Failed to load data")
       } finally {

@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { HardHat, Building2, Globe, Settings, UserPlus, CheckCircle2, ArrowLeft, ArrowRight, Lock, Mail, Phone, MapPin, Calendar, DollarSign } from "lucide-react"
+import { DEMO_MODE } from "@/lib/features"
 
 const steps = [
   { id: 1, label: "Welcome", icon: HardHat },
@@ -530,27 +531,29 @@ export default function SetupPage() {
         </div>
 
         {/* Demo mode */}
-        <div className="px-8 pb-8 flex flex-col items-center gap-1.5">
-          <button
-            type="button"
-            onClick={handleDemoLogin}
-            disabled={demoLoading}
-            className="flex items-center gap-2 rounded-xl border border-orange-200 px-5 py-2.5 text-sm font-medium text-orange-600 hover:bg-orange-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {demoLoading ? (
-              <>
-                <div className="h-4 w-4 animate-spin rounded-full border-2 border-orange-500 border-t-transparent" />
-                Entering demo mode...
-              </>
-            ) : (
-              <>
-                <HardHat className="h-4 w-4" />
-                Skip setup — enter demo mode
-              </>
-            )}
-          </button>
-          <p className="text-xs text-slate-400">For demonstration only</p>
-        </div>
+        {DEMO_MODE && (
+          <div className="px-8 pb-8 flex flex-col items-center gap-1.5">
+            <button
+              type="button"
+              onClick={handleDemoLogin}
+              disabled={demoLoading}
+              className="flex items-center gap-2 rounded-xl border border-orange-200 px-5 py-2.5 text-sm font-medium text-orange-600 hover:bg-orange-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {demoLoading ? (
+                <>
+                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-orange-500 border-t-transparent" />
+                  Entering demo mode...
+                </>
+              ) : (
+                <>
+                  <HardHat className="h-4 w-4" />
+                  Skip setup — enter demo mode
+                </>
+              )}
+            </button>
+            <p className="text-xs text-slate-400">For demonstration only</p>
+          </div>
+        )}
       </div>
     </div>
   )

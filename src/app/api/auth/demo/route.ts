@@ -6,11 +6,16 @@ import { generateToken, hashPassword } from '@/lib/auth-utils'
 import { logAudit } from '@/lib/audit'
 import { readFile, writeFile, mkdir } from 'fs/promises'
 import { join } from 'path'
+import { DEMO_MODE } from '@/lib/features'
 
 const sessionsPath = join(process.cwd(), 'data', 'sessions.json')
 const settingsPath = join(process.cwd(), 'data', 'settings.json')
 
 export async function POST(request: Request) {
+  if (!DEMO_MODE) {
+    return Response.json({ error: 'Not found' }, { status: 404 })
+  }
+
   try {
     // 1. Prefer the first active Super Admin; fall back to any active user.
     let user = await prisma.user.findFirst({

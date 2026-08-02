@@ -5,7 +5,7 @@ import { Sidebar } from "./sidebar"
 import { Header } from "./header"
 import { BottomNav } from "./bottom-nav"
 import { cn } from "@/lib/utils"
-import { AI_ENABLED } from "@/lib/features"
+import { AI_ENABLED, DEMO_MODE } from "@/lib/features"
 import TutorialOverlay from "@/components/tutorial/tutorial-overlay"
 import { AIAssistant } from "@/components/ai/ai-assistant"
 
@@ -62,6 +62,11 @@ function DashboardLayout({ children }: { children: React.ReactNode }) {
         )}
       >
         <Header sidebarCollapsed={sidebarCollapsed} />
+        {DEMO_MODE && (
+          <div className="fixed top-0 right-0 z-50 bg-orange-500 text-white text-[11px] font-bold uppercase tracking-widest px-3 py-1 rounded-bl-lg shadow">
+            Demo Edition
+          </div>
+        )}
         <main className="p-6 pb-24 lg:pb-6">{children}</main>
       </div>
       {showTutorial && <TutorialOverlay onComplete={handleTutorialComplete} />}

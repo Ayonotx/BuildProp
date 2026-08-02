@@ -4,7 +4,7 @@ import React, { useEffect, useState, useCallback } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Save, Settings, Palette, Users, Shield, Download, Upload, RotateCcw, AlertTriangle, Database, Brain, Key, Eye, EyeOff, Zap, Check, X, Loader2, Pencil, Monitor, LogOut, RefreshCw } from "lucide-react"
-import { AI_ENABLED } from "@/lib/features"
+import { AI_ENABLED, DEMO_MODE } from "@/lib/features"
 import { formatDate } from "@/lib/utils"
 
 const tabs = [
@@ -44,6 +44,9 @@ export default function SettingsPage() {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [showToast, setShowToast] = useState(false)
+  const [demoResetting, setDemoResetting] = useState(false)
+  const [demoResetMessage, setDemoResetMessage] = useState<string | null>(null)
+  const [demoResetError, setDemoResetError] = useState<string | null>(null)
 
   const [backups, setBackups] = useState<{ filename: string; size: number; sizeFormatted: string; createdAt: string }[]>([])
   const [backingUp, setBackingUp] = useState(false)
@@ -329,6 +332,25 @@ export default function SettingsPage() {
     setSaving(false)
   }
 
+  async function handleDemoReset() {
+    setDemoResetting(true)
+    setDemoResetMessage(null)
+    setDemoResetError(null)
+    try {
+      const res = await fetch("/api/demo/reset", { method: "POST" })
+      const data = await res.json()
+      if (res.ok && data.success) {
+        setDemoResetMessage("Demo data reset complete. Please refresh/reload the app to see the restored sample data.")
+      } else {
+        setDemoResetError(data.error || "Demo reset failed")
+      }
+    } catch {
+      setDemoResetError("Failed to reset demo data")
+    } finally {
+      setDemoResetting(false)
+    }
+  }
+
   const fetchBackups = useCallback(async () => {
     try {
       const res = await fetch("/api/backup")
@@ -447,6 +469,32 @@ export default function SettingsPage() {
 
   return (
     <div className="space-y-6">
+      {DEMO_MODE && (
+        <div className="rounded-xl border border-orange-200 bg-orange-50 p-4">
+          <div className="flex items-center gap-2">
+            <RotateCcw className="h-4 w-4 text-orange-500" />
+            <h2 className="text-sm font-semibold text-orange-900">Demo Edition</h2>
+          </div>
+          <p className="text-sm text-orange-700 mt-1">
+            This is the separate BuildProp Demo build with sample data. Resetting restores the original sample dataset.
+          </p>
+          <Button
+            onClick={handleDemoReset}
+            disabled={demoResetting}
+            className="mt-3 bg-orange-500 hover:bg-orange-600 text-white"
+          >
+            <RotateCcw className="h-4 w-4 mr-2" />
+            {demoResetting ? "Resetting..." : "Reset Demo Data"}
+          </Button>
+          {demoResetMessage && (
+            <p className="text-sm font-medium text-emerald-700 mt-3">{demoResetMessage}</p>
+          )}
+          {demoResetError && (
+            <p className="text-sm font-medium text-red-700 mt-3">{demoResetError}</p>
+          )}
+        </div>
+      )}
+
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-slate-900">System Settings</h1>

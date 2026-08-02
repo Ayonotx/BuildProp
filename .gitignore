@@ -40,3 +40,4 @@ electron/resources/ai/models/blobs/
 electron/resources/node.exe
 mobile/.expo/
 *.tsbuildinfo
+electron/.env.demo

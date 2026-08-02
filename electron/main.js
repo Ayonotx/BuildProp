@@ -9,7 +9,7 @@ let mainWindow = null
 let serverProcess = null
 let ollamaProcess = null
 
-const PORT = 3456
+let PORT = 3456
 const OLLAMA_PORT = 11435
 
 function getServerDir() {
@@ -403,6 +403,7 @@ function createWindow() {
 // === App Lifecycle ===
 app.on('ready', async () => {
     loadEnv()
+    PORT = parseInt(process.env.BUILDPROP_PORT || String(PORT), 10) || PORT
     // Force absolute DATABASE_URL - Prisma engine cannot resolve relative file: paths
     if (!process.env.DATABASE_URL || process.env.DATABASE_URL.startsWith("file:")) {
       process.env.DATABASE_URL = "file:" + path.join(getServerDir(), "prisma", "dev.db")

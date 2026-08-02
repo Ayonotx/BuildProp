@@ -4,7 +4,7 @@ import React, { useState, useEffect, useMemo } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
-import { AI_ENABLED } from "@/lib/features"
+import { AI_ENABLED, DEMO_MODE } from "@/lib/features"
 import {
   LayoutDashboard,
   FolderKanban,
@@ -208,7 +208,7 @@ function Sidebar({ collapsed = false, onToggle }: SidebarProps) {
             <div>
               <span className="text-lg font-bold tracking-tight">BuildProp</span>
               {AI_ENABLED ? (
-                <span className="block text-[10px] text-purple-400 -mt-1">Premium <span className="inline-flex items-center rounded-md bg-purple-500/20 px-1.5 py-0.5 text-[9px] font-semibold text-purple-300 ring-1 ring-inset ring-purple-500/30 ml-0.5">AI</span></span>
+                <span className="block text-[10px] text-purple-400 -mt-1">{DEMO_MODE ? 'Demo' : 'Premium'} <span className="inline-flex items-center rounded-md bg-purple-500/20 px-1.5 py-0.5 text-[9px] font-semibold text-purple-300 ring-1 ring-inset ring-purple-500/30 ml-0.5">AI</span></span>
               ) : (
                 <span className="block text-[10px] text-orange-200/60 -mt-1">Standard</span>
               )}
