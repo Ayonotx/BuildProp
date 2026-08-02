@@ -11,7 +11,7 @@ import {
   Sparkles,
   ArrowRight,
 } from "lucide-react"
-import { cn, formatCurrency } from "@/lib/utils"
+import { cn } from "@/lib/utils"
 
 interface Message {
   role: "user" | "assistant"
@@ -373,135 +373,6 @@ function getNavSuggestions(key: string): Suggestion[] {
   )
 }
 
-async function getContextForQuery(query: string): Promise<string> {
-  const [dashboard, projects, properties] = await Promise.all([
-    fetch("/api/dashboard")
-      .then((r) => r.json())
-      .catch(() => null),
-    fetch("/api/projects")
-      .then((r) => r.json())
-      .catch(() => []),
-    fetch("/api/properties")
-      .then((r) => r.json())
-      .catch(() => []),
-  ])
-
-  let context =
-    "You are BuildProp AI, an assistant for a construction and real estate management system.\n\n"
-
-  if (dashboard?.kpi) {
-    context += `DASHBOARD KPIs:\n`
-    context += `- Total Projects: ${dashboard.kpi.totalProjects || 0}\n`
-    context += `- Active Projects: ${dashboard.kpi.activeProjects || 0}\n`
-    context += `- Revenue: ${formatCurrency(dashboard.kpi.revenue || 0)}\n`
-    context += `- Outstanding: ${formatCurrency(dashboard.kpi.outstanding || 0)}\n`
-    context += `- Properties: ${dashboard.kpi.totalProperties || 0}\n`
-    context += `- Available Properties: ${dashboard.kpi.availableProperties || 0}\n\n`
-  }
-
-  const q = query.toLowerCase()
-
-  if (q.includes("project")) {
-    context += `PROJECTS:\n`
-    if (Array.isArray(projects)) {
-      projects.forEach((p: Record<string, unknown>) => {
-        context += `- ${p.name} (${p.code}): ${p.status}, Budget: ${formatCurrency(Number(p.estimatedBudget) || 0)}, Actual: ${formatCurrency(Number(p.actualCost) || 0)}, Progress: ${p.completionPercentage}%, Location: ${p.location || "N/A"}\n`
-      })
-    }
-    context += "\n"
-  }
-
-  if (
-    q.includes("propert") ||
-    q.includes("house") ||
-    q.includes("land") ||
-    q.includes("real estate") ||
-    q.includes("apartment") ||
-    q.includes("villa")
-  ) {
-    context += `PROPERTIES:\n`
-    if (Array.isArray(properties)) {
-      properties.slice(0, 15).forEach((p: Record<string, unknown>) => {
-        context += `- ${p.name}: ${p.propertyType}, ${p.status}, Price: ${formatCurrency(Number(p.price) || 0)}, Area: ${p.areaSqft || "N/A"} sqft, ${p.address || ""} ${p.city || ""}\n`
-      })
-    }
-    context += "\n"
-  }
-
-  if (
-    q.includes("revenue") ||
-    q.includes("money") ||
-    q.includes("income") ||
-    q.includes("financial") ||
-    q.includes("profit") ||
-    q.includes("transaction") ||
-    q.includes("invoice") ||
-    q.includes("payment") ||
-    q.includes("budget") ||
-    q.includes("cost") ||
-    q.includes("expense")
-  ) {
-    const finance = await fetch("/api/finance")
-      .then((r) => r.json())
-      .catch(() => [])
-    if (Array.isArray(finance)) {
-      context += `FINANCIAL TRANSACTIONS:\n`
-      finance.slice(0, 15).forEach((t: Record<string, unknown>) => {
-        context += `- ${t.description || t.transactionNumber}: ${formatCurrency(Number(t.totalAmount) || 0)} (${t.type}) on ${t.date}\n`
-      })
-    }
-    context += "\n"
-  }
-
-  if (q.includes("task") || q.includes("todo") || q.includes("overdue") || q.includes("doing")) {
-    const tasks = await fetch("/api/tasks").then(r => r.json()).catch(() => ({ tasks: [] }))
-    if (tasks.tasks) {
-      context += `TASKS:\n`
-      tasks.tasks.slice(0, 10).forEach((t: Record<string, unknown>) => {
-        context += `- ${t.title}: ${t.status}, Priority: ${t.priority}, Due: ${t.dueDate || 'No date'}\n`
-      })
-      context += "\n"
-    }
-  }
-
-  if (q.includes("calendar") || q.includes("meeting") || q.includes("schedule") || q.includes("event")) {
-    const calendar = await fetch("/api/calendar").then(r => r.json()).catch(() => ({ events: [] }))
-    const events = calendar.events || calendar
-    if (Array.isArray(events)) {
-      context += `CALENDAR EVENTS:\n`
-      events.slice(0, 10).forEach((e: Record<string, unknown>) => {
-        context += `- ${e.title}: ${new Date(e.startTime as string).toLocaleDateString('en-GB')} (${e.status})\n`
-      })
-      context += "\n"
-    }
-  }
-
-  if (q.includes("employee") || q.includes("staff") || q.includes("hr") || q.includes("payroll")) {
-    const hr = await fetch("/api/hr").then(r => r.json()).catch(() => ({ employees: [] }))
-    if (hr.employees) {
-      context += `EMPLOYEES:\n`
-      hr.employees.slice(0, 10).forEach((e: Record<string, unknown>) => {
-        context += `- ${e.firstName} ${e.lastName}: ${e.designation || 'N/A'}, Dept: ${(e.department as Record<string, unknown>)?.name || 'N/A'}, Salary: ${formatCurrency(Number(e.salary) || 0)}\n`
-      })
-      context += "\n"
-    }
-  }
-
-  if (q.includes("inventory") || q.includes("stock") || q.includes("material")) {
-    const inv = await fetch("/api/inventory").then(r => r.json()).catch(() => ({ items: [] }))
-    const items = inv.items || inv
-    if (Array.isArray(items)) {
-      context += `INVENTORY:\n`
-      items.slice(0, 10).forEach((i: Record<string, unknown>) => {
-        context += `- ${i.name}: ${i.currentStock} ${i.unitOfMeasure || 'units'}, Min: ${i.minStock || 0}\n`
-      })
-      context += "\n"
-    }
-  }
-
-  return context
-}
-
 function TypingIndicator() {
   return (
     <div className="flex items-center gap-1 px-4 py-3">
@@ -542,6 +413,28 @@ function AIAssistant() {
       setInput("")
       setIsThinking(true)
 
+      // Pure greetings & small talk — reply instantly, never wrap in business context
+      const trimmed = text.trim()
+      const isGreeting =
+        trimmed.length <= 40 &&
+        /^(hi+|hello+|hey+|greetings+|good\s*(morning|afternoon|evening|day)|howdy|hola|yo+|wassup|what's\s*up)\b[!.?]*$/i.test(trimmed)
+      const isThanks =
+        trimmed.length <= 40 &&
+        /^(thanks|thank you|thx|ty|appreciate(d)?\s+(it|you|that)|i\s+appreciate\s+that)\b[!.?]*$/i.test(trimmed)
+      if (isGreeting || isThanks) {
+        setMessages((prev) => [
+          ...prev,
+          {
+            role: "assistant",
+            content: isGreeting
+              ? "Hello! I'm your BuildProp AI Assistant. I can help you with your projects, properties, finances, invoices, reports, and more. What would you like to do today?"
+              : "You're welcome! Happy to help. Is there anything else you'd like me to do — check your finances, create a task, or open a page?",
+          },
+        ])
+        setIsThinking(false)
+        return
+      }
+
       const actionResult = executeAction(text, router)
 
       if (actionResult.executed) {
@@ -554,20 +447,12 @@ function AIAssistant() {
         setMessages((prev) => [...prev, actionMsg])
 
         try {
-          const context = await getContextForQuery(text)
-          const history = messages
-            .slice(-10)
-            .map((m) => `${m.role}: ${m.content}`)
-            .join("\n")
-
-          const prompt = `${context}\n\nConversation history:\n${history}\n\nuser: ${text}\n\nRespond as a helpful, concise business assistant. Use specific numbers from the data when available. Format responses with bullet points for readability. Be brief but informative.`
-
           const res = await fetch("/api/ai", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
               action: "chat",
-              data: { message: prompt, model: "light" },
+              data: { message: text, model: "light" },
             }),
           })
 
@@ -586,20 +471,12 @@ function AIAssistant() {
       }
 
       try {
-        const context = await getContextForQuery(text)
-        const history = messages
-          .slice(-10)
-          .map((m) => `${m.role}: ${m.content}`)
-          .join("\n")
-
-        const prompt = `${context}\n\nConversation history:\n${history}\n\nuser: ${text}\n\nRespond as a helpful, concise business assistant. Use specific numbers from the data when available. Format responses with bullet points for readability. Be brief but informative.`
-
         const res = await fetch("/api/ai", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             action: "chat",
-            data: { message: prompt, model: "light" },
+            data: { message: text, model: "light" },
           }),
         })
 

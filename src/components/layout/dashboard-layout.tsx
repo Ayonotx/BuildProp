@@ -5,6 +5,7 @@ import { Sidebar } from "./sidebar"
 import { Header } from "./header"
 import { BottomNav } from "./bottom-nav"
 import { cn } from "@/lib/utils"
+import { AI_ENABLED } from "@/lib/features"
 import TutorialOverlay from "@/components/tutorial/tutorial-overlay"
 import { AIAssistant } from "@/components/ai/ai-assistant"
 
@@ -64,7 +65,7 @@ function DashboardLayout({ children }: { children: React.ReactNode }) {
         <main className="p-6 pb-24 lg:pb-6">{children}</main>
       </div>
       {showTutorial && <TutorialOverlay onComplete={handleTutorialComplete} />}
-      <AIAssistant />
+      {AI_ENABLED && <AIAssistant />}
       <BottomNav />
     </div>
   )
