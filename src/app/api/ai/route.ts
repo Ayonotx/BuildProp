@@ -31,6 +31,8 @@ function sanitizeInput(input: string): string {
     .slice(0, MAX_PROMPT_LENGTH)
 }
 
+const GREETING_PATTERN = /^(hi+|hello+|hey+|greetings+|good\s*(morning|afternoon|evening|day)|howdy|hola|yo+|wassup|what's\s*up)\b[!.?]*$/i
+
 function validateModelName(provider: string, model: string | undefined): string {
   if (!model) return ''
   const allowed = ALLOWED_MODELS[provider]
@@ -332,6 +334,16 @@ export async function POST(request: Request) {
           })
         }
 
+        // Pure greeting fast path - never hits the LLM
+        const isPureGreeting = sanitized.length <= 40 && GREETING_PATTERN.test(sanitized)
+        if (isPureGreeting) {
+          return Response.json({
+            response: "Hello! I'm your BuildProp AI Assistant. I can help you with your projects, properties, finances, invoices, reports, and more. What would you like to do today?",
+            provider: config.activeProvider,
+            greeting: true,
+          })
+        }
+
         const [dashProjects, dashProperties, dashPayments, dashInvoices, dashTasks, dashEmployees] = await Promise.all([
           prisma.project.findMany({ select: { name: true, status: true, estimatedBudget: true, actualCost: true, completionPercentage: true }, take: 10 }),
           prisma.property.findMany({ select: { name: true, price: true, status: true, propertyType: true, city: true }, take: 10 }),
@@ -379,11 +391,12 @@ REAL BUSINESS DATA (use ONLY these numbers, never fabricate):
 - Employees: ${dashEmployees.map((e: any) => `${e.employeeId} (${e.designation || 'N/A'})`).join('; ') || 'None'}
 
 RULES:
-- Always reference the REAL data above when answering questions
+- If the user greets you or makes small talk (hello, hi, good morning, thanks, who are you, etc.), reply with a short friendly greeting and a one-line offer to help with their projects, finances, properties, or reports. Do NOT recite business data for a mere greeting.
+- Only answer business questions using the REAL data above; never fabricate numbers
 - Use specific numbers from the data (never say "$5 million" when actual is GH₵501,750)
 - Currency is GHS (Ghana Cedis), formatted as GH₵X,XXX
 - Be concise and actionable
-- If asked about something not in the data, say "I don't have that data" rather than making it up`
+- If asked about a specific fact or figure NOT present in the data, say "I don't have that data" rather than making it up`
 
         if (conversationHistory) {
           systemPrompt += conversationHistory

@@ -200,6 +200,7 @@ export default function AIPage() {
   const [predictionLoading, setPredictionLoading] = useState(false)
 
   const [modelTier, setModelTier] = useState<string>("heavy")
+  const [lastProvider, setLastProvider] = useState<string | null>(null)
   const [providers, setProviders] = useState<ProvidersPayload>(DEFAULT_PROVIDERS)
   const [settingsSaving, setSettingsSaving] = useState(false)
   const [settingsMessage, setSettingsMessage] = useState<string>("")
@@ -356,6 +357,7 @@ export default function AIPage() {
         body: JSON.stringify({ action: "chat", data: { message: userMessage, model: modelTier } }),
       })
       const data = await res.json()
+      setLastProvider(data.provider || null)
       setChatMessages((prev) => [
         ...prev,
         { role: "assistant", message: data.response || "No response.", model: data.model, provider: data.provider },
@@ -703,7 +705,7 @@ export default function AIPage() {
                   </div>
                   <div className="ml-auto flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-50 border border-slate-200 text-xs text-slate-600">
                     <span className={`h-1.5 w-1.5 rounded-full ${isOnline ? "bg-emerald-500" : "bg-red-500"}`} />
-                    {activeProviderLabel}
+                    {(lastProvider ? (PROVIDER_LABELS[lastProvider] || lastProvider) : activeProviderLabel)}
                   </div>
                 </div>
               </CardHeader>
