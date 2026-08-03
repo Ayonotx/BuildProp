@@ -144,6 +144,7 @@
     }
 
     showLoading('Signing in…')
+    API.configure(url)
     try {
       var res = await API.apiFetch('/api/mobile/auth', {
         method: 'POST',
