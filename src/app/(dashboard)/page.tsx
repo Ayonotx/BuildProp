@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import {
   FolderKanban,
   DollarSign,
@@ -12,6 +13,10 @@ import {
   TrendingUp,
   TrendingDown,
   ArrowUpRight,
+  FileText,
+  Users,
+  CreditCard,
+  CheckSquare,
 } from "lucide-react"
 import {
   BarChart,
@@ -291,6 +296,37 @@ export default function DashboardPage() {
           )
         })}
       </div>
+
+      {/* Quick Actions */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Quick Actions</CardTitle>
+          <p className="text-sm text-slate-500">Jump straight into your most common tasks</p>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+            {[
+              { label: "New Project", icon: FolderKanban, href: "/projects?new=1" },
+              { label: "New Invoice", icon: FileText, href: "/invoices?new=1" },
+              { label: "Add Task", icon: CheckSquare, href: "/tasks?new=1" },
+              { label: "Add Contact", icon: Users, href: "/crm?new=1" },
+              { label: "Record Payment", icon: CreditCard, href: "/payments?new=1" },
+            ].map((action) => {
+              const Icon = action.icon
+              return (
+                <Button
+                  key={action.label}
+                  onClick={() => router.push(action.href)}
+                  className="flex items-center justify-center gap-2"
+                >
+                  <Icon className="h-4 w-4" />
+                  {action.label}
+                </Button>
+              )
+            })}
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Row 2: Status + Activity + Tasks — all equal height */}
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">

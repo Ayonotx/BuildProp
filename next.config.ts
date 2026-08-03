@@ -42,6 +42,7 @@ const securityHeaders = [
 const nextConfig: NextConfig = {
   output: 'standalone',
   poweredByHeader: false,
+  serverExternalPackages: ['nodemailer'],
   async headers() {
     return [
       {

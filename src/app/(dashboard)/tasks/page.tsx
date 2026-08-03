@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState } from "react"
+import React, { use, useEffect, useState } from "react"
 import { useCrud } from "@/hooks/use-crud"
 import { PageHeader } from "@/components/dashboard/page-header"
 import { StatsGrid } from "@/components/dashboard/stats-grid"
@@ -38,7 +38,11 @@ const nextStatus: Record<string, string> = {
 
 const defaultForm = { projectId: "", title: "", description: "", priority: "medium", dueDate: "", estimatedHours: "" }
 
-export default function TasksPage() {
+export default function TasksPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
+}) {
   const [filter, setFilter] = useState("all")
   const [myTasksOnly, setMyTasksOnly] = useState(false)
   const { toast } = useToast()
@@ -60,6 +64,12 @@ export default function TasksPage() {
       }
     },
   })
+
+  const params = use(searchParams)
+
+  useEffect(() => {
+    if (params.new === "1") setShowModal(true)
+  }, [params, setShowModal])
 
   async function handleToggleStatus(task: Task) {
     const newStatus = nextStatus[task.status] || "todo"

@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState } from "react"
+import React, { use, useCallback, useEffect, useState } from "react"
 import { useCrud } from "@/hooks/use-crud"
 import { PageHeader } from "@/components/dashboard/page-header"
 import { StatsGrid } from "@/components/dashboard/stats-grid"
@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Avatar } from "@/components/ui/avatar"
-import { Plus, Users, UserPlus, Phone, Mail, Search, Pencil, Trash2, Download } from "lucide-react"
+import { Plus, Users, UserPlus, Phone, Mail, Search, Pencil, Trash2, Download, Send, X, Loader2 } from "lucide-react"
 import { useToast } from "@/components/dashboard/toast"
 import { formatDate } from "@/lib/utils"
 import { exportToCSV } from "@/lib/export-csv"
@@ -46,10 +46,19 @@ const defaultForm = {
   leadStatus: "new",
 }
 
-export default function CRMPage() {
+export default function CRMPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
+}) {
   const [searchQuery, setSearchQuery] = useState("")
   const [filterStage, setFilterStage] = useState("all")
   const { toast } = useToast()
+  const [emailTarget, setEmailTarget] = useState<Contact | null>(null)
+  const [emailSubject, setEmailSubject] = useState("")
+  const [emailMessage, setEmailMessage] = useState("")
+  const [emailSending, setEmailSending] = useState(false)
+  const [emailError, setEmailError] = useState<string | null>(null)
   const {
     data: contacts, loading, showModal, setShowModal,
     editingItem, setEditingItem, formData, setFormData,
@@ -66,11 +75,55 @@ export default function CRMPage() {
     },
   })
 
-  function openCreate() {
+  function openEmailDialog(contact: Contact) {
+    setEmailTarget(contact)
+    setEmailSubject("")
+    setEmailMessage("")
+    setEmailError(null)
+  }
+
+  async function sendQuickEmail() {
+    if (!emailTarget) return
+    if (!emailSubject.trim() || !emailMessage.trim()) {
+      setEmailError("Subject and message are required.")
+      return
+    }
+    setEmailSending(true)
+    setEmailError(null)
+    try {
+      const res = await fetch("/api/email/send", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          to: emailTarget.email,
+          subject: emailSubject,
+          html: `<div style="font-family: Arial, Helvetica, sans-serif; color: #1e293b;"><p>Dear ${emailTarget.firstName} ${emailTarget.lastName},</p><p style="white-space: pre-wrap;">${emailMessage}</p></div>`,
+        }),
+      })
+      const data = await res.json()
+      if (res.ok && data.success) {
+        setEmailTarget(null)
+        toast({ title: "Email sent", description: `Message sent to ${emailTarget.email}`, variant: "success" })
+      } else {
+        setEmailError(Array.isArray(data?.details) && data.details.length > 0 ? data.details[0] : data?.error || "Could not send email")
+      }
+    } catch {
+      setEmailError("Could not send email")
+    }
+    setEmailSending(false)
+  }
+
+  const openCreate = useCallback(() => {
     setEditingItem(null)
     setFormData(defaultForm)
     setShowModal(true)
-  }
+  }, [setEditingItem, setFormData, setShowModal])
+
+  const params = use(searchParams)
+
+  useEffect(() => {
+    if (params.new === "1") openCreate()
+  }, [params, openCreate])
 
   function openEdit(item: Contact) {
     setEditingItem(item)
@@ -231,6 +284,11 @@ export default function CRMPage() {
                         </div>
                       </div>
                       <div className="flex items-center gap-2">
+                        {contact.email && (
+                          <Button variant="ghost" size="sm" onClick={() => openEmailDialog(contact)} title="Send email">
+                            <Mail className="h-4 w-4 text-blue-500" />
+                          </Button>
+                        )}
                         <Button variant="ghost" size="sm" onClick={() => openEdit(contact)}><Pencil className="h-4 w-4" /></Button>
                         <Button variant="ghost" size="sm" onClick={() => handleDelete(contact.id)}><Trash2 className="h-4 w-4 text-red-500" /></Button>
                       </div>
@@ -290,6 +348,38 @@ export default function CRMPage() {
           </Card>
         </div>
       </div>
+
+      {emailTarget && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className="bg-white rounded-xl shadow-xl p-6 max-w-lg w-full mx-4 space-y-4">
+            <div className="flex items-center justify-between">
+              <h3 className="font-semibold text-slate-900">Send Email to {emailTarget.firstName} {emailTarget.lastName}</h3>
+              <button onClick={() => setEmailTarget(null)} className="p-1.5 text-slate-400 hover:text-slate-600 rounded">
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+            <p className="text-sm text-slate-500 break-all">{emailTarget.email}</p>
+            {emailError && (
+              <div className="rounded-lg bg-red-50 border border-red-200 p-3 text-sm text-red-800">{emailError}</div>
+            )}
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-1">Subject *</label>
+              <input type="text" value={emailSubject} onChange={e => setEmailSubject(e.target.value)} className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-orange-400" />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-1">Message *</label>
+              <textarea value={emailMessage} onChange={e => setEmailMessage(e.target.value)} rows={5} className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-orange-400" />
+            </div>
+            <div className="flex justify-end gap-2 pt-2">
+              <Button variant="outline" onClick={() => setEmailTarget(null)}>Cancel</Button>
+              <Button onClick={sendQuickEmail} disabled={emailSending}>
+                {emailSending ? <Loader2 className="h-4 w-4 animate-spin mr-1" /> : <Send className="h-4 w-4 mr-1" />}
+                {emailSending ? "Sending..." : "Send Email"}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <CRUDModal
         open={showModal}

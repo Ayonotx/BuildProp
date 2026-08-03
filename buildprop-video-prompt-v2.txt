@@ -1,0 +1,107 @@
+﻿FLIKI AI — Updated Video Prompt (No AI, No Website, Mobile App + All Features)
+=============================================================================
+
+Go to: https://fliki.ai
+Sign up (free) → Click "File" → "New File" → Choose "Script to Video" → Paste the prompt below → Generate → Download.
+
+
+THE PROMPT (copy everything below):
+-------------------------------------
+
+Create a 60-second professional corporate product advertisement video for "BuildProp" — a complete construction and real estate management software platform built for the Ghanaian market.
+
+STYLE: Modern corporate tech advertisement. Dark navy blue and bright orange color scheme. Clean, minimal, premium feel. Think Notion or Monday.com product ads. Smooth transitions between scenes. Upbeat corporate background music with building energy.
+
+VOICEOVER: Use a professional confident voice. Narrate this script:
+
+VOICEOVER SCRIPT:
+
+"Managing construction projects is complicated. You need one platform that handles everything.
+
+Introducing BuildProp — the complete construction and real estate management platform.
+
+Manage your projects from start to finish — milestones, tasks, budgets, and timelines. Track every detail across every site.
+
+Handle your finances with confidence — invoicing, payments, P&L statements, accounts receivable, all in Ghana Cedis.
+
+Run your entire workforce — HR, payroll, SSNIT, PAYE compliance, leave management, and employee records.
+
+Keep your properties organized — listing, tracking, availability, and tenant management.
+
+Stay connected with your clients — CRM, communication history, and follow-ups.
+
+Control your inventory and procurement — stock levels, purchase orders, and equipment tracking.
+
+Manage your fleet and assets — vehicles, machinery, and depreciation tracking.
+
+Generate professional reports and documents — PDF export, audit logs, and compliance records.
+
+Organize everything with documents, calendars, and task assignments across your team.
+
+Support multiple branches — Accra, Kumasi, Takoradi — all from one dashboard.
+
+Set role-based access control — 8 permission levels so everyone sees only what they need.
+
+Auto-backup your data so you never lose anything.
+
+And access everything from your phone with our mobile app — monitor projects, approve tasks, and check finances from anywhere, even offline.
+
+Built for Ghana. GHS currency. Multi-branch. SSNIT compliant. Works offline.
+
+Choose your edition — Standard for core features, Premium for the full suite, or try the Demo with realistic sample data before you buy.
+
+BuildProp. Everything you need. One platform."
+
+SCENE BREAKDOWN:
+
+Scene 1 (0-5 sec): Construction site aerial view, cranes, modern buildings. Text: "BuildProp" large white text with orange accent. Subtitle: "Complete Construction & Real Estate Management"
+
+Scene 2 (5-12 sec): Project management visuals — blueprints, Gantt charts, team reviewing plans on tablet. Text: "Project Management" with bullet points "Milestones • Tasks • Budgets • Timelines"
+
+Scene 3 (12-17 sec): Finance visuals — person reviewing financial charts, calculator, money. Text: "Finance & Accounting" with bullets "Invoices • Payments • P&L • A/R Aging • GHS Currency"
+
+Scene 4 (17-22 sec): HR visuals — diverse team in office, payroll documents, employee records. Text: "HR & Payroll" with bullets "SSNIT • PAYE • Leave • Employee Records"
+
+Scene 5 (22-26 sec): Property visuals — modern buildings, property listings, tenant management. Text: "Property Management" with bullets "Listings • Tracking • Tenants • Availability"
+
+Scene 6 (26-30 sec): CRM visuals — handshake, client meeting, communication. Text: "CRM & Sales" with bullets "Contacts • Follow-ups • Communication History"
+
+Scene 7 (30-34 sec): Inventory visuals — warehouse, stock tracking, purchase orders. Text: "Inventory & Procurement" with bullets "Stock • Purchase Orders • Equipment"
+
+Scene 8 (34-38 sec): Fleet visuals — vehicles, machinery, maintenance tracking. Text: "Fleet & Assets" with bullets "Vehicles • Machinery • Depreciation"
+
+Scene 9 (38-42 sec): Reports visuals — documents, charts, PDF export. Text: "Reports & Documents" with bullets "PDF Export • Audit Logs • Compliance"
+
+Scene 10 (42-46 sec): Multi-branch visuals — map of Ghana with Accra, Kumasi, Takoradi markers. Text: "Multi-Branch Support" with bullets "Accra • Kumasi • Takoradi • One Dashboard"
+
+Scene 11 (46-50 sec): Security visuals — lock icon, role-based access grid. Text: "Role-Based Access Control" with bullets "8 Permission Levels • Data Security • Auto-Backup"
+
+Scene 12 (50-55 sec): Mobile app visuals — person using phone on construction site, phone showing dashboard. Text: "Mobile App" with bullets "Monitor Projects • Approve Tasks • Check Finances • Works Offline"
+
+Scene 13 (55-60 sec): Three edition cards — Standard (silver), Premium (gold), Demo (purple). Text: "Choose Your Edition" with labels "Standard | Premium | Demo". Then final frame: "BuildProp" large text, "Everything You Need. One Platform." below.
+
+MUSIC: Upbeat corporate electronic, building energy throughout, climactic at the end.
+
+TRANSITIONS: Smooth cross-fades between scenes, 0.5 second transitions.
+
+TEXT ANIMATIONS: Clean fade-in from bottom, professional sans-serif typography, white text on dark backgrounds with orange accents.
+
+
+END OF PROMPT (stop copying here)
+-----------------------------------
+
+
+WHAT TO DO:
+1. Go to https://fliki.ai
+2. Sign up free
+3. Click "New File"
+4. Choose "Script to Video"
+5. Paste the prompt above
+6. Click Generate
+7. Wait for the video to process
+8. Download as MP4
+
+If Fliki's free tier limits are hit, try:
+- https://invideo.io (paste same prompt)
+- https://capcut.com (use "Script to Video" feature)
+- https://pika.art (paste same prompt)

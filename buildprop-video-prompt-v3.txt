@@ -1,0 +1,94 @@
+FLIKI AI — Updated Video Prompt v3 (Mobile App + Email Added)
+============================================================
+
+Go to: https://fliki.ai
+Sign up (free) → Click "New File" → "Script to Video" → Paste the prompt below → Generate → Download.
+
+
+THE PROMPT (copy everything below):
+-------------------------------------
+
+Create a 60-second professional corporate product advertisement video for "BuildProp" — a complete construction and real estate management software platform built for the Ghanaian market.
+
+STYLE: Modern corporate tech advertisement. Dark navy blue and bright orange color scheme. Clean, minimal, premium feel. Smooth transitions between scenes. Upbeat corporate background music with building energy.
+
+VOICEOVER: Use a professional confident voice. Narrate this script:
+
+VOICEOVER SCRIPT:
+
+"Managing construction projects is complicated. You need one platform that handles everything.
+
+Introducing BuildProp — the complete construction and real estate management platform.
+
+Manage your projects from start to finish — milestones, tasks, budgets, and timelines. Track every detail across every site.
+
+Handle your finances with confidence — invoicing, payments, P&L statements, accounts receivable, all in Ghana Cedis.
+
+Send invoices to your clients by email with one click. Send automatic payment reminders for overdue accounts.
+
+Run your entire workforce — HR, payroll, SSNIT, PAYE compliance, leave management, and employee records.
+
+Keep your properties organized — listing, tracking, availability, and tenant management.
+
+Stay connected with your clients — CRM, communication history, follow-ups, and direct email from your contact list.
+
+Control your inventory, procurement, fleet, and assets — everything tracked in one place.
+
+Generate professional reports and documents — PDF export, audit logs, and compliance records.
+
+Set role-based access control — 8 permission levels so everyone sees only what they need.
+
+Auto-backup your data so you never lose anything.
+
+And with the BuildProp mobile app, the owner or CEO can monitor everything from anywhere — check project progress, revenue, outstanding invoices, and alerts right from your phone, even when you're offsite.
+
+Built for Ghana. GHS currency. Multi-branch. SSNIT compliant. Works offline.
+
+Choose your edition — Standard for core features, Premium for the full suite, or try the Demo with realistic sample data before you buy.
+
+BuildProp. Everything you need. One platform."
+
+SCENE BREAKDOWN:
+
+Scene 1 (0-5 sec): Construction site aerial view, cranes, modern buildings. Text: "BuildProp" large white text with orange accent. Subtitle: "Complete Construction & Real Estate Management"
+
+Scene 2 (5-11 sec): Project management visuals — blueprints, Gantt charts, team reviewing plans on tablet. Text: "Project Management" with bullet points "Milestones • Tasks • Budgets • Timelines"
+
+Scene 3 (11-16 sec): Finance visuals — person reviewing financial charts, calculator, money. Text: "Finance & Accounting" with bullets "Invoices • Payments • P&L • GHS Currency"
+
+Scene 4 (16-21 sec): Email visuals — person reading an invoice email on laptop, sending a message, phone showing inbox notification. Text: "Email Built-In" with bullets "Send Invoices by Email • Payment Reminders • Contact Clients"
+
+Scene 5 (21-26 sec): HR visuals — diverse team in office, payroll documents, employee records. Text: "HR & Payroll" with bullets "SSNIT • PAYE • Leave • Employee Records"
+
+Scene 6 (26-30 sec): Property visuals — modern buildings, property listings, tenant management. Text: "Property Management" with bullets "Listings • Tracking • Tenants"
+
+Scene 7 (30-34 sec): CRM visuals — handshake, client meeting, communication. Text: "CRM & Sales" with bullets "Contacts • Follow-ups • Email Clients"
+
+Scene 8 (34-39 sec): Inventory visuals — warehouse, stock tracking, fleet vehicles. Text: "Inventory, Fleet & Assets" with bullets "Stock • Procurement • Vehicles"
+
+Scene 9 (39-43 sec): Reports visuals — documents, charts, PDF export. Text: "Reports & Documents" with bullets "PDF Export • Audit Logs • Compliance"
+
+Scene 10 (43-47 sec): Security visuals — lock icon, role-based access grid. Text: "Role-Based Access" with bullets "8 Permission Levels • Data Security • Auto-Backup"
+
+Scene 11 (47-53 sec): MOBILE APP — person standing on a construction site using a smartphone, looking at a dashboard on the phone screen, smiling. Text: "Mobile App — Monitor From Anywhere" with bullets "Project Progress • Revenue & Invoices • Alerts • Works Offline"
+
+Scene 12 (53-60 sec): Three edition cards — Standard (silver), Premium (gold), Demo (purple). Text: "Choose Your Edition" with labels "Standard | Premium | Demo". Final frame: "BuildProp" large text, "Everything You Need. One Platform."
+
+MUSIC: Upbeat corporate electronic, building energy throughout, climactic at the end.
+
+TRANSITIONS: Smooth cross-fades between scenes, 0.5 second transitions.
+
+TEXT ANIMATIONS: Clean fade-in from bottom, professional sans-serif typography, white text on dark backgrounds with orange accents.
+
+
+END OF PROMPT (stop copying here)
+-----------------------------------
+
+WHAT TO DO:
+1. Go to https://fliki.ai
+2. Sign up free
+3. Click "New File" → "Script to Video"
+4. Paste the prompt above
+5. Click Generate
+6. Wait for the video to process
+7. Download as MP4

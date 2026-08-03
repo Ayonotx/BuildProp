@@ -41,3 +41,16 @@ electron/resources/node.exe
 mobile/.expo/
 *.tsbuildinfo
 electron/.env.demo
+
+mobile/buildprop-release.keystore
+
+# Android build artifacts (mobile app)
+mobile/android/.gradle/
+mobile/android/build/
+mobile/android/app/build/
+mobile/android/capacitor-cordova-android-plugins/build/
+mobile/android/capacitor-cordova-android-plugins/src/main/libs/
+mobile/android/local.properties
+mobile/android/.idea/
+mobile/android/captures/
+mobile/android/*.iml

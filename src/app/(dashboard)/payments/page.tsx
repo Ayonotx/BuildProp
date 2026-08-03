@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useEffect, useState } from "react"
+import React, { use, useCallback, useEffect, useState } from "react"
 import { useCrud } from "@/hooks/use-crud"
 import { PageHeader } from "@/components/dashboard/page-header"
 import { StatsGrid } from "@/components/dashboard/stats-grid"
@@ -77,7 +77,11 @@ function downloadReceipt(p: Payment) {
   generateReceiptPDF(p, "BuildProp")
 }
 
-export default function PaymentsPage() {
+export default function PaymentsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
+}) {
   const [search, setSearch] = useState("")
   const [contacts, setContacts] = useState<any[]>([])
   const [invoices, setInvoices] = useState<InvoiceSummary[]>([])
@@ -119,11 +123,17 @@ export default function PaymentsPage() {
     },
   })
 
-  function openCreate() {
+  const openCreate = useCallback(() => {
     setEditingItem(null)
     setFormData(defaultForm)
     setShowModal(true)
-  }
+  }, [setEditingItem, setFormData, setShowModal])
+
+  const params = use(searchParams)
+
+  useEffect(() => {
+    if (params.new === "1") openCreate()
+  }, [params, openCreate])
 
   function openEdit(p: Payment) {
     setEditingItem(p)

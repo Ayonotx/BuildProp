@@ -3,7 +3,7 @@
 import React, { useEffect, useState, useCallback } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Save, Settings, Palette, Users, Shield, Download, Upload, RotateCcw, AlertTriangle, Database, Brain, Key, Eye, EyeOff, Zap, Check, X, Loader2, Pencil, Monitor, LogOut, RefreshCw } from "lucide-react"
+import { Save, Settings, Palette, Users, Shield, Download, Upload, RotateCcw, AlertTriangle, Database, Brain, Key, Eye, EyeOff, Zap, Check, X, Loader2, Pencil, Monitor, LogOut, RefreshCw, Mail, Send } from "lucide-react"
 import { AI_ENABLED, DEMO_MODE } from "@/lib/features"
 import { formatDate } from "@/lib/utils"
 
@@ -12,6 +12,7 @@ const tabs = [
   { id: "preferences", label: "Preferences", icon: Palette },
   { id: "users", label: "Users", icon: Users },
   { id: "security", label: "Security", icon: Shield },
+  { id: "email", label: "Email / SMTP", icon: Mail },
   { id: "backup", label: "Backup & Restore", icon: Database },
   ...(AI_ENABLED ? [{ id: "ai", label: "AI Configuration", icon: Brain }] : []),
 ]
@@ -83,6 +84,22 @@ export default function SettingsPage() {
     twoFactorEnabled: "false",
     sessionTimeout: "30",
   })
+
+  const [emailForm, setEmailForm] = useState({
+    host: "",
+    port: 465,
+    secure: true,
+    user: "",
+    password: "",
+    fromName: "",
+    fromEmail: "",
+  })
+  const [emailConfigured, setEmailConfigured] = useState(false)
+  const [emailSaving, setEmailSaving] = useState(false)
+  const [emailTesting, setEmailTesting] = useState(false)
+  const [emailMsg, setEmailMsg] = useState<{ ok: boolean; text: string } | null>(null)
+  const [showTestInput, setShowTestInput] = useState(false)
+  const [testEmailTo, setTestEmailTo] = useState("")
 
   const [dbUsers, setDbUsers] = useState<UserRecord[]>([])
   const [dbRoles, setDbRoles] = useState<RoleRecord[]>([])
@@ -349,6 +366,95 @@ export default function SettingsPage() {
     } finally {
       setDemoResetting(false)
     }
+  }
+
+  const fetchEmailSettings = useCallback(async () => {
+    try {
+      const res = await fetch("/api/email/settings")
+      const data = await res.json()
+      if (!data || data.error) return
+      setEmailForm({
+        host: data.host || "",
+        port: data.port || 465,
+        secure: data.secure ?? true,
+        user: data.user || "",
+        password: "",
+        fromName: data.fromName || "",
+        fromEmail: data.fromEmail || "",
+      })
+      setEmailConfigured(!!data.configured)
+    } catch {}
+  }, [])
+
+  useEffect(() => {
+    if (activeTab === "email") fetchEmailSettings()
+  }, [activeTab, fetchEmailSettings])
+
+  async function handleSaveEmail() {
+    if (!emailForm.host || !emailForm.fromEmail) {
+      setEmailMsg({ ok: false, text: "SMTP host and From email are required." })
+      return
+    }
+    setEmailSaving(true)
+    setEmailMsg(null)
+    try {
+      const res = await fetch("/api/email/settings", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          host: emailForm.host,
+          port: Number(emailForm.port) || (emailForm.secure ? 465 : 587),
+          secure: emailForm.secure,
+          user: emailForm.user,
+          password: emailForm.password,
+          fromName: emailForm.fromName,
+          fromEmail: emailForm.fromEmail,
+        }),
+      })
+      const data = await res.json()
+      if (res.ok && data.success) {
+        setEmailMsg({ ok: true, text: "Email settings saved successfully." })
+        setEmailConfigured(true)
+        setEmailForm(prev => ({ ...prev, password: "" }))
+      } else {
+        setEmailMsg({ ok: false, text: errMsg(data, "Failed to save email settings") })
+      }
+    } catch {
+      setEmailMsg({ ok: false, text: "Failed to save email settings" })
+    }
+    setEmailSaving(false)
+  }
+
+  async function handleSendTestEmail() {
+    if (!testEmailTo) {
+      setEmailMsg({ ok: false, text: "Please enter a destination email address." })
+      return
+    }
+    setEmailTesting(true)
+    setEmailMsg(null)
+    try {
+      const res = await fetch("/api/email/test", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ to: testEmailTo }),
+      })
+      const data = await res.json()
+      if (res.ok && data.success) {
+        setEmailMsg({ ok: true, text: `Test email sent to ${testEmailTo}.` })
+      } else {
+        setEmailMsg({ ok: false, text: errMsg(data, "Test email failed") })
+      }
+    } catch {
+      setEmailMsg({ ok: false, text: "Test email failed" })
+    }
+    setEmailTesting(false)
+  }
+
+  function toggleEmailSecure() {
+    setEmailForm(prev => {
+      const secure = !prev.secure
+      return { ...prev, secure, port: secure ? 465 : 587 }
+    })
   }
 
   const fetchBackups = useCallback(async () => {
@@ -768,6 +874,93 @@ export default function SettingsPage() {
             </CardContent>
           </Card>
         </div>
+      )}
+
+      {activeTab === "email" && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Mail className="h-5 w-5 text-blue-500" />
+              Email / SMTP Settings
+            </CardTitle>
+            <p className="text-sm text-slate-500">
+              Configure an SMTP account to send invoices, payment reminders, and quick messages to your contacts.
+            </p>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4 max-w-3xl">
+              {emailConfigured && (
+                <div className="rounded-lg bg-emerald-50 border border-emerald-200 p-3 text-sm text-emerald-800 flex items-center gap-2">
+                  <Check className="h-4 w-4" />
+                  SMTP account configured. Emails can be sent from the app.
+                </div>
+              )}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-medium text-slate-700 mb-1">SMTP Host *</label>
+                  <input type="text" value={emailForm.host} onChange={e => setEmailForm({ ...emailForm, host: e.target.value })} className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-orange-400" placeholder="smtp.gmail.com" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">Port</label>
+                  <input type="number" value={emailForm.port} onChange={e => setEmailForm({ ...emailForm, port: Number(e.target.value) || 0 })} className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-orange-400" />
+                </div>
+                <div className="flex items-end pb-2">
+                  <button type="button" onClick={toggleEmailSecure} className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${emailForm.secure ? "bg-orange-500" : "bg-slate-200"}`}>
+                    <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${emailForm.secure ? "translate-x-6" : "translate-x-1"}`} />
+                  </button>
+                  <span className="ml-3 text-sm text-slate-700">Use SSL/TLS (secure connection)</span>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">Username</label>
+                  <input type="text" value={emailForm.user} onChange={e => setEmailForm({ ...emailForm, user: e.target.value })} className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-orange-400" placeholder="you@example.com" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">Password</label>
+                  <input type="password" value={emailForm.password} onChange={e => setEmailForm({ ...emailForm, password: e.target.value })} className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-orange-400" placeholder="Leave blank to keep existing" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">From Name</label>
+                  <input type="text" value={emailForm.fromName} onChange={e => setEmailForm({ ...emailForm, fromName: e.target.value })} className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-orange-400" placeholder="BuildProp" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">From Email *</label>
+                  <input type="email" value={emailForm.fromEmail} onChange={e => setEmailForm({ ...emailForm, fromEmail: e.target.value })} className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-orange-400" placeholder="noreply@example.com" />
+                </div>
+              </div>
+              <div className="flex flex-wrap items-center gap-3">
+                <Button onClick={handleSaveEmail} disabled={emailSaving}>
+                  <Save className="h-4 w-4 mr-2" />
+                  {emailSaving ? "Saving..." : "Save Email Settings"}
+                </Button>
+                <Button variant="outline" onClick={() => setShowTestInput(v => !v)} disabled={!emailConfigured}>
+                  <Send className="h-4 w-4 mr-2" />
+                  Send Test Email
+                </Button>
+              </div>
+              {showTestInput && (
+                <div className="flex items-center gap-3 p-3 bg-slate-50 rounded-xl max-w-lg">
+                  <input
+                    type="email"
+                    value={testEmailTo}
+                    onChange={e => setTestEmailTo(e.target.value)}
+                    placeholder="recipient@example.com"
+                    className="flex-1 rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-orange-400"
+                  />
+                  <Button onClick={handleSendTestEmail} disabled={emailTesting} size="sm">
+                    {emailTesting ? <Loader2 className="h-4 w-4 animate-spin mr-1" /> : <Send className="h-4 w-4 mr-1" />}
+                    Send
+                  </Button>
+                </div>
+              )}
+              {emailMsg && (
+                <div className={`rounded-lg border p-3 text-sm ${emailMsg.ok ? "bg-emerald-50 border-emerald-200 text-emerald-800" : "bg-red-50 border-red-200 text-red-800"}`}>
+                  {emailMsg.ok ? <Check className="h-4 w-4 inline mr-1" /> : <X className="h-4 w-4 inline mr-1" />}
+                  {emailMsg.text}
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
       )}
 
       {activeTab === "backup" && (

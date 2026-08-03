@@ -1,0 +1,407 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BuildProp - Product Ad</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;height:100%;overflow:hidden;font-family:'Inter',sans-serif;background:#0f172a}
+.pres{width:100vw;height:100vh;position:relative}
+.s{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;transition:opacity 0.8s ease;pointer-events:none;padding:60px 80px}
+.s.on{opacity:1;pointer-events:auto}
+.sb{position:absolute;inset:0;z-index:0}
+.sc{position:relative;z-index:1;width:100%;max-width:1200px}
+@keyframes fu{from{opacity:0;transform:translateY(40px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fl{from{opacity:0;transform:translateX(-50px)}to{opacity:1;transform:translateX(0)}}
+@keyframes fr{from{opacity:0;transform:translateX(50px)}to{opacity:1;transform:translateX(0)}}
+@keyframes si{from{opacity:0;transform:scale(0.85)}to{opacity:1;transform:scale(1)}}
+@keyframes sd{from{opacity:0;transform:translateY(-25px)}to{opacity:1;transform:translateY(0)}}
+@keyframes gl{0%,100%{box-shadow:0 0 20px rgba(249,115,22,0.3)}50%{box-shadow:0 0 40px rgba(249,115,22,0.6)}}
+@keyframes pu{0%,100%{transform:scale(1)}50%{transform:scale(1.04)}}
+@keyframes su{from{opacity:0;transform:translateY(50px)}to{opacity:1;transform:translateY(0)}}
+@keyframes dp{0%,100%{opacity:.3}50%{opacity:1}}
+@keyframes gr{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+.s.on .au{animation:fu .8s ease-out forwards}
+.s.on .al{animation:fl .8s ease-out forwards}
+.s.on .ar{animation:fr .8s ease-out forwards}
+.s.on .as{animation:si .8s ease-out forwards}
+.s.on .ad{animation:sd .8s ease-out forwards}
+.s.on .ap{animation:pu 2.5s ease-in-out infinite}
+.s.on .ag{animation:gl 2s ease-in-out infinite}
+.d1{animation-delay:.2s!important}.d2{animation-delay:.4s!important}.d3{animation-delay:.6s!important}.d4{animation-delay:.8s!important}.d5{animation-delay:1s!important}.d6{animation-delay:1.2s!important}
+
+/* SCENES */
+.sb1{background:linear-gradient(135deg,#0f172a,#1e293b 50%,#0f172a)}
+.sb1::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 40%,rgba(249,115,22,.08),transparent 70%)}
+.grid-bg{position:absolute;inset:0;background-image:linear-gradient(rgba(249,115,22,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(249,115,22,.03) 1px,transparent 1px);background-size:60px 60px}
+.corner{position:absolute;width:100px;height:100px;border:2px solid rgba(249,115,22,.15)}
+.corner.tl{top:25px;left:25px;border-right:none;border-bottom:none}
+.corner.tr{top:25px;right:25px;border-left:none;border-bottom:none}
+.corner.bl{bottom:25px;left:25px;border-right:none;border-top:none}
+.corner.br{bottom:25px;right:25px;border-left:none;border-top:none}
+.logo{font-size:68px;font-weight:900;color:#fff;letter-spacing:-2px;text-align:center}
+.logo em{color:#f97316;font-style:normal}
+.tag{font-size:20px;color:#94a3b8;font-weight:300;margin-top:14px;text-align:center;letter-spacing:4px;text-transform:uppercase}
+.sub{font-size:15px;color:#64748b;margin-top:20px;text-align:center;max-width:520px;line-height:1.6}
+.dots{display:flex;gap:8px;margin-top:24px}
+.dot{width:8px;height:8px;border-radius:50%;background:#f97316;opacity:.3;animation:dp 2s ease-in-out infinite}
+.dot:nth-child(2){animation-delay:.3s}.dot:nth-child(3){animation-delay:.6s}
+
+/* Scene 2 */
+.sb2{background:linear-gradient(135deg,#0f172a,#1a1a2e)}
+.s2t{font-size:42px;font-weight:800;color:#fff;text-align:center;line-height:1.2}
+.s2t em{color:#f97316;font-style:normal}
+.s2s{font-size:17px;color:#94a3b8;text-align:center;margin-top:14px;line-height:1.6}
+.prob-grid{display:flex;gap:20px;margin-top:44px;justify-content:center;flex-wrap:wrap}
+.prob{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);border-radius:14px;padding:22px 24px;text-align:center;width:180px;opacity:0;transform:translateY(25px)}
+.s.on .prob{animation:su .6s ease-out forwards}
+.s.on .prob:nth-child(1){animation-delay:.4s}
+.s.on .prob:nth-child(2){animation-delay:.55s}
+.s.on .prob:nth-child(3){animation-delay:.7s}
+.s.on .prob:nth-child(4){animation-delay:.85s}
+.prob .pi{font-size:32px;margin-bottom:10px}
+.prob .pl{font-size:13px;color:#fca5a5;font-weight:600}
+
+/* Scene 3 */
+.sb3{background:linear-gradient(135deg,#0f172a,#1e293b)}
+.sb3::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 50%,rgba(249,115,22,.06),transparent 60%)}
+.badge{display:inline-flex;align-items:center;gap:8px;background:rgba(249,115,22,.1);border:1px solid rgba(249,115,22,.3);border-radius:100px;padding:7px 18px;font-size:12px;color:#f97316;font-weight:600;letter-spacing:1px;text-transform:uppercase}
+.s3t{font-size:50px;font-weight:900;color:#fff;margin-top:18px;line-height:1.1}
+.s3t em{color:#f97316;font-style:normal}
+.s3d{font-size:16px;color:#94a3b8;margin-top:14px;max-width:580px;line-height:1.7}
+.dash{margin-top:36px;background:#1e293b;border:1px solid #334155;border-radius:14px;overflow:hidden;width:100%;max-width:860px;opacity:0;transform:scale(.92);box-shadow:0 20px 50px rgba(0,0,0,.4)}
+.s.on .dash{animation:si .8s ease-out .6s forwards}
+.dtop{background:#334155;padding:10px 18px;display:flex;align-items:center;gap:7px}
+.ddot{width:11px;height:11px;border-radius:50%}
+.ddot.r{background:#ef4444}.ddot.y{background:#eab308}.ddot.g{background:#22c55e}
+.dtop span{font-size:10px;color:#64748b;margin-left:6px}
+.dbody{display:grid;grid-template-columns:180px 1fr;min-height:240px}
+.dside{background:rgba(15,23,42,.5);padding:14px;border-right:1px solid #334155}
+.dnav{display:flex;flex-direction:column;gap:5px}
+.dnavi{padding:7px 10px;border-radius:7px;font-size:10px;color:#64748b;display:flex;align-items:center;gap:7px}
+.dnavi.ac{background:rgba(249,115,22,.15);color:#f97316}
+.dnavi .nd{width:5px;height:5px;border-radius:50%;background:currentColor;opacity:.5}
+.dmain{padding:18px}
+.dhdr{font-size:13px;font-weight:700;color:#fff;margin-bottom:14px}
+.dkpi{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+.kpi{background:rgba(30,41,59,.8);border:1px solid #334155;border-radius:9px;padding:11px}
+.kpi .v{font-size:16px;font-weight:800;color:#fff}
+.kpi .l{font-size:9px;color:#64748b;margin-top:2px}
+.kpi.or .v{color:#f97316}.kpi.gr .v{color:#10b981}.kpi.pu .v{color:#a78bfa}
+.dchart{background:rgba(30,41,59,.5);border:1px solid #334155;border-radius:9px;padding:10px;height:90px;display:flex;align-items:flex-end;gap:5px;position:relative;padding-top:35px}
+.dchart span{position:absolute;top:7px;left:10px;font-size:9px;color:#64748b;font-weight:600}
+.bar{flex:1;border-radius:3px 3px 0 0;background:#334155}
+
+/* Scene 4 */
+.sb4{background:linear-gradient(135deg,#0f172a,#1e293b)}
+.s4t{font-size:38px;font-weight:800;color:#fff;text-align:center}
+.s4t em{color:#f97316;font-style:normal}
+.fgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:36px}
+.fcard{background:linear-gradient(135deg,rgba(30,41,59,.8),rgba(15,23,42,.9));border:1px solid #334155;border-radius:18px;padding:28px 24px;text-align:center;opacity:0;transform:translateY(35px)}
+.s.on .fcard{animation:su .7s ease-out forwards}
+.s.on .fcard:nth-child(1){animation-delay:.3s}
+.s.on .fcard:nth-child(2){animation-delay:.5s}
+.s.on .fcard:nth-child(3){animation-delay:.7s}
+.ficon{width:54px;height:54px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:26px;margin:0 auto 14px}
+.ficon.o{background:rgba(249,115,22,.12)}.ficon.g{background:rgba(16,185,129,.12)}.ficon.p{background:rgba(139,92,246,.12)}
+.fcard h3{font-size:17px;font-weight:700;color:#fff;margin-bottom:6px}
+.fcard>p{font-size:12px;color:#94a3b8;line-height:1.5}
+.flist{display:flex;flex-direction:column;gap:5px;margin-top:12px}
+.flist span{font-size:11px;color:#64748b;display:flex;align-items:center;gap:6px;justify-content:center}
+.flist span::before{content:'✓';color:#10b981;font-weight:700;font-size:11px}
+
+/* Scene 5 */
+.sb5{background:linear-gradient(135deg,#0f172a,#1a1025 50%,#0f172a)}
+.sb5::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 30%,rgba(139,92,246,.08),transparent 60%)}
+.s5b{display:inline-flex;align-items:center;gap:8px;background:rgba(139,92,246,.1);border:1px solid rgba(139,92,246,.3);border-radius:100px;padding:7px 18px;font-size:12px;color:#a78bfa;font-weight:600;letter-spacing:1px;text-transform:uppercase}
+.s5t{font-size:44px;font-weight:900;color:#fff;margin-top:18px;line-height:1.1}
+.s5t em{color:#a78bfa;font-style:normal}
+.s5cols{display:grid;grid-template-columns:1fr 1fr;gap:36px;margin-top:32px;align-items:start}
+.s5left>p{font-size:15px;color:#94a3b8;line-height:1.7;margin-bottom:22px}
+.s5feat{display:flex;align-items:flex-start;gap:12px;margin-bottom:18px;opacity:0;transform:translateX(-30px)}
+.s.on .s5feat{animation:fl .6s ease-out forwards}
+.s.on .s5feat:nth-child(2){animation-delay:.4s}
+.s.on .s5feat:nth-child(3){animation-delay:.6s}
+.s.on .s5feat:nth-child(4){animation-delay:.8s}
+.sficon{width:42px;height:42px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.sficon.gq{background:rgba(249,115,22,.12)}.sficon.ol{background:rgba(16,185,129,.12)}.sficon.in{background:rgba(139,92,246,.12)}
+.sft h4{font-size:13px;font-weight:700;color:#fff}
+.sft p{font-size:11px;color:#64748b;margin-top:2px}
+.chat{background:#1e293b;border:1px solid #334155;border-radius:14px;overflow:hidden;box-shadow:0 18px 45px rgba(0,0,0,.3);opacity:0;transform:scale(.9);max-width:380px;justify-self:end}
+.s.on .chat{animation:si .8s ease-out .5s forwards}
+.ch{background:#334155;padding:11px 14px;display:flex;align-items:center;gap:9px;border-bottom:1px solid #334155}
+.ch .av{width:30px;height:30px;border-radius:50%;background:#8b5cf6;display:flex;align-items:center;justify-content:center;font-size:13px}
+.ch .nm{font-size:12px;font-weight:600;color:#fff}
+.ch .st{font-size:9px;color:#10b981}
+.cb{padding:14px;display:flex;flex-direction:column;gap:9px;min-height:180px}
+.msg{max-width:85%;padding:9px 12px;border-radius:11px;font-size:11px;line-height:1.5}
+.msg.u{background:#f97316;color:#fff;align-self:flex-end;border-bottom-right-radius:3px}
+.msg.a{background:#334155;color:#cbd5e1;align-self:flex-start;border-bottom-left-radius:3px}
+.msg.a .ml{font-size:8px;color:#a78bfa;font-weight:600;margin-bottom:3px}
+.cinp{padding:10px 14px;border-top:1px solid #334155;display:flex;gap:7px}
+.cinp span{flex:1;background:#0f172a;border:1px solid #334155;border-radius:7px;padding:7px 10px;font-size:10px;color:#64748b}
+.cinp .snd{width:28px;height:28px;border-radius:7px;background:#8b5cf6;display:flex;align-items:center;justify-content:center;font-size:12px;color:#fff}
+
+/* Scene 6 */
+.sb6{background:linear-gradient(135deg,#0f172a,#1e293b)}
+.s6t{font-size:38px;font-weight:800;color:#fff;text-align:center}
+.s6t em{color:#f97316;font-style:normal}
+.s6s{font-size:15px;color:#94a3b8;text-align:center;margin-top:6px}
+.s6grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:32px}
+.ecard{border-radius:18px;padding:28px 22px;text-align:center;opacity:0;transform:translateY(35px);position:relative;overflow:hidden}
+.s.on .ecard{animation:su .7s ease-out forwards}
+.s.on .ecard:nth-child(1){animation-delay:.3s}
+.s.on .ecard:nth-child(2){animation-delay:.5s}
+.s.on .ecard:nth-child(3){animation-delay:.7s}
+.ecard.std{background:linear-gradient(135deg,#1e293b,#0f172a);border:1px solid #334155}
+.ecard.prm{background:linear-gradient(135deg,rgba(249,115,22,.08),rgba(249,115,22,.02));border:2px solid #f97316;transform:scale(1.02)}
+.s.on .ecard.prm{animation:su .7s ease-out .5s forwards}
+.ecard.prm .etag{position:absolute;top:10px;right:-26px;background:#f97316;color:#fff;font-size:9px;font-weight:700;padding:3px 28px;transform:rotate(45deg);text-transform:uppercase;letter-spacing:1px}
+.ecard.dem{background:linear-gradient(135deg,rgba(139,92,246,.08),rgba(139,92,246,.02));border:1px solid rgba(139,92,246,.3)}
+.ecard h3{font-size:20px;font-weight:800;color:#fff;margin-bottom:3px}
+.ecard .ep{font-size:12px;color:#64748b;margin-bottom:14px}
+.elist{display:flex;flex-direction:column;gap:6px;text-align:left}
+.elist span{font-size:11px;color:#94a3b8;display:flex;align-items:center;gap:7px}
+.elist span::before{content:'✓';font-weight:700;font-size:10px;width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ecard.std .elist span::before{background:rgba(100,116,139,.2);color:#94a3b8}
+.ecard.prm .elist span::before{background:rgba(249,115,22,.15);color:#f97316}
+.ecard.dem .elist span::before{background:rgba(139,92,246,.15);color:#a78bfa}
+
+/* Scene 7 */
+.sb7{background:linear-gradient(135deg,#0f172a,#0a1628)}
+.sb7::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 60% 40%,rgba(16,185,129,.06),transparent 60%)}
+.s7row{display:flex;gap:56px;align-items:center;width:100%}
+.s7l{flex:1}
+.flag{display:flex;gap:3px;margin-bottom:18px}
+.flag div{height:7px;border-radius:3px}
+.flag .r{width:45px;background:#ce1126}.flag .y{width:45px;background:#fcd116}.flag .g{width:45px;background:#006b3f}
+.s7t{font-size:42px;font-weight:900;color:#fff;line-height:1.1}
+.s7t em{color:#10b981;font-style:normal}
+.s7d{font-size:15px;color:#94a3b8;margin-top:14px;line-height:1.7}
+.s7r{flex:1;display:flex;flex-direction:column;gap:14px}
+.s7i{display:flex;align-items:center;gap:14px;background:rgba(30,41,59,.6);border:1px solid #334155;border-radius:12px;padding:16px 18px;opacity:0;transform:translateX(35px)}
+.s.on .s7i{animation:fr .6s ease-out forwards}
+.s.on .s7i:nth-child(1){animation-delay:.3s}
+.s.on .s7i:nth-child(2){animation-delay:.5s}
+.s.on .s7i:nth-child(3){animation-delay:.7s}
+.s.on .s7i:nth-child(4){animation-delay:.9s}
+.s7i .ic{font-size:24px;width:44px;height:44px;border-radius:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.s7i .ic.gh{background:rgba(16,185,129,.12)}.s7i .ic.br{background:rgba(249,115,22,.12)}.s7i .ic.ss{background:rgba(139,92,246,.12)}.s7i .ic.of{background:rgba(59,130,246,.12)}
+.s7i h4{font-size:13px;font-weight:700;color:#fff}
+.s7i p{font-size:11px;color:#64748b;margin-top:1px}
+
+/* Scene 8 */
+.sb8{background:linear-gradient(135deg,#0f172a,#1e293b 50%,#0f172a)}
+.sb8::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 50%,rgba(249,115,22,.06),transparent 60%)}
+.s8c{text-align:center}
+.cta{display:inline-flex;align-items:center;gap:10px;background:#f97316;color:#fff;padding:14px 36px;border-radius:12px;font-size:17px;font-weight:700;margin-top:28px;box-shadow:0 8px 28px rgba(249,115,22,.3);animation:gl 2s ease-in-out infinite}
+.s8det{display:flex;gap:36px;justify-content:center;margin-top:32px}
+.s8det span{font-size:13px;color:#94a3b8;display:flex;align-items:center;gap:7px}
+.s8det .sdot{width:5px;height:5px;border-radius:50%;background:#f97316}
+.s8tag{font-size:12px;color:#64748b;margin-top:36px;letter-spacing:3px;text-transform:uppercase}
+
+/* Progress */
+.prog{position:fixed;bottom:0;left:0;height:3px;background:#f97316;z-index:100;transition:width .3s}
+.ctrl{position:fixed;bottom:18px;right:22px;display:flex;gap:7px;z-index:100}
+.ctrl button{width:34px;height:34px;border-radius:50%;border:1px solid #334155;background:#1e293b;color:#94a3b8;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.ctrl button:hover{border-color:#f97316;color:#f97316}
+.cnt{position:fixed;bottom:22px;left:22px;font-size:11px;color:#64748b;z-index:100;font-weight:500}
+</style>
+</head>
+<body>
+<div class="pres">
+
+<!-- S1: OPENING -->
+<section class="s on" id="s1">
+<div class="sb sb1"><div class="grid-bg"></div>
+<div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
+</div>
+<div class="sc" style="text-align:center">
+<div class="as" style="opacity:0">
+<div class="logo">Build<em>Prop</em></div>
+<div class="tag">Construction &amp; Real Estate Management</div>
+<div class="sub">The all-in-one platform built for modern construction companies and real estate developers</div>
+<div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+</div></div></section>
+
+<!-- S2: PROBLEM -->
+<section class="s" id="s2">
+<div class="sb sb2"></div>
+<div class="sc">
+<div class="au" style="opacity:0">
+<div class="s2t">Managing Projects <em>Shouldn't Be This Hard</em></div>
+<div class="s2s">Scattered spreadsheets, missed deadlines, and invisible cash flow<br>are costing you money every single day.</div>
+</div>
+<div class="prob-grid">
+<div class="prob"><div class="pi">📋</div><div class="pl">Manual Tracking</div></div>
+<div class="prob"><div class="pi">💸</div><div class="pl">Lost Invoices</div></div>
+<div class="prob"><div class="pi">⏰</div><div class="pl">Missed Deadlines</div></div>
+<div class="prob"><div class="pi">🔇</div><div class="pl">No Real-Time Data</div></div>
+</div></div></section>
+
+<!-- S3: SOLUTION -->
+<section class="s" id="s3">
+<div class="sb sb3"></div>
+<div class="sc">
+<div style="text-align:left">
+<div class="ad badge" style="opacity:0">🚀 Introducing</div>
+<div class="au s3t" style="opacity:0">One Platform.<br><em>Everything Connected.</em></div>
+<div class="au d2 s3d" style="opacity:0">Projects, finances, HR, CRM, and AI — all working together in a single dashboard built for your business.</div>
+</div>
+<div class="dash">
+<div class="dtop"><div class="ddot r"></div><div class="ddot y"></div><div class="ddot g"></div><span>BuildProp Dashboard</span></div>
+<div class="dbody">
+<div class="dside"><div class="dnav">
+<div class="dnavi ac"><div class="nd"></div>Dashboard</div>
+<div class="dnavi"><div class="nd"></div>Projects</div>
+<div class="dnavi"><div class="nd"></div>Properties</div>
+<div class="dnavi"><div class="nd"></div>Invoices</div>
+<div class="dnavi"><div class="nd"></div>HR &amp; Payroll</div>
+<div class="dnavi"><div class="nd"></div>AI &amp; Automation</div>
+</div></div>
+<div class="dmain">
+<div class="dhdr">Good morning, John 👋</div>
+<div class="dkpi">
+<div class="kpi or"><div class="v">6</div><div class="l">Active Projects</div></div>
+<div class="kpi gr"><div class="v">GH₵501K</div><div class="l">Total Revenue</div></div>
+<div class="kpi pu"><div class="v">8</div><div class="l">Properties</div></div>
+<div class="kpi"><div class="v">92%</div><div class="l">On-Time Tasks</div></div>
+</div>
+<div class="dchart"><span>Monthly Revenue (GH₵)</span>
+<div class="bar" style="height:30%"></div><div class="bar" style="height:45%"></div><div class="bar" style="height:35%"></div><div class="bar" style="height:60%"></div><div class="bar" style="height:55%;background:#ea580c"></div><div class="bar" style="height:75%;background:#f97316"></div><div class="bar" style="height:70%;background:#f97316"></div><div class="bar" style="height:85%;background:#f97316"></div><div class="bar" style="height:80%;background:#f97316"></div><div class="bar" style="height:95%;background:#fb923c"></div><div class="bar" style="height:90%;background:#fb923c"></div><div class="bar" style="height:100%;background:#f97316"></div>
+</div></div></div></div></div></section>
+
+<!-- S4: FEATURES -->
+<section class="s" id="s4">
+<div class="sb sb4"></div>
+<div class="sc">
+<div class="au" style="opacity:0;text-align:center"><div class="s4t">Everything You Need. <em>Nothing You Don't.</em></div></div>
+<div class="fgrid">
+<div class="fcard">
+<div class="ficon o">📊</div>
+<h3>Project Management</h3>
+<p>Track milestones, tasks, budgets and timelines across every project.</p>
+<div class="flist"><span>Milestone tracking</span><span>Budget vs actual costs</span><span>Multi-project dashboards</span><span>PDF report export</span></div>
+</div>
+<div class="fcard">
+<div class="ficon g">💰</div>
+<h3>Finance &amp; Accounting</h3>
+<p>Complete financial control from invoicing to P&amp;L statements.</p>
+<div class="flist"><span>Invoicing &amp; payments</span><span>P&amp;L statements</span><span>A/R aging reports</span><span>GHS currency native</span></div>
+</div>
+<div class="fcard">
+<div class="ficon p">👥</div>
+<h3>People &amp; Operations</h3>
+<p>Manage your team, equipment, procurement and fleet — all in one place.</p>
+<div class="flist"><span>HR &amp; payroll (SSNIT)</span><span>Task assignments</span><span>Inventory tracking</span><span>Equipment &amp; fleet</span></div>
+</div>
+</div></div></section>
+
+<!-- S5: AI -->
+<section class="s" id="s5">
+<div class="sb sb5"></div>
+<div class="sc">
+<div style="text-align:left">
+<div class="ad s5b" style="opacity:0">🤖 AI-Powered</div>
+<div class="au s5t" style="opacity:0">Intelligence That<br><em>Never Sleeps</em></div>
+</div>
+<div class="s5cols">
+<div class="s5left">
+<p class="au d2" style="opacity:0">Ask questions in plain English. Get instant answers about your projects, finances, and operations.</p>
+<div class="s5feat"><div class="sficon gq">⚡</div><div class="sft"><h4>Groq Cloud — Ultra-Fast</h4><p>Millisecond responses powered by Groq's LPU inference</p></div></div>
+<div class="s5feat"><div class="sficon ol">🔒</div><div class="sft"><h4>Ollama Local — Offline Mode</h4><p>Full AI works without internet. Your data never leaves your computer.</p></div></div>
+<div class="s5feat"><div class="sficon in">🧠</div><div class="sft"><h4>Smart Insights &amp; Automation</h4><p>Budget alerts, risk detection, automated reporting</p></div></div>
+</div>
+<div class="chat">
+<div class="ch"><div class="av">🤖</div><div><div class="nm">BuildProp AI</div><div class="st">● Online</div></div></div>
+<div class="cb">
+<div class="msg u">How many projects are active?</div>
+<div class="msg a"><div class="ml">✨ AI Assistant</div>You have 6 active projects. Ocean View Estates is leading with GH₵501,750 in revenue. 3 projects are on track, 1 needs attention.</div>
+<div class="msg u">Any budget risks?</div>
+<div class="msg a"><div class="ml">✨ AI Assistant</div>Yes — Downtown Plaza and Hilltop Commercial are at risk of budget overrun. I recommend reviewing their cost reports.</div>
+</div>
+<div class="cinp"><span>Ask about your business...</span><div class="snd">→</div></div>
+</div>
+</div></div></section>
+
+<!-- S6: EDITIONS -->
+<section class="s" id="s6">
+<div class="sb sb6"></div>
+<div class="sc">
+<div class="au" style="opacity:0;text-align:center"><div class="s6t">Choose Your <em>Edition</em></div><div class="s6s">From essential tools to full AI-powered automation</div></div>
+<div class="s6grid">
+<div class="ecard std">
+<h3>Standard</h3><div class="ep">Core Features</div>
+<div class="elist"><span>Project management</span><span>Finance &amp; accounting</span><span>HR &amp; payroll</span><span>CRM &amp; documents</span><span>PDF export</span><span>Role-based access</span><span>Auto-backup</span></div>
+</div>
+<div class="ecard prm">
+<div class="etag">Popular</div>
+<h3>Premium</h3><div class="ep">Full AI Suite</div>
+<div class="elist"><span>Everything in Standard</span><span>AI chat assistant</span><span>Groq cloud (instant)</span><span>Ollama offline mode</span><span>Smart insights</span><span>Predictive analytics</span><span>Workflow automation</span></div>
+</div>
+<div class="ecard dem">
+<h3>Demo</h3><div class="ep">Try Before You Buy</div>
+<div class="elist"><span>Full Premium features</span><span>Realistic sample data</span><span>6 projects pre-loaded</span><span>Ghanaian construction data</span><span>One-click reset</span><span>Zero-risk exploration</span><span>See it to believe it</span></div>
+</div>
+</div></div></section>
+
+<!-- S7: GHANA -->
+<section class="s" id="s7">
+<div class="sb sb7"></div>
+<div class="sc">
+<div class="s7row">
+<div class="s7l">
+<div class="au" style="opacity:0"><div class="flag"><div class="r"></div><div class="y"></div><div class="g"></div></div></div>
+<div class="au" style="opacity:0"><div class="s7t">Built for <em>Ghana</em></div><div class="s7d">Designed from the ground up for the Ghanaian construction and real estate industry. Local currency, local compliance, local everything.</div></div>
+</div>
+<div class="s7r">
+<div class="s7i"><div class="ic gh">₵</div><div><h4>GHS Currency Native</h4><p>All financials in Ghana Cedis — no conversions, no confusion</p></div></div>
+<div class="s7i"><div class="ic br">🏢</div><div><h4>Multi-Branch Support</h4><p>Manage Accra, Kumasi, Takoradi from one dashboard</p></div></div>
+<div class="s7i"><div class="ic ss">📋</div><div><h4>SSNIT &amp; PAYE Compliance</h4><p>Payroll that follows Ghana's tax and social security rules</p></div></div>
+<div class="s7i"><div class="ic of">🌍</div><div><h4>Works Offline</h4><p>Full functionality without internet — powered by Ollama AI</p></div></div>
+</div>
+</div></div></section>
+
+<!-- S8: CTA -->
+<section class="s" id="s8">
+<div class="sb sb8"></div>
+<div class="sc">
+<div class="s8c">
+<div class="as" style="opacity:0"><div class="logo">Build<em>Prop</em></div></div>
+<div class="au d2" style="opacity:0"><div class="s7t" style="text-align:center">Start Managing <em style="color:#f97316">Smarter</em></div></div>
+<div class="au d3" style="opacity:0"><div class="cta">Get Started Today →</div></div>
+<div class="au d4" style="opacity:0">
+<div class="s8det">
+<span><div class="sdot"></div>www.buildprop.com</span>
+<span><div class="sdot"></div>info@buildprop.com</span>
+<span><div class="sdot"></div>Available on Windows</span>
+</div>
+<div class="s8tag">Construction &amp; Real Estate Management Platform</div>
+</div>
+</div></div></section>
+
+</div>
+
+<div class="prog" id="prog"></div>
+<div class="cnt" id="cnt">1 / 8</div>
+<div class="ctrl">
+<button onclick="prev()" title="Previous">◀</button>
+<button onclick="tp()" id="pb" title="Pause/Play">❚❚</button>
+<button onclick="next()" title="Next">▶</button>
+</div>
+
+<script>
+var ss=document.querySelectorAll('.s'),T=ss.length,c=0,tm=null,ps=false,dur=7500,
+pg=document.getElementById('prog'),cn=document.getElementById('cnt');
+function go(i){ss[c].classList.remove('on');c=((i%T)+T)%T;ss[c].classList.add('on');pg.style.width=((c+1)/T*100)+'%';cn.textContent=(c+1)+' / '+T}
+function next(){go(c+1)}function prev(){go(c-1)}
+function tp(){ps=!ps;document.getElementById('pb').textContent=ps?'▶':'❚❚';if(!ps)st();else clearInterval(tm)}
+function st(){clearInterval(tm);tm=setInterval(function(){if(!ps)next()},dur)}
+go(0);st();
+document.addEventListener('keydown',function(e){if(e.key==='ArrowRight')next();if(e.key==='ArrowLeft')prev();if(e.key===' '){e.preventDefault();tp()}});
+</script>
+</body>
+</html>

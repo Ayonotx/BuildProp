@@ -1,0 +1,76 @@
+﻿INVIDEO AI — Complete Video Prompt
+==================================
+
+Go to: https://invideo.io
+Sign up (free) → Click "AI Video" → Paste EVERYTHING below into the prompt box → Click Generate → Download your video.
+
+
+THE PROMPT (copy everything below this line):
+-----------------------------------------------
+
+Create a 60-second professional corporate product advertisement video for "BuildProp" — a construction and real estate management software platform built for the Ghanaian market.
+
+STYLE: Modern corporate tech ad. Dark navy blue and orange color scheme. Clean, minimal, professional. Think Stripe or Notion product videos. Smooth transitions between scenes. Upbeat corporate electronic background music.
+
+VOICEOVER: Use a professional male voice with a confident, warm, African English accent. Narrate the following script throughout the video:
+
+VOICEOVER SCRIPT:
+"Managing construction projects shouldn't be this hard. Scattered spreadsheets, missed deadlines, and invisible cash flow are costing you money every single day.
+
+Introducing BuildProp — the all-in-one platform for construction and real estate management.
+
+Track every project. Control every dollar. Manage every person. From milestones and budgets to invoicing, payroll, and HR — everything connected in one powerful dashboard.
+
+And with built-in AI, you can ask questions in plain English and get instant answers about your projects, finances, and operations — even when you're offline.
+
+Choose from three editions. Standard for core features. Premium with full AI intelligence. Or try the Demo with realistic sample data before you buy.
+
+Built for Ghana — GHS currency, multi-branch support across Accra, Kumasi, and Takoradi, SSNIT compliance, and full offline capability.
+
+BuildProp. Start managing smarter."
+
+SCENE BREAKDOWN (show these visuals during the narration):
+
+Scene 1 (0-7 seconds): Show construction sites, cranes, modern buildings being built. Golden hour lighting. Camera moving through steel beams. Text overlay: "BuildProp" in large white text with orange accent, subtitle "Construction & Real Estate Management Platform"
+
+Scene 2 (7-14 seconds): Show a frustrated office worker at a messy desk with papers everywhere, multiple old monitors, chaotic energy. Dramatic lighting. Text overlay: "Managing Projects Shouldn't Be This Hard"
+
+Scene 3 (14-22 seconds): Show a sleek modern laptop or tablet opening to reveal a clean dashboard interface with charts, KPIs, and project data. Orange and blue UI elements. Text overlay: "One Platform. Everything Connected."
+
+Scene 4 (22-30 seconds): Split into three quick shots: (1) Construction site aerial view with workers reviewing plans on tablet — text "Project Management" (2) Hands counting Ghana Cedis currency at a modern desk — text "Finance & Accounting" (3) Diverse team meeting in modern conference room — text "People & Operations"
+
+Scene 5 (30-40 seconds): Show futuristic AI visualization — glowing neural network, holographic brain, or person chatting with an AI on a laptop screen. Purple and blue tech aesthetic. Text overlay: "AI Intelligence That Never Sleeps" with smaller text "Groq Cloud • Ollama Offline • Smart Insights"
+
+Scene 6 (40-48 seconds): Show three product boxes or cards side by side on dark surface with dramatic spotlighting — silver, gold/orange, and purple. Text overlay: "Choose Your Edition" with labels "Standard | Premium | Demo"
+
+Scene 7 (48-54 seconds): Show beautiful aerial shot of Accra skyline at golden hour, Ghanaian flags, modern buildings. Text overlay: "Built for Ghana" with bullet points "GHS Currency • Multi-Branch • SSNIT Compliance • Works Offline"
+
+Scene 8 (54-60 seconds): Show modern glass building at sunset, camera pulling back. Text overlay: "BuildProp" in large text, "Start Managing Smarter" below, and "www.buildprop.com" at the bottom. Orange glow effect on the text.
+
+ADDITIONAL SETTINGS:
+- Aspect ratio: 16:9 (landscape, YouTube style)
+- Duration: 60 seconds
+- Music: Upbeat corporate tech background music, building energy throughout
+- Transitions: Smooth cross-fades between scenes
+- Text animations: Clean fade-in, professional typography
+- Overall mood: Confident, modern, trustworthy, innovative
+
+
+END OF PROMPT (stop copying here)
+-----------------------------------
+
+
+WHAT TO DO:
+1. Go to https://invideo.io
+2. Sign up free (Google login works)
+3. Click "AI Video" or "Create New Video"
+4. Paste the prompt above
+5. Click "Generate" or "Create"
+6. Wait 2-5 minutes for the video to generate
+7. Download as MP4
+
+NOTE: The free tier adds a small watermark. To remove it you'd need to upgrade, but the watermark is fine for a demo/preview to show your client. If the client likes it, you can upgrade to remove the watermark.
+
+ALTERNATIVE TOOL (if InVideo is full/busy):
+- Go to https://pika.art → Sign up → Paste the same prompt → Generate
+- Go to https://klingai.com → Sign up → Paste the same prompt → Generate

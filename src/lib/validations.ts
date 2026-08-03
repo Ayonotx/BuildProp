@@ -7,6 +7,13 @@ export const loginSchema = z.object({
 
 export type LoginInput = z.infer<typeof loginSchema>
 
+export const mobileLoginSchema = z.object({
+  email: z.string().min(1, 'Email is required').email('Invalid email format'),
+  password: z.string().min(1, 'Password is required'),
+})
+
+export type MobileLoginInput = z.infer<typeof mobileLoginSchema>
+
 export const projectSchema = z.object({
   name: z.string().min(1, 'Project name is required').max(200, 'Project name must be under 200 characters'),
   code: z.string().min(1, 'Project code is required').max(50, 'Project code must be under 50 characters'),
@@ -121,6 +128,45 @@ export const settingsSchema = z.object({
 })
 
 export type SettingsInput = z.infer<typeof settingsSchema>
+
+export const emailSettingsSchema = z.object({
+  host: z.string().min(1, 'SMTP host is required').max(200, 'SMTP host must be under 200 characters'),
+  port: z.number().int().positive('Port must be a positive number').optional(),
+  secure: z.boolean().optional(),
+  user: z.string().max(200).optional(),
+  // Password is optional on save — leave blank to keep the existing password.
+  password: z.string().max(300).optional(),
+  fromName: z.string().max(200).optional(),
+  fromEmail: z.string().email('Invalid from email format'),
+})
+
+export type EmailSettingsInput = z.infer<typeof emailSettingsSchema>
+
+export const emailTestSchema = z.object({
+  to: z.string().min(1, 'Recipient email is required').email('Invalid recipient email'),
+})
+
+export type EmailTestInput = z.infer<typeof emailTestSchema>
+
+export const emailSendSchema = z.object({
+  to: z.string().min(1, 'Recipient email is required').email('Invalid recipient email'),
+  subject: z.string().min(1, 'Subject is required').max(200, 'Subject must be under 200 characters'),
+  html: z.string().max(200000, 'Message body is too large').optional(),
+})
+
+export type EmailSendInput = z.infer<typeof emailSendSchema>
+
+export const emailInvoiceSchema = z.object({
+  invoiceId: z.string().min(1, 'Invoice id is required'),
+})
+
+export type EmailInvoiceInput = z.infer<typeof emailInvoiceSchema>
+
+export const emailRemindersSchema = z.object({
+  invoiceIds: z.array(z.string()).max(500, 'Too many invoices').optional(),
+})
+
+export type EmailRemindersInput = z.infer<typeof emailRemindersSchema>
 
 export const taskSchema = z.object({
   projectId: z.string().optional(),

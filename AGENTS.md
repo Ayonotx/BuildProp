@@ -67,3 +67,9 @@ Demo:
 - Settings stored as a JSON file (`data/settings.json`), not a Prisma model. `GET /api/setup` reports configured if the file has a companyName OR the DB has ≥1 user.
 - Auth: httpOnly cookie `buildprop_token`; JWT carries `role`. Deactivated users get 401 at login.
 - `.env.*` files under `electron/` contain secrets — never commit them (GitHub push protection rejects them).
+
+## v3.7 additions
+- **Quick Actions** on dashboard (New Project / Invoice / Task / Contact / Payment) → navigate to `?new=1`; those pages auto-open their create dialog on mount (read `searchParams` via React `use()` — params are Promises in this Next version).
+- **Email (SMTP)**: `src/lib/email.ts` + `src/app/api/email/{settings,test,send,invoice,reminders}` routes. Config stored in `data/email.json` (password omitted from GET). Requires internet + a working SMTP account; independent of AI. nodemailer is in `serverExternalPackages` in next.config.ts.
+- **Mobile monitoring API**: `src/app/api/mobile/auth` (POST → {token,user}, no cookie). `src/proxy.ts` now ALSO accepts `Authorization: Bearer` on /api/* and adds CORS (ACAO: *) + OPTIONS preflight to every response. Cookie auth for pages unchanged.
+- **Mobile app**: see `mobile/README.md`. Build: `mobile/android/gradlew.bat assembleRelease`. APK → `dist/mobile/`.

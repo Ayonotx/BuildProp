@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useEffect, useState } from "react"
+import React, { use, useCallback, useEffect, useState } from "react"
 import { useCrud } from "@/hooks/use-crud"
 import { PageHeader } from "@/components/dashboard/page-header"
 import { StatsGrid } from "@/components/dashboard/stats-grid"
@@ -11,7 +11,7 @@ import { EmptyState } from "@/components/dashboard/empty-state"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent } from "@/components/ui/card"
-import { Plus, FileText, Search, Trash2, Printer, Download, Pencil, X } from "lucide-react"
+import { Plus, FileText, Search, Trash2, Printer, Download, Pencil, X, Mail, BellRing } from "lucide-react"
 import { useToast } from "@/components/dashboard/toast"
 import { printDocument } from "@/lib/print"
 import { exportToCSV } from "@/lib/export-csv"
@@ -56,7 +56,11 @@ const defaultForm = {
   dueDate: "",
 }
 
-export default function InvoicesPage() {
+export default function InvoicesPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
+}) {
   const [search, setSearch] = useState("")
   const [contacts, setContacts] = useState<any[]>([])
   const [lineItems, setLineItems] = useState<LineItem[]>([
@@ -133,12 +137,21 @@ export default function InvoicesPage() {
     },
   })
 
-  function openCreate() {
+  const openCreate = useCallback(() => {
     setEditingItem(null)
     setFormData(defaultForm)
     setLineItems([{ description: "", quantity: 1, unitPrice: 0 }])
     setShowModal(true)
-  }
+  }, [setEditingItem, setFormData, setLineItems, setShowModal])
+
+  const params = use(searchParams)
+
+  useEffect(() => {
+    if (params.new === "1") {
+      const timeout = setTimeout(openCreate, 0)
+      return () => clearTimeout(timeout)
+    }
+  }, [params, openCreate])
 
   function openEdit(inv: Invoice) {
     setEditingItem(inv)
@@ -169,6 +182,7 @@ export default function InvoicesPage() {
   const totalPaid = invoices.reduce((s: number, i: Invoice) => s + toNum(i.paidAmount), 0)
   const totalPending = invoices.filter((i: Invoice) => i.status === "pending").reduce((s: number, i: Invoice) => s + toNum(i.totalAmount) - toNum(i.paidAmount), 0)
   const totalOverdue = invoices.filter((i: Invoice) => i.status === "overdue").reduce((s: number, i: Invoice) => s + toNum(i.totalAmount) - toNum(i.paidAmount), 0)
+  const overdueCount = invoices.filter((i: Invoice) => i.status === "overdue").length
 
   const stats = [
     { label: "Total Invoiced", value: formatCurrency(totalInvoiced), color: "text-blue-500", bg: "bg-blue-50" },
@@ -206,6 +220,45 @@ export default function InvoicesPage() {
     generateInvoicePDF(inv, inv.items || [], "BuildProp")
   }
 
+  const emailErrMsg = (data: { details?: string[]; error?: string }, fallback: string) =>
+    Array.isArray(data?.details) && data.details.length > 0 ? data.details[0] : data?.error || fallback
+
+  async function sendInvoiceEmail(inv: Invoice) {
+    try {
+      const res = await fetch("/api/email/invoice", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ invoiceId: inv.id }),
+      })
+      const data = await res.json()
+      if (res.ok && data.success) {
+        toast({ title: "Email sent", description: `Invoice ${inv.invoiceNumber} sent to ${data.to}`, variant: "success" })
+      } else {
+        toast({ title: "Failed to send email", description: emailErrMsg(data, "Could not send invoice email"), variant: "error" })
+      }
+    } catch {
+      toast({ title: "Failed to send email", description: "An error occurred", variant: "error" })
+    }
+  }
+
+  async function sendReminders() {
+    try {
+      const res = await fetch("/api/email/reminders", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({}),
+      })
+      const data = await res.json()
+      if (res.ok && data.success) {
+        toast({ title: "Reminders sent", description: `${data.sent} sent, ${data.errors} failed`, variant: "success" })
+      } else {
+        toast({ title: "Failed to send reminders", description: emailErrMsg(data, "Could not send reminders"), variant: "error" })
+      }
+    } catch {
+      toast({ title: "Failed to send reminders", description: "An error occurred", variant: "error" })
+    }
+  }
+
   const columns: Column<Invoice>[] = [
     {
       key: "invoiceNumber", header: "Invoice",
@@ -231,6 +284,7 @@ export default function InvoicesPage() {
           <button onClick={() => openEdit(inv)} className="p-1.5 hover:bg-slate-100 rounded" title="Edit"><Pencil className="h-4 w-4 text-slate-500" /></button>
           <button onClick={() => printInvoice(inv)} className="p-1.5 hover:bg-slate-100 rounded" title="Print"><Printer className="h-4 w-4 text-slate-500" /></button>
           <button onClick={() => downloadInvoicePDF(inv)} className="p-1.5 hover:bg-slate-100 rounded" title="Download PDF"><Download className="h-4 w-4 text-slate-500" /></button>
+          <button onClick={() => sendInvoiceEmail(inv)} className="p-1.5 hover:bg-slate-100 rounded" title="Send invoice to client"><Mail className="h-4 w-4 text-blue-500" /></button>
           <button onClick={() => handleDelete(inv.id)} className="p-1.5 hover:bg-slate-100 rounded" title="Delete"><Trash2 className="h-4 w-4 text-red-500" /></button>
         </div>
       ),
@@ -255,6 +309,9 @@ export default function InvoicesPage() {
               rows: filtered.map((inv: Invoice) => [inv.invoiceNumber, inv.contactName, inv.type.charAt(0).toUpperCase() + inv.type.slice(1), formatCurrency(inv.totalAmount), formatCurrency(inv.paidAmount), statusLabel(inv.status), formatDate(inv.dueDate)]),
               filename: "invoices.pdf",
             })}><Download className="h-4 w-4 mr-2" />Export PDF</Button>
+            <Button variant="outline" onClick={sendReminders} disabled={overdueCount === 0} title={overdueCount === 0 ? "No overdue invoices" : `Send reminders for ${overdueCount} overdue invoice${overdueCount !== 1 ? "s" : ""}`}>
+              <BellRing className="h-4 w-4 mr-2" />Send Reminders
+            </Button>
             <Button onClick={openCreate}><Plus className="h-4 w-4 mr-2" />Create Invoice</Button>
           </div>
         }

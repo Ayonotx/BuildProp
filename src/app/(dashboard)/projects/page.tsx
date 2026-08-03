@@ -1,6 +1,6 @@
 "use client"
 
-import React from "react"
+import React, { use, useCallback, useEffect } from "react"
 import { useCrud } from "@/hooks/use-crud"
 import { PageHeader } from "@/components/dashboard/page-header"
 import { StatsGrid } from "@/components/dashboard/stats-grid"
@@ -45,7 +45,11 @@ const defaultForm = {
   location: "",
 }
 
-export default function ProjectsPage() {
+export default function ProjectsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
+}) {
   const { toast } = useToast()
   const {
     data: projects, loading, showModal, setShowModal,
@@ -67,11 +71,17 @@ export default function ProjectsPage() {
     },
   })
 
-  function openCreate() {
+  const openCreate = useCallback(() => {
     setEditingItem(null)
     setFormData(defaultForm)
     setShowModal(true)
-  }
+  }, [setEditingItem, setFormData, setShowModal])
+
+  const params = use(searchParams)
+
+  useEffect(() => {
+    if (params.new === "1") openCreate()
+  }, [params, openCreate])
 
   function openEdit(item: Project) {
     setEditingItem(item)
