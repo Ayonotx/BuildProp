@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Avatar } from "@/components/ui/avatar"
-import { Plus, Users, UserPlus, Phone, Mail, Search, Pencil, Trash2, Download, Send, X, Loader2 } from "lucide-react"
+import { Plus, Users, UserPlus, Phone, Mail, Search, Pencil, Trash2, Download, Send, X, Loader2, Copy, MessageCircle } from "lucide-react"
 import { useToast } from "@/components/dashboard/toast"
 import { formatDate } from "@/lib/utils"
 import { exportToCSV } from "@/lib/export-csv"
@@ -59,6 +59,7 @@ export default function CRMPage({
   const [emailMessage, setEmailMessage] = useState("")
   const [emailSending, setEmailSending] = useState(false)
   const [emailError, setEmailError] = useState<string | null>(null)
+  const [callTarget, setCallTarget] = useState<Contact | null>(null)
   const {
     data: contacts, loading, showModal, setShowModal,
     editingItem, setEditingItem, formData, setFormData,
@@ -75,11 +76,47 @@ export default function CRMPage({
     },
   })
 
-  function openEmailDialog(contact: Contact) {
-    setEmailTarget(contact)
+  const contactsWithEmail = contacts.filter((c: Contact) => c.email)
+  const contactsWithPhone = contacts.filter((c: Contact) => c.phone)
+
+  function openEmailDialog(contact?: Contact) {
+    const recipient = (contact && contact.email ? contact : contactsWithEmail[0]) || null
+    if (!recipient) {
+      toast({ title: "No contacts with email", description: "Add an email address to a contact first", variant: "error" })
+      return
+    }
+    setEmailTarget(recipient)
     setEmailSubject("")
     setEmailMessage("")
     setEmailError(null)
+  }
+
+  function openCallDialog(contact?: Contact) {
+    const recipient = (contact && contact.phone ? contact : contactsWithPhone[0]) || null
+    if (!recipient) {
+      toast({ title: "No contacts with phone", description: "Add a phone number to a contact first", variant: "error" })
+      return
+    }
+    setCallTarget(recipient)
+  }
+
+  function digitsOnly(phone: string) {
+    return phone.replace(/\D/g, "")
+  }
+
+  function whatsAppNumber(phone: string) {
+    const digits = digitsOnly(phone)
+    if (digits.startsWith("0")) return "233" + digits.slice(1)
+    return digits
+  }
+
+  async function copyPhone(phone: string) {
+    try {
+      await navigator.clipboard.writeText(phone)
+      toast({ title: "Phone number copied", variant: "success" })
+    } catch {
+      toast({ title: "Could not copy phone number", variant: "error" })
+    }
   }
 
   async function sendQuickEmail() {
@@ -289,6 +326,11 @@ export default function CRMPage({
                             <Mail className="h-4 w-4 text-blue-500" />
                           </Button>
                         )}
+                        {contact.phone && (
+                          <Button variant="ghost" size="sm" onClick={() => openCallDialog(contact)} title="Call">
+                            <Phone className="h-4 w-4 text-orange-500" />
+                          </Button>
+                        )}
                         <Button variant="ghost" size="sm" onClick={() => openEdit(contact)}><Pencil className="h-4 w-4" /></Button>
                         <Button variant="ghost" size="sm" onClick={() => handleDelete(contact.id)}><Trash2 className="h-4 w-4 text-red-500" /></Button>
                       </div>
@@ -326,16 +368,16 @@ export default function CRMPage({
             <CardContent>
               <div className="grid grid-cols-2 gap-3">
                 {[
-                  { label: "New Lead", icon: UserPlus, color: "bg-blue-50 text-blue-600" },
-                  { label: "Add Contact", icon: Users, color: "bg-emerald-50 text-emerald-600" },
-                  { label: "Call", icon: Phone, color: "bg-orange-50 text-orange-600" },
-                  { label: "Email", icon: Mail, color: "bg-purple-50 text-purple-600" },
+                  { label: "New Lead", icon: UserPlus, color: "bg-blue-50 text-blue-600", onClick: () => { setFormData({ ...defaultForm, type: "lead" }); openCreate() } },
+                  { label: "Add Contact", icon: Users, color: "bg-emerald-50 text-emerald-600", onClick: () => openCreate() },
+                  { label: "Call", icon: Phone, color: "bg-orange-50 text-orange-600", onClick: () => openCallDialog() },
+                  { label: "Email", icon: Mail, color: "bg-purple-50 text-purple-600", onClick: () => openEmailDialog() },
                 ].map((action) => {
                   const Icon = action.icon
                   return (
                     <button
                       key={action.label}
-                      onClick={() => { if (action.label === "New Lead") { setFormData({...defaultForm, type: "lead"}); openCreate() } else if (action.label === "Add Contact") { openCreate() } }}
+                      onClick={action.onClick}
                       className={`flex flex-col items-center gap-2 rounded-xl p-4 ${action.color} hover:opacity-80 transition-opacity`}
                     >
                       <Icon className="h-6 w-6" />
@@ -358,6 +400,21 @@ export default function CRMPage({
                 <X className="h-4 w-4" />
               </button>
             </div>
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-1">Recipient *</label>
+              <select
+                value={emailTarget.id}
+                onChange={(e) => {
+                  const selected = contacts.find((c: Contact) => c.id === e.target.value)
+                  if (selected) setEmailTarget(selected)
+                }}
+                className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-orange-400"
+              >
+                {contactsWithEmail.map((c: Contact) => (
+                  <option key={c.id} value={c.id}>{c.firstName} {c.lastName} — {c.email}</option>
+                ))}
+              </select>
+            </div>
             <p className="text-sm text-slate-500 break-all">{emailTarget.email}</p>
             {emailError && (
               <div className="rounded-lg bg-red-50 border border-red-200 p-3 text-sm text-red-800">{emailError}</div>
@@ -376,6 +433,51 @@ export default function CRMPage({
                 {emailSending ? <Loader2 className="h-4 w-4 animate-spin mr-1" /> : <Send className="h-4 w-4 mr-1" />}
                 {emailSending ? "Sending..." : "Send Email"}
               </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {callTarget && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className="bg-white rounded-xl shadow-xl p-6 max-w-lg w-full mx-4 space-y-4">
+            <div className="flex items-center justify-between">
+              <h3 className="font-semibold text-slate-900">Call {callTarget.firstName} {callTarget.lastName}</h3>
+              <button onClick={() => setCallTarget(null)} className="p-1.5 text-slate-400 hover:text-slate-600 rounded">
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-1">Recipient *</label>
+              <select
+                value={callTarget.id}
+                onChange={(e) => {
+                  const selected = contacts.find((c: Contact) => c.id === e.target.value)
+                  if (selected) setCallTarget(selected)
+                }}
+                className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-orange-400"
+              >
+                {contactsWithPhone.map((c: Contact) => (
+                  <option key={c.id} value={c.id}>{c.firstName} {c.lastName} — {c.phone}</option>
+                ))}
+              </select>
+            </div>
+            <div className="rounded-lg bg-orange-50 border border-orange-200 p-4 text-center">
+              <p className="text-xl font-bold text-slate-900">{callTarget.phone}</p>
+            </div>
+            <div className="grid grid-cols-3 gap-2">
+              <Button onClick={() => window.open("tel:" + callTarget.phone, "_blank")}>
+                <Phone className="h-4 w-4 mr-1" />Open Dialer
+              </Button>
+              <Button variant="outline" onClick={() => window.open("https://wa.me/" + whatsAppNumber(callTarget.phone || ""), "_blank")}>
+                <MessageCircle className="h-4 w-4 mr-1" />WhatsApp
+              </Button>
+              <Button variant="outline" onClick={() => copyPhone(callTarget.phone || "")}>
+                <Copy className="h-4 w-4 mr-1" />Copy Number
+              </Button>
+            </div>
+            <div className="flex justify-end pt-2">
+              <Button variant="outline" onClick={() => setCallTarget(null)}>Close</Button>
             </div>
           </div>
         </div>

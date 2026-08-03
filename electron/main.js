@@ -1,4 +1,4 @@
-const { app, BrowserWindow, dialog } = require('electron')
+const { app, BrowserWindow, dialog, shell } = require('electron')
 const { spawn } = require('child_process')
 const path = require('path')
 const fs = require('fs')
@@ -399,6 +399,25 @@ function createWindow() {
     console.error('[main] Window error:', e)
   }
 }
+
+// External links (http/https/tel/mailto/whatsapp) open in the OS default app
+// instead of navigating inside the app window.
+app.on('web-contents-created', (_event, contents) => {
+  contents.setWindowOpenHandler(({ url }) => {
+    if (/^(https?:|tel:|mailto:|whatsapp:)/i.test(url)) {
+      shell.openExternal(url)
+    }
+    return { action: 'deny' }
+  })
+  contents.on('will-navigate', (event, url) => {
+    const appUrl = contents.getURL()
+    const allowed = appUrl.indexOf('127.0.0.1') !== -1 || appUrl.indexOf('localhost') !== -1
+    if (!allowed) {
+      event.preventDefault()
+      if (/^(https?:|tel:|mailto:|whatsapp:)/i.test(url)) shell.openExternal(url)
+    }
+  })
+})
 
 // === App Lifecycle ===
 app.on('ready', async () => {
