@@ -15,6 +15,10 @@
     return isNaN(n) ? 0 : n
   }
 
+  function round2(v) {
+    return Math.round((num(v) + Number.EPSILON) * 100) / 100
+  }
+
   function formatCurrency(v) {
     return 'GH₵ ' + num(v).toLocaleString('en-US', { maximumFractionDigits: 2 })
   }
@@ -71,6 +75,11 @@
       failed: 'badge-red',
       expired: 'badge-red',
       inactive: 'badge-red',
+      customer: 'badge-green',
+      lead: 'badge-yellow',
+      tenant: 'badge-blue',
+      vendor: 'badge-gray',
+      contractor: 'badge-blue',
     }
     return map[s] || 'badge-gray'
   }
@@ -197,12 +206,24 @@
     )
   }
 
+  function quickActions() {
+    return (
+      '<div class="quick-actions">' +
+      '<button class="quick-btn" type="button" data-action="new-project"><span class="quick-icon">🏗️</span>New Project</button>' +
+      '<button class="quick-btn" type="button" data-action="new-invoice"><span class="quick-icon">🧾</span>New Invoice</button>' +
+      '<button class="quick-btn" type="button" data-action="new-payment"><span class="quick-icon">💵</span>Record Payment</button>' +
+      '<button class="quick-btn" type="button" data-action="new-contact"><span class="quick-icon">👥</span>Add Contact</button>' +
+      '</div>'
+    )
+  }
+
   function renderHome(d) {
     const data = d.dashboard || {}
     const kpi = data.kpi || {}
     const user = d.user || {}
     const activities = (data.recentActivities || []).slice(0, 5)
     const tasks = (data.upcomingTasks || []).slice(0, 5)
+    const alerts = d.alerts || []
 
     const firstName = user.firstName || user.email || ''
     const hour = new Date().getHours()
@@ -227,6 +248,15 @@
       kpiCard('⚠️', 'Outstanding', formatCurrency(kpi.outstanding), 'kpi-outstanding') +
       kpiCard('🏠', 'Available Properties', num(kpi.availableProperties), 'kpi-properties') +
       '</div>'
+
+    html +=
+      '<div class="card-title" style="margin:0 2px 8px;">Quick Actions</div>' +
+      quickActions()
+
+    html +=
+      '<button class="btn btn-outline" type="button" data-action="view-alerts" style="margin-bottom:14px;">' +
+      '<span style="flex:1;text-align:center;">🔔 Alerts <span class="count" style="color:var(--red);">' + alerts.length + '</span> · View all</span>' +
+      '</button>'
 
     html +=
       '<div class="card"><div class="card-title">Project Status</div>' +
@@ -282,6 +312,7 @@
     const list = (payload && payload.projects) || []
     let html = '<div class="screen">'
     if (meta && meta.offline) html += offlineBanner()
+    html += '<button class="btn btn-primary btn-add" type="button" data-action="new-project">＋ New Project</button>'
     if (!list.length) {
       html += emptyState('🏗️', 'No projects yet')
     } else {
@@ -319,6 +350,8 @@
       '<span class="badge ' + badgeClass(p.status) + '">' + esc(statusLabel(p.status)) + '</span>' +
       '</div>'
 
+    html += '<button class="btn btn-outline btn-add" type="button" data-action="edit-project" data-id="' + esc(p.id) + '">✏️ Edit Project</button>'
+
     html +=
       '<div class="meta-grid">' +
       '<div class="meta-cell"><span class="meta-label">📍 Location</span><span class="meta-value">' + esc(p.location || '—') + '</span></div>' +
@@ -349,23 +382,33 @@
       html += '<div class="card"><div class="card-title">Description</div><p class="muted">' + esc(p.description) + '</p></div>'
     }
 
-    if (tasks.length) {
-      html +=
-        '<div class="card"><div class="card-title">📋 Tasks <span class="count">' + tasks.length + '</span></div>' +
-        '<ul class="mini-list">' +
-        tasks.map(function (t) {
-          return (
-            '<li class="mini-row">' +
-            '<div class="mini-wrap" style="flex:1;min-width:0;">' +
-            '<div class="mini-title">' + esc(t.title) + '</div>' +
-            '<div class="mini-sub">' + (t.dueDate ? 'Due ' + formatDate(t.dueDate) : 'No due date') + '</div>' +
-            '</div>' +
-            '<span class="badge ' + badgeClass(t.status) + '">' + esc(statusLabel(t.status)) + '</span>' +
-            '</li>'
-          )
-        }).join('') +
-        '</ul></div>'
-    }
+    html +=
+      '<div class="card">' +
+      '<div class="section-head">' +
+      '<div class="card-title" style="margin:0;">📋 Tasks <span class="count">' + tasks.length + '</span></div>' +
+      '<button class="btn-sm btn-sm-green" type="button" data-action="add-task" data-id="' + esc(p.id) + '">＋ Add Task</button>' +
+      '</div>' +
+      (tasks.length
+        ? '<ul class="mini-list">' + tasks.map(function (t) {
+            const isDone = String(t.status).toLowerCase() === 'completed'
+            return (
+              '<li class="task-row' + (isDone ? ' task-done' : '') + '">' +
+              '<div class="task-main">' +
+              '<div class="task-title">' + esc(t.title) + '</div>' +
+              '<div class="task-sub">' +
+              (t.description ? esc(t.description) + ' · ' : '') +
+              (t.dueDate ? 'Due ' + formatDate(t.dueDate) : 'No due date') +
+              '</div>' +
+              '</div>' +
+              '<span class="badge ' + priorityClass(t.priority) + '">' + esc(statusLabel(t.priority)) + '</span>' +
+              (isDone
+                ? '<span class="badge badge-green">Completed</span>'
+                : '<button class="btn-sm btn-sm-green" type="button" data-action="task-complete" data-id="' + esc(t.id) + '">✓ Done</button>') +
+              '</li>'
+            )
+          }).join('') + '</ul>'
+        : emptyState('🗒️', 'No tasks yet — add the first one')) +
+      '</div>'
 
     if (budgets.length) {
       html +=
@@ -460,6 +503,10 @@
     if (meta && meta.offline) html += offlineBanner()
 
     html +=
+      '<button class="btn btn-primary btn-add" type="button" data-action="new-invoice">＋ New Invoice</button>' +
+      '<button class="btn btn-outline btn-add" type="button" data-action="new-payment">＋ Record Payment</button>'
+
+    html +=
       '<div class="card summary-card">' +
       '<div class="summary-item"><span class="summary-label">Outstanding</span><span class="summary-value negative">' + formatCurrency(outstandingTotal) + '</span></div>' +
       '<div class="summary-item"><span class="summary-label">Invoices</span><span class="summary-value">' + invoices.length + '</span></div>' +
@@ -482,6 +529,53 @@
         : emptyState('💳', 'No payments recorded')) +
       '</div>'
 
+    html += '</div>'
+    return html
+  }
+
+  /* ------------------------------ CONTACTS ------------------------------ */
+
+  function initials(c) {
+    return esc(((c.firstName || '')[0] || '') + ((c.lastName || '')[0] || ''))
+  }
+
+  function contactCard(c) {
+    const type = c.type || 'customer'
+    const sub = [c.email, c.phone, c.company].filter(Boolean).map(esc).join(' · ')
+    return (
+      '<article class="contact-card">' +
+      '<div class="contact-head">' +
+      '<div class="contact-avatar">' + initials(c) + '</div>' +
+      '<div class="contact-main">' +
+      '<div class="contact-name">' + esc(c.firstName || '') + ' ' + esc(c.lastName || '') + '</div>' +
+      '<div class="contact-sub">' + (sub || 'No contact details') + '</div>' +
+      '</div>' +
+      '<span class="badge ' + badgeClass(type) + '">' + esc(statusLabel(type)) + '</span>' +
+      '</div>' +
+      '<div class="contact-actions">' +
+      (c.email ? '<a class="btn-sm" href="mailto:' + esc(c.email) + '">✉️ Email</a>' : '') +
+      (c.phone ? '<a class="btn-sm" href="tel:' + esc(c.phone) + '">📞 Call</a>' : '') +
+      '<button class="btn-sm" type="button" data-action="edit-contact" data-id="' + esc(c.id) + '">✏️ Edit</button>' +
+      '<button class="btn-sm btn-sm-danger" type="button" data-action="delete-contact" data-id="' + esc(c.id) + '">🗑️ Delete</button>' +
+      '</div>' +
+      '</article>'
+    )
+  }
+
+  function renderContacts(contacts, meta) {
+    const list = Array.isArray(contacts) ? contacts : []
+    let html = '<div class="screen">'
+    if (meta && meta.offline) html += offlineBanner()
+    html += '<button class="btn btn-primary btn-add" type="button" data-action="new-contact">＋ Add Contact</button>'
+    if (!list.length) {
+      html += emptyState('👥', 'No contacts yet')
+    } else {
+      html +=
+        '<div class="card-title" style="margin:0 2px 10px;">' +
+        'Contacts <span class="count">' + list.length + '</span>' +
+        '</div>'
+      html += list.map(contactCard).join('')
+    }
     html += '</div>'
     return html
   }
@@ -525,6 +619,11 @@
       '</div>' +
 
       '<div class="card">' +
+      '<div class="card-title">📲 Pairing</div>' +
+      '<button class="btn btn-outline" type="button" data-action="link-qr">📷 Link with QR</button>' +
+      '</div>' +
+
+      '<div class="card">' +
       '<div class="card-title">🌐 Server</div>' +
       '<div class="settings-row"><span>Address</span><b>' + esc(s.serverUrl || '—') + '</b></div>' +
       '<button class="btn btn-outline" type="button" data-action="change-server">Change Server</button>' +
@@ -532,8 +631,8 @@
 
       '<div class="card center">' +
       '<div style="font-size:26px;">🏗️</div>' +
-      '<div style="font-weight:700;margin-top:6px;">BuildProp Monitor v1.0.0</div>' +
-      '<div class="muted small" style="margin-top:4px;">BuildProp ERP · mobile monitoring</div>' +
+      '<div style="font-weight:700;margin-top:6px;">BuildProp Admin v2.0.0</div>' +
+      '<div class="muted small" style="margin-top:4px;">BuildProp ERP · mobile admin</div>' +
       '</div>' +
 
       '<button class="btn btn-danger" type="button" data-action="sign-out">Sign Out</button>' +
@@ -541,8 +640,235 @@
     )
   }
 
+  /* ------------------------------ FORMS ------------------------------ */
+
+  var PROJECT_TYPES = ['residential', 'commercial', 'industrial', 'infrastructure', 'mixed_use']
+  var PROJECT_STATUSES = ['planning', 'in_progress', 'on_hold', 'completed', 'cancelled']
+  var PRIORITIES = ['low', 'medium', 'high', 'critical']
+  var CONTACT_TYPES = ['customer', 'lead', 'tenant', 'vendor', 'contractor']
+  var INVOICE_TYPES = ['sales', 'purchase', 'proforma', 'credit_note']
+  var PAYMENT_METHODS = ['cash', 'bank_transfer', 'cheque', 'card', 'online', 'other']
+  var CONTACT_SOURCES = ['website', 'referral', 'walk_in', 'social', 'phone', 'email', 'other']
+  var LEAD_STATUSES = ['new', 'contacted', 'qualified', 'proposal', 'won', 'lost']
+
+  function optionsHtml(list, selected) {
+    return list.map(function (o) {
+      return '<option value="' + esc(o) + '"' + (String(o) === String(selected) ? ' selected' : '') + '>' + esc(statusLabel(o)) + '</option>'
+    }).join('')
+  }
+
+  function formLabel(label, required) {
+    return '<label class="form-label">' + esc(label) + (required ? ' <span class="req">*</span>' : '') + '</label>'
+  }
+
+  function dateValue(s) {
+    if (!s) return ''
+    const v = String(s)
+    if (v.length <= 10) return v
+    return v.slice(0, 10)
+  }
+
+  function toDateInput(daysFromNow) {
+    const d = new Date()
+    d.setDate(d.getDate() + daysFromNow)
+    return d.toISOString().slice(0, 10)
+  }
+
+  function formButtons() {
+    return (
+      '<div class="form-buttons">' +
+      '<button class="btn btn-outline" type="button" data-action="close-modal">Cancel</button>' +
+      '<button class="btn btn-primary" type="submit">Save</button>' +
+      '</div>'
+    )
+  }
+
+  function contactOptions(contacts) {
+    let html = '<option value="">— Auto (first contact) —</option>'
+    html += (contacts || []).map(function (c) {
+      const name = [c.firstName, c.lastName].filter(Boolean).join(' ')
+      return '<option value="' + esc(c.id) + '">' + esc(name || 'Contact') + '</option>'
+    }).join('')
+    return html
+  }
+
+  function generateProjectCode(name) {
+    const slug = String(name || '')
+      .replace(/[^a-zA-Z0-9]+/g, '')
+      .slice(0, 4)
+      .toUpperCase()
+    const rand = Math.random().toString(36).slice(2, 6).toUpperCase()
+    return (slug ? 'PRJ-' + slug + '-' : 'PRJ-') + rand
+  }
+
+  function renderProjectForm(p) {
+    p = p || {}
+    const isEdit = !!p.id
+    const val = function (k) { return p[k] === undefined || p[k] === null ? '' : p[k] }
+    return (
+      '<form data-form="project" data-id="' + esc(p.id || '') + '">' +
+      formLabel('Project name', true) +
+      '<input id="f-name" class="form-input" value="' + esc(val('name')) + '" maxlength="200" placeholder="e.g. Sunrise Villas Phase 2">' +
+
+      formLabel('Project code', true) +
+      '<input id="f-code" class="form-input" value="' + esc(isEdit ? val('code') : generateProjectCode(val('name'))) + '" maxlength="50" placeholder="e.g. PRJ-2026-001">' +
+
+      formLabel('Location') +
+      '<input id="f-location" class="form-input" value="' + esc(val('location')) + '" maxlength="500" placeholder="e.g. East Legon, Accra">' +
+
+      '<div class="form-grid">' +
+      '<div>' + formLabel('Type') + '<select id="f-type" class="form-select">' + optionsHtml(PROJECT_TYPES, val('projectType') || 'residential') + '</select></div>' +
+      '<div>' + formLabel('Status') + '<select id="f-status" class="form-select">' + optionsHtml(PROJECT_STATUSES, val('status') || 'planning') + '</select></div>' +
+      '</div>' +
+
+      '<div class="form-grid">' +
+      '<div>' + formLabel('Priority') + '<select id="f-priority" class="form-select">' + optionsHtml(PRIORITIES, val('priority') || 'medium') + '</select></div>' +
+      '<div>' + formLabel('Estimated budget') + '<input id="f-budget" class="form-input" type="number" min="0" step="0.01" value="' + esc(val('estimatedBudget')) + '" placeholder="0.00"></div>' +
+      '</div>' +
+
+      '<div class="form-grid">' +
+      '<div>' + formLabel('Start date') + '<input id="f-start" class="form-input" type="date" value="' + esc(dateValue(val('startDate'))) + '"></div>' +
+      '<div>' + formLabel('End date') + '<input id="f-end" class="form-input" type="date" value="' + esc(dateValue(val('endDate'))) + '"></div>' +
+      '</div>' +
+
+      formLabel('Description') +
+      '<textarea id="f-description" class="form-textarea" maxlength="2000" placeholder="Brief project description">' + esc(val('description')) + '</textarea>' +
+
+      formButtons() +
+      '</form>'
+    )
+  }
+
+  function invoiceItemRowHtml(index) {
+    return (
+      '<div class="inv-item">' +
+      '<input class="form-input f-item-desc" placeholder="Description — e.g. Foundation works" maxlength="500">' +
+      '<div class="inv-item-cols">' +
+      '<input class="form-input f-item-qty" type="number" min="1" step="1" value="1">' +
+      '<input class="form-input f-item-price" type="number" min="0" step="0.01" placeholder="Unit price (GH₵)">' +
+      '<button class="btn-sm btn-sm-danger remove-item" type="button" data-action="remove-item">✕</button>' +
+      '</div>' +
+      '</div>'
+    )
+  }
+
+  function renderInvoiceForm(contacts) {
+    return (
+      '<form data-form="invoice">' +
+
+      '<div class="form-grid">' +
+      '<div>' + formLabel('Invoice type') + '<select id="f-inv-type" class="form-select">' + optionsHtml(INVOICE_TYPES, 'sales') + '</select></div>' +
+      '<div>' + formLabel('Customer') + '<select id="f-inv-customer" class="form-select">' + contactOptions(contacts) + '</select></div>' +
+      '</div>' +
+
+      '<div class="form-grid">' +
+      '<div>' + formLabel('Issue date', true) + '<input id="f-inv-issue" class="form-input" type="date" value="' + toDateInput(0) + '"></div>' +
+      '<div>' + formLabel('Due date', true) + '<input id="f-inv-due" class="form-input" type="date" value="' + toDateInput(14) + '"></div>' +
+      '</div>' +
+
+      formLabel('Line items') +
+      '<div class="inv-items">' + invoiceItemRowHtml(0) + '</div>' +
+      '<button class="btn-sm" type="button" data-action="add-item">＋ Add item</button>' +
+
+      '<div id="inv-totals" class="inv-totals"></div>' +
+      '<div class="form-hint">VAT of 15% is applied to the subtotal, matching the desktop invoice.</div>' +
+
+      formButtons() +
+      '</form>'
+    )
+  }
+
+  function renderPaymentForm(contacts, invoices) {
+    let invOptions = '<option value="">— None —</option>'
+    invOptions += (invoices || []).map(function (inv) {
+      const remaining = round2(num(inv.totalAmount) - num(inv.paidAmount))
+      const label = inv.invoiceNumber + ' — ' + formatCurrency(remaining) + (String(inv.status).toLowerCase() === 'paid' ? ' (paid)' : ' (' + statusLabel(inv.status) + ')')
+      return '<option value="' + esc(inv.id) + '">' + esc(label) + '</option>'
+    }).join('')
+    return (
+      '<form data-form="payment">' +
+
+      '<div class="form-grid">' +
+      '<div>' + formLabel('Type') + '<select id="f-pay-type" class="form-select">' + optionsHtml(['received', 'made'], 'received') + '</select></div>' +
+      '<div>' + formLabel('Payment method') + '<select id="f-pay-method" class="form-select">' + optionsHtml(PAYMENT_METHODS, 'cash') + '</select></div>' +
+      '</div>' +
+
+      formLabel('Customer') +
+      '<select id="f-pay-customer" class="form-select">' + contactOptions(contacts) + '</select>' +
+
+      formLabel('Amount', true) +
+      '<input id="f-pay-amount" class="form-input" type="number" min="0" step="0.01" placeholder="0.00">' +
+
+      '<div class="form-grid">' +
+      '<div>' + formLabel('Payment date', true) + '<input id="f-pay-date" class="form-input" type="date" value="' + toDateInput(0) + '"></div>' +
+      '<div>' + formLabel('Invoice') + '<select id="f-pay-invoice" class="form-select">' + invOptions + '</select></div>' +
+      '</div>' +
+
+      formButtons() +
+      '</form>'
+    )
+  }
+
+  function renderContactForm(c) {
+    c = c || {}
+    const val = function (k) { return c[k] === undefined || c[k] === null ? '' : c[k] }
+    return (
+      '<form data-form="contact" data-id="' + esc(c.id || '') + '">' +
+
+      formLabel('Type') +
+      '<select id="f-contact-type" class="form-select">' + optionsHtml(CONTACT_TYPES, val('type') || 'customer') + '</select>' +
+
+      '<div class="form-grid">' +
+      '<div>' + formLabel('First name', true) + '<input id="f-first" class="form-input" value="' + esc(val('firstName')) + '" maxlength="100"></div>' +
+      '<div>' + formLabel('Last name', true) + '<input id="f-last" class="form-input" value="' + esc(val('lastName')) + '" maxlength="100"></div>' +
+      '</div>' +
+
+      '<div class="form-grid">' +
+      '<div>' + formLabel('Email') + '<input id="f-email" class="form-input" type="email" value="' + esc(val('email')) + '"></div>' +
+      '<div>' + formLabel('Phone') + '<input id="f-phone" class="form-input" type="tel" value="' + esc(val('phone')) + '" maxlength="20"></div>' +
+      '</div>' +
+
+      '<div class="form-grid">' +
+      '<div>' + formLabel('Company') + '<input id="f-company" class="form-input" value="' + esc(val('company')) + '" maxlength="200"></div>' +
+      '<div>' + formLabel('Source') + '<select id="f-source" class="form-select">' + optionsHtml(CONTACT_SOURCES, val('source') || 'website') + '</select></div>' +
+      '</div>' +
+
+      '<div class="form-grid">' +
+      '<div>' + formLabel('Lead status') + '<select id="f-lead-status" class="form-select">' + optionsHtml(LEAD_STATUSES, val('leadStatus') || 'new') + '</select></div>' +
+      '<div>' + formLabel('Address') + '<input id="f-address" class="form-input" value="' + esc(val('address')) + '" maxlength="500"></div>' +
+      '</div>' +
+
+      formLabel('Notes') +
+      '<textarea id="f-notes" class="form-textarea" maxlength="2000" placeholder="Notes about this contact">' + esc(val('notes')) + '</textarea>' +
+
+      formButtons() +
+      '</form>'
+    )
+  }
+
+  function renderTaskForm(projectId) {
+    return (
+      '<form data-form="task" data-project-id="' + esc(projectId) + '">' +
+      formLabel('Task title', true) +
+      '<input id="f-task-title" class="form-input" maxlength="300" placeholder="e.g. Order site materials">' +
+
+      formLabel('Description') +
+      '<textarea id="f-task-desc" class="form-textarea" maxlength="2000" placeholder="What needs to be done"></textarea>' +
+
+      '<div class="form-grid">' +
+      '<div>' + formLabel('Priority') + '<select id="f-task-priority" class="form-select">' + optionsHtml(PRIORITIES, 'medium') + '</select></div>' +
+      '<div>' + formLabel('Due date') + '<input id="f-task-due" class="form-input" type="date"></div>' +
+      '</div>' +
+
+      formButtons() +
+      '</form>'
+    )
+  }
+
   window.BuildPropScreens = {
     esc: esc,
+    num: num,
+    round2: round2,
     formatCurrency: formatCurrency,
     formatDate: formatDate,
     relativeTime: relativeTime,
@@ -552,7 +878,14 @@
     renderProjects: renderProjects,
     renderProjectDetail: renderProjectDetail,
     renderFinance: renderFinance,
+    renderContacts: renderContacts,
     renderAlerts: renderAlerts,
     renderSettings: renderSettings,
+    renderProjectForm: renderProjectForm,
+    renderInvoiceForm: renderInvoiceForm,
+    renderPaymentForm: renderPaymentForm,
+    renderContactForm: renderContactForm,
+    renderTaskForm: renderTaskForm,
+    invoiceItemRowHtml: invoiceItemRowHtml,
   }
 })()

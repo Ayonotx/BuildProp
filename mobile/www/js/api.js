@@ -2,7 +2,7 @@
   'use strict'
 
   const TIMEOUT_MS = 15000
-  const PUBLIC_PATHS = ['/api/mobile/auth', '/api/setup']
+  const PUBLIC_PATHS = ['/api/mobile/auth', '/api/mobile/pair/confirm', '/api/setup']
 
   let baseUrl = ''
   let token = ''

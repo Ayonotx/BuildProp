@@ -73,3 +73,21 @@ Demo:
 - **Email (SMTP)**: `src/lib/email.ts` + `src/app/api/email/{settings,test,send,invoice,reminders}` routes. Config stored in `data/email.json` (password omitted from GET). Requires internet + a working SMTP account; independent of AI. nodemailer is in `serverExternalPackages` in next.config.ts.
 - **Mobile monitoring API**: `src/app/api/mobile/auth` (POST → {token,user}, no cookie). `src/proxy.ts` now ALSO accepts `Authorization: Bearer` on /api/* and adds CORS (ACAO: *) + OPTIONS preflight to every response. Cookie auth for pages unchanged.
 - **Mobile app**: see `mobile/README.md`. Build: `mobile/android/gradlew.bat assembleRelease`. APK → `dist/mobile/`.
+
+## v3.8 additions — Mobile linking, admin app, Tailscale, remote access
+- **QR pairing**: Settings → "Mobile & Remote" tab shows a QR (auto-refreshes every 2.5 min, 5-min one-time token). Phone scans it → `POST /api/mobile/pair/confirm` → gets a JWT → linked with ZERO typing. QR payload = `{"v":1,"s":"<serverUrl>","k":"<token>"}`.
+  - Routes: `src/app/api/mobile/pair/{start,qr,confirm,tailscale}/route.ts`, store in `src/lib/pairing.ts` (JSON file `data/pairing.json`).
+  - `confirm` is PUBLIC (in `src/proxy.ts` PUBLIC_PATHS); `start/qr/tailscale` require Super Admin/Admin.
+  - `getCurrentUser()` (`src/lib/current-user.ts`) now falls back to `Authorization: Bearer` — REQUIRED for the mobile app's CRUD (routes use getCurrentUser for RBAC; the proxy only validates tokens, it does not forward user identity).
+  - serverUrl prefers Tailscale IP (100.x) else LAN IPv4; port = `BUILDPROP_PORT || 3456`.
+- **Mobile app is now a full admin app**: `mobile/www/` — 5 tabs (Home/Projects/Finance/Contacts/Settings), create/edit projects, invoices (with line items + 15% VAT), payments, contacts, tasks, QR scanner (jsQR + getUserMedia, CAMERA permission in manifest), manual pairing-code paste fallback. Alerts moved to a Home bell + screen.
+- **Tailscale bundling**: `electron/resources/tools/tailscale-setup.msi` (36.6 MB) is added via extraResources → `tools/tailscale-setup.msi` for Premium + Demo only. The "Install Secure Remote Access" button in Settings POSTs to `/api/mobile/pair/tailscale` which runs `msiexec /i "<BUILDPROP_TAILSCALE_MSI>" /quiet` (UAC prompt). `electron/main.js` sets `BUILDPROP_RESOURCES_DIR` and `BUILDPROP_TAILSCALE_MSI` env vars for the server.
+- **LAN binding**: `electron/main.js` sets `BIND_HOST: '0.0.0.0'` (wrapper) so phones can reach the app over LAN/Tailscale. Internal upstream stays 127.0.0.1.
+
+## Gotchas (v3.8)
+- **NSIS installer crash 0xc0000005 (System.dll)**: caused by a SPACE in the shortcut/app name on this Windows 11 build. Fix: add `"shortcutName": "BuildProp"` (no space) to every `nsis` config. Keep productName with space ("BuildProp Demo") — the install dir becomes `BuildPropDemo` automatically.
+- **Next.js standalone 8GB balloon**: `@vercel/nft` scans STRING LITERALS and `path.join(process.cwd(), ...)` as file paths during `next build` and copies whole folders into `.next/standalone`. Avoid ANY absolute-path string (`'C:\\Program Files\\...'`) or static `join(process.cwd(), '<folder>')` in traced server code. `resolveResourcesDir()` uses only env vars for this reason.
+- **Two-team contract trap**: keep desktop Settings page and mobile app on ONE contract for `/api/mobile/pair/qr` — it returns `{ success, v, s, k, token, expiresAt, qrDataUrl, serverUrl, tailscaleInstalled, tailscaleIp }`.
+- **File locks during rebuild**: a running app from `dist/*/win-unpacked` locks files (esp. `ai/lib/ollama/*.dll` via `llama-server.exe` and `ollama.exe`). Kill `BuildProp*`, `llama-server*`, `ollama*` processes before rebuilding, or electron-builder fails with "Access is denied".
+- **Build commands must run from the right dir**: `npm run build:<edition>` from repo ROOT; `npx electron-builder ...` from `electron/`. Mixing them silently packages the WRONG edition (verified the hard way).
+- The emulator's headless camera cannot render getUserMedia video ("Unable to play media") — camera scanning is untestable on this machine; test on a real phone. The manual paste fallback covers it.

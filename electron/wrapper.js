@@ -7,6 +7,7 @@ const { spawn } = require('child_process')
 const PORT = parseInt(process.env.PORT || '3456', 10)
 const INTERNAL_PORT = PORT + 1
 const HOSTNAME = process.env.HOSTNAME || '127.0.0.1'
+const BIND_HOST = process.env.BIND_HOST || '127.0.0.1'
 const serverDir = process.env.SERVER_DIR || __dirname
 
 // Start Next.js server on internal port using spawn (NOT fork - fork has issues in Electron packaged apps)
@@ -102,8 +103,8 @@ function createProxy() {
     req.pipe(proxyReq)
   })
 
-  proxy.listen(PORT, HOSTNAME, () => {
-    console.log('[wrapper] BuildProp server on http://' + HOSTNAME + ':' + PORT)
+  proxy.listen(PORT, BIND_HOST, () => {
+    console.log('[wrapper] BuildProp server on http://' + BIND_HOST + ':' + PORT)
     if (process.send) process.send('ready')
   })
 

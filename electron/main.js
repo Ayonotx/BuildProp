@@ -26,6 +26,14 @@ function getAiDir() {
   return path.join(__dirname, 'resources', 'ai')
 }
 
+// Directory that holds bundled tools (tools/tailscale-setup.msi).
+function getResourcesDir() {
+  if (app.isPackaged) {
+    return process.resourcesPath
+  }
+  return path.join(__dirname, 'resources')
+}
+
 function getOllamaDataDir() {
   return path.join(app.getPath('appData'), 'BuildProp', 'ollama-data')
 }
@@ -124,7 +132,7 @@ function getTimestampDirName() {
 }
 
 // Safety-net backup of the SQLite DB + small JSON configs, run shortly after startup.
-// Never throws/crashes the app — any failure is caught and logged.
+// Never throws/crashes the app Ã¢â‚¬â€ any failure is caught and logged.
 function runAutoBackup() {
   const BACKUP_KEEP = 10
   try {
@@ -280,7 +288,10 @@ function startNextServer() {
           ELECTRON_RUN_AS_NODE: '1',
           PORT: String(PORT),
           HOSTNAME: '127.0.0.1',
+          BIND_HOST: '0.0.0.0',
           SERVER_DIR: serverDir,
+          BUILDPROP_RESOURCES_DIR: getResourcesDir(),
+          BUILDPROP_TAILSCALE_MSI: path.join(getResourcesDir(), 'tools', 'tailscale-setup.msi'),
           NODE_ENV: 'production',
         },
         stdio: ['ignore', 'pipe', 'pipe'],

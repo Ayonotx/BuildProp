@@ -54,3 +54,5 @@ mobile/android/local.properties
 mobile/android/.idea/
 mobile/android/captures/
 mobile/android/*.iml
+
+electron/resources/tools/

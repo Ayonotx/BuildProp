@@ -14,6 +14,12 @@ export const mobileLoginSchema = z.object({
 
 export type MobileLoginInput = z.infer<typeof mobileLoginSchema>
 
+export const pairConfirmSchema = z.object({
+  token: z.string().min(10, 'Pairing token is required'),
+})
+
+export type PairConfirmInput = z.infer<typeof pairConfirmSchema>
+
 export const projectSchema = z.object({
   name: z.string().min(1, 'Project name is required').max(200, 'Project name must be under 200 characters'),
   code: z.string().min(1, 'Project code is required').max(50, 'Project code must be under 50 characters'),

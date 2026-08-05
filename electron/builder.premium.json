@@ -21,7 +21,8 @@
     "nsis": {
         "oneClick": false,
         "allowToChangeInstallationDirectory": true,
-        "createDesktopShortcut": true
+        "createDesktopShortcut": true,
+        "shortcutName": "BuildProp"
     },
     "extraResources": [
         {
@@ -42,6 +43,10 @@
         {
             "to": "ai/lib",
             "from": "resources/ai/lib"
+        },
+        {
+            "from": "resources/tools/tailscale-setup.msi",
+            "to": "tools/tailscale-setup.msi"
         }
     ]
 }

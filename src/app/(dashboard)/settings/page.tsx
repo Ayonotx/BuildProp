@@ -3,7 +3,7 @@
 import React, { useEffect, useState, useCallback } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Save, Settings, Palette, Users, Shield, Download, Upload, RotateCcw, AlertTriangle, Database, Brain, Key, Eye, EyeOff, Zap, Check, X, Loader2, Pencil, Monitor, LogOut, RefreshCw, Mail, Send } from "lucide-react"
+import { Save, Settings, Palette, Users, Shield, Download, Upload, RotateCcw, AlertTriangle, Database, Brain, Key, Eye, EyeOff, Zap, Check, X, Loader2, Pencil, Monitor, LogOut, RefreshCw, Mail, Send, QrCode, Smartphone } from "lucide-react"
 import { AI_ENABLED, DEMO_MODE } from "@/lib/features"
 import { formatDate } from "@/lib/utils"
 
@@ -13,6 +13,7 @@ const tabs = [
   { id: "users", label: "Users", icon: Users },
   { id: "security", label: "Security", icon: Shield },
   { id: "email", label: "Email / SMTP", icon: Mail },
+  { id: "mobile", label: "Mobile & Remote", icon: Smartphone },
   { id: "backup", label: "Backup & Restore", icon: Database },
   ...(AI_ENABLED ? [{ id: "ai", label: "AI Configuration", icon: Brain }] : []),
 ]
@@ -100,6 +101,12 @@ export default function SettingsPage() {
   const [emailMsg, setEmailMsg] = useState<{ ok: boolean; text: string } | null>(null)
   const [showTestInput, setShowTestInput] = useState(false)
   const [testEmailTo, setTestEmailTo] = useState("")
+
+  const [pairing, setPairing] = useState<{ token: string; expiresAt: string; qrDataUrl: string; serverUrl: string; tailscaleInstalled: boolean; tailscaleIp: string } | null>(null)
+  const [pairingLoading, setPairingLoading] = useState(false)
+  const [pairingError, setPairingError] = useState<string | null>(null)
+  const [tailscaleInstalling, setTailscaleInstalling] = useState(false)
+  const [tailscaleMsg, setTailscaleMsg] = useState<{ ok: boolean; text: string } | null>(null)
 
   const [dbUsers, setDbUsers] = useState<UserRecord[]>([])
   const [dbRoles, setDbRoles] = useState<RoleRecord[]>([])
@@ -455,6 +462,51 @@ export default function SettingsPage() {
       const secure = !prev.secure
       return { ...prev, secure, port: secure ? 465 : 587 }
     })
+  }
+
+  const fetchPairing = useCallback(async () => {
+    setPairingLoading(true)
+    setPairingError(null)
+    try {
+      const res = await fetch("/api/mobile/pair/qr", { cache: "no-store" })
+      const data = await res.json()
+      if (!res.ok || !data.qrDataUrl) {
+        setPairingError(errMsg(data, "Failed to generate QR code"))
+        setPairing(null)
+        return
+      }
+      setPairing(data)
+    } catch {
+      setPairingError("Failed to generate QR code")
+      setPairing(null)
+    } finally {
+      setPairingLoading(false)
+    }
+  }, [])
+
+  useEffect(() => {
+    if (activeTab !== "mobile") return
+    fetchPairing()
+    // The QR code expires after 5 minutes, so refresh it every 2.5 minutes.
+    const interval = setInterval(fetchPairing, 150000)
+    return () => clearInterval(interval)
+  }, [activeTab, fetchPairing])
+
+  async function handleInstallTailscale() {
+    setTailscaleInstalling(true)
+    setTailscaleMsg(null)
+    try {
+      const res = await fetch("/api/mobile/pair/tailscale", { method: "POST" })
+      const data = await res.json()
+      if (res.ok && data.success) {
+        setTailscaleMsg({ ok: true, text: data.message || "Tailscale installer launched." })
+      } else {
+        setTailscaleMsg({ ok: false, text: errMsg(data, "Failed to launch Tailscale installer") })
+      }
+    } catch {
+      setTailscaleMsg({ ok: false, text: "Failed to launch Tailscale installer" })
+    }
+    setTailscaleInstalling(false)
   }
 
   const fetchBackups = useCallback(async () => {
@@ -961,6 +1013,96 @@ export default function SettingsPage() {
             </div>
           </CardContent>
         </Card>
+      )}
+
+      {activeTab === "mobile" && (
+        <div className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <QrCode className="h-5 w-5 text-orange-500" />
+                Link your phone — BuildProp Mobile
+              </CardTitle>
+              <p className="text-sm text-slate-500">
+                Open the BuildProp app on your phone → tap Link with QR → scan this code. No need to type a server address, IP, or password.
+              </p>
+            </CardHeader>
+            <CardContent>
+              <div className="flex flex-col items-center gap-4">
+                {pairingError && (
+                  <div className="rounded-lg bg-red-50 border border-red-200 p-3 text-sm text-red-800 w-full max-w-md">{pairingError}</div>
+                )}
+                <div className="bg-white border border-slate-200 rounded-xl p-4">
+                  {pairingLoading && !pairing ? (
+                    <div className="flex items-center justify-center h-64 w-64">
+                      <Loader2 className="h-6 w-6 animate-spin text-slate-400" />
+                    </div>
+                  ) : pairing ? (
+                    <img src={pairing.qrDataUrl} alt="BuildProp pairing QR code" className="h-64 w-64" />
+                  ) : (
+                    <div className="flex items-center justify-center h-64 w-64 text-sm text-slate-400">Generating…</div>
+                  )}
+                </div>
+                {pairing && (
+                  <>
+                    <div className="text-sm text-slate-500">
+                      Phone connects to <span className="font-medium text-slate-700">{pairing.serverUrl}</span>
+                    </div>
+                    <p className="text-xs text-slate-400">
+                      The QR code refreshes automatically every few minutes. Scan it before it expires.
+                    </p>
+                  </>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Shield className="h-5 w-5 text-emerald-500" />
+                Remote Access
+              </CardTitle>
+              <p className="text-sm text-slate-500">
+                Tailscale lets your phone reach this computer securely over the internet, even when you're not on the same Wi-Fi.
+              </p>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4 max-w-xl">
+                {pairing && (
+                  <div className={`rounded-lg border p-3 text-sm flex items-center gap-2 ${pairing.tailscaleInstalled ? "bg-emerald-50 border-emerald-200 text-emerald-800" : "bg-slate-50 border-slate-200 text-slate-600"}`}>
+                    {pairing.tailscaleInstalled ? (
+                      <>
+                        <Check className="h-4 w-4 shrink-0" />
+                        Tailscale is installed and connected ({pairing.tailscaleIp}).
+                      </>
+                    ) : (
+                      <>
+                        <X className="h-4 w-4 shrink-0" />
+                        Tailscale is not installed or not connected yet.
+                      </>
+                    )}
+                  </div>
+                )}
+                {!pairing?.tailscaleInstalled && (
+                  <Button onClick={handleInstallTailscale} disabled={tailscaleInstalling}>
+                    {tailscaleInstalling ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Shield className="h-4 w-4 mr-2" />}
+                    {tailscaleInstalling ? "Installing..." : "Install Secure Remote Access (Tailscale)"}
+                  </Button>
+                )}
+                {tailscaleMsg && (
+                  <div className={`rounded-lg border p-3 text-sm ${tailscaleMsg.ok ? "bg-emerald-50 border-emerald-200 text-emerald-800" : "bg-red-50 border-red-200 text-red-800"}`}>
+                    {tailscaleMsg.ok ? <Check className="h-4 w-4 inline mr-1" /> : <X className="h-4 w-4 inline mr-1" />}
+                    {tailscaleMsg.text}
+                  </div>
+                )}
+                <p className="text-xs text-slate-400">
+                  A Windows permission prompt (UAC) will appear — click Yes to allow the installer to run, then reload this page.
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
       )}
 
       {activeTab === "backup" && (
