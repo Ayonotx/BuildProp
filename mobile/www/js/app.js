@@ -14,6 +14,14 @@
     projects: 'buildprop_cache_projects',
     finance: 'buildprop_cache_finance',
     contacts: 'buildprop_cache_contacts',
+    properties: 'buildprop_cache_properties',
+    inventory: 'buildprop_cache_inventory',
+    procurement: 'buildprop_cache_procurement',
+    fleet: 'buildprop_cache_fleet',
+    assets: 'buildprop_cache_assets',
+    employees: 'buildprop_cache_employees',
+    installments: 'buildprop_cache_installments',
+    reports: 'buildprop_cache_reports',
   }
 
   var ROUTE_TITLES = {
@@ -23,6 +31,40 @@
     contacts: 'Contacts',
     alerts: 'Alerts',
     settings: 'Settings',
+    more: 'More',
+  }
+
+  var MODULE_META = {
+    properties: { title: 'Properties', api: '/api/properties' },
+    inventory: { title: 'Inventory', api: '/api/inventory' },
+    procurement: { title: 'Procurement', api: '/api/procurement' },
+    fleet: { title: 'Fleet', api: '/api/fleet' },
+    assets: { title: 'Assets', api: '/api/assets' },
+    employees: { title: 'Employees', api: '/api/hr' },
+    installments: { title: 'Installments', api: '/api/installments' },
+    reports: { title: 'Reports', api: null },
+  }
+
+  var MODULE_RENDERERS = {
+    properties: 'renderProperties',
+    inventory: 'renderInventory',
+    procurement: 'renderProcurement',
+    fleet: 'renderFleet',
+    assets: 'renderAssets',
+    employees: 'renderEmployees',
+    installments: 'renderInstallments',
+  }
+
+  var REPORT_META = {
+    overview: { title: 'Business Overview', api: '/api/reports' },
+    pnl: { title: 'Profit & Loss', api: '/api/reports/pnl' },
+    aging: { title: 'Receivables Aging', api: '/api/reports/aging' },
+  }
+
+  var REPORT_RENDERERS = {
+    overview: 'renderReportOverview',
+    pnl: 'renderReportPnl',
+    aging: 'renderReportAging',
   }
 
   var state = {
@@ -37,6 +79,14 @@
       projects: null,
       finance: null,
       contacts: null,
+      properties: null,
+      inventory: null,
+      procurement: null,
+      fleet: null,
+      assets: null,
+      employees: null,
+      installments: null,
+      reports: null,
     },
   }
 
@@ -82,6 +132,14 @@
     state.cache.projects = cacheGet(STORE.projects)
     state.cache.finance = cacheGet(STORE.finance)
     state.cache.contacts = cacheGet(STORE.contacts)
+    state.cache.properties = cacheGet(STORE.properties)
+    state.cache.inventory = cacheGet(STORE.inventory)
+    state.cache.procurement = cacheGet(STORE.procurement)
+    state.cache.fleet = cacheGet(STORE.fleet)
+    state.cache.assets = cacheGet(STORE.assets)
+    state.cache.employees = cacheGet(STORE.employees)
+    state.cache.installments = cacheGet(STORE.installments)
+    state.cache.reports = cacheGet(STORE.reports)
 
     if (API.getToken() && state.user && state.serverUrl) {
       enterApp()
@@ -409,7 +467,13 @@
     if (parts[0] === 'projects' && parts[1]) {
       return { name: 'project', tab: 'projects', id: decodeURIComponent(parts[1]) }
     }
-    if (['home', 'projects', 'finance', 'contacts', 'alerts', 'settings'].indexOf(parts[0]) !== -1) {
+    if (parts[0] === 'm' && parts[1]) {
+      return { name: 'module', tab: 'more', module: parts[1] }
+    }
+    if (parts[0] === 'report' && parts[1]) {
+      return { name: 'report', tab: 'more', report: parts[1] }
+    }
+    if (['home', 'projects', 'finance', 'contacts', 'alerts', 'settings', 'more'].indexOf(parts[0]) !== -1) {
       return { name: parts[0], tab: parts[0] }
     }
     return { name: 'home', tab: 'home' }
@@ -426,7 +490,7 @@
   function renderRoute() {
     var route = parseRoute()
     state.route = route
-    var pushed = route.name === 'project' || route.name === 'alerts'
+    var pushed = route.name === 'project' || route.name === 'alerts' || route.name === 'module' || route.name === 'report'
 
     $('#tabbar').classList.toggle('hidden', pushed)
     $('#screen-container').scrollTop = 0
@@ -455,6 +519,15 @@
       case 'settings':
         renderSettingsScreen()
         break
+      case 'more':
+        renderMoreScreen()
+        break
+      case 'module':
+        renderModuleScreen(route.module)
+        break
+      case 'report':
+        renderReportScreen(route.report)
+        break
       default:
         navigate('/home')
     }
@@ -474,14 +547,18 @@
     var bell = $('#btn-alerts')
     var title = $('#header-title')
 
-    if (route.name === 'project' || route.name === 'alerts') {
+    var pushed = route.name === 'project' || route.name === 'alerts' || route.name === 'module' || route.name === 'report'
+    if (pushed) {
       back.classList.remove('hidden')
-      refresh.classList.add('hidden')
+      refresh.classList.toggle('hidden', !(route.name === 'module' || route.name === 'report'))
       bell.classList.add('hidden')
-      title.textContent = route.name === 'alerts' ? 'Alerts' : (state.detailName || 'Project')
+      if (route.name === 'alerts') title.textContent = 'Alerts'
+      else if (route.name === 'project') title.textContent = state.detailName || 'Project'
+      else if (route.name === 'module') title.textContent = (MODULE_META[route.module] && MODULE_META[route.module].title) || S.statusLabel(route.module)
+      else title.textContent = (REPORT_META[route.report] && REPORT_META[route.report].title) || 'Report'
     } else {
       back.classList.add('hidden')
-      refresh.classList.toggle('hidden', !(route.name === 'home' || route.name === 'projects' || route.name === 'finance' || route.name === 'contacts'))
+      refresh.classList.toggle('hidden', !(route.name === 'home' || route.name === 'projects' || route.name === 'finance' || route.name === 'contacts' || route.name === 'more'))
       bell.classList.toggle('hidden', route.name !== 'home')
       title.textContent = ROUTE_TITLES[route.name] || 'BuildProp Admin'
     }
@@ -536,6 +613,7 @@
     if (form) {
       var kind = form.getAttribute('data-form')
       if (kind === 'invoice') recomputeInvoiceTotals()
+      if (kind === 'procurement') recomputePoTotals()
       form.addEventListener('submit', onFormSubmit)
     }
   }
@@ -551,7 +629,10 @@
   function routeKey() {
     var r = state.route
     if (!r) return ''
-    return r.name + (r.name === 'project' && r.id ? ':' + r.id : '')
+    if (r.name === 'project' && r.id) return 'project:' + r.id
+    if (r.name === 'module' && r.module) return 'module:' + r.module
+    if (r.name === 'report' && r.report) return 'report:' + r.report
+    return r.name
   }
 
   function staleRoute(expected) {
@@ -720,6 +801,79 @@
     }
   }
 
+  function renderMoreScreen() {
+    $('#screen-container').innerHTML = S.renderMore()
+  }
+
+  function moduleCacheKey(module) {
+    return STORE[module] || ''
+  }
+
+  async function renderModuleScreen(module) {
+    var meta = MODULE_META[module]
+    if (!meta) {
+      $('#screen-container').innerHTML = S.renderModuleUnavailable(module)
+      return
+    }
+    if (!meta.api) {
+      if (module === 'reports') {
+        $('#screen-container').innerHTML = S.renderReportsMenu()
+      } else {
+        $('#screen-container').innerHTML = S.renderModuleUnavailable(module)
+      }
+      return
+    }
+
+    var sc = $('#screen-container')
+    var expected = routeKey()
+    sc.innerHTML = loadingScreen()
+    try {
+      var data = await API.apiFetch(meta.api)
+      if (staleRoute(expected)) return
+      state.cache[module] = data
+      storeSet(moduleCacheKey(module), JSON.stringify(data))
+      state.offline = false
+      sc.innerHTML = S[MODULE_RENDERERS[module]](data, { offline: false })
+    } catch (err) {
+      if (staleRoute(expected)) return
+      if (handleSessionError(err)) return
+      state.offline = true
+      if (state.cache[module]) {
+        sc.innerHTML = S[MODULE_RENDERERS[module]](state.cache[module], { offline: true })
+      } else {
+        sc.innerHTML = errorScreen(err)
+      }
+    }
+  }
+
+  async function renderReportScreen(report) {
+    var meta = REPORT_META[report]
+    if (!meta) {
+      navigate('/m/reports')
+      return
+    }
+    var sc = $('#screen-container')
+    var expected = routeKey()
+    sc.innerHTML = loadingScreen()
+    try {
+      var data = await API.apiFetch(meta.api)
+      if (staleRoute(expected)) return
+      state.cache.reports = data
+      storeSet(STORE.reports, JSON.stringify(data))
+      state.offline = false
+      sc.innerHTML = S[REPORT_RENDERERS[report]](data, { offline: false })
+    } catch (err) {
+      if (staleRoute(expected)) return
+      if (handleSessionError(err)) return
+      state.offline = true
+      if (state.cache.reports) {
+        sc.innerHTML = S[REPORT_RENDERERS[report]](state.cache.reports, { offline: true })
+      } else {
+        sc.innerHTML = errorScreen(err)
+      }
+    }
+  }
+
   async function renderAlerts() {
     var sc = $('#screen-container')
     sc.innerHTML = S.renderAlerts(deriveAlerts())
@@ -842,6 +996,16 @@
     else if (kind === 'payment') submitPayment(form)
     else if (kind === 'contact') submitContact(form)
     else if (kind === 'task') submitTask(form)
+    else if (kind === 'property') submitProperty(form)
+    else if (kind === 'inventory') submitInventory(form)
+    else if (kind === 'inventory-adjust') submitInventoryAdjust(form)
+    else if (kind === 'procurement') submitProcurement(form)
+    else if (kind === 'procurement-edit') submitProcurementEdit(form)
+    else if (kind === 'fleet') submitFleet(form)
+    else if (kind === 'asset') submitAsset(form)
+    else if (kind === 'employee-new') submitEmployeeNew(form)
+    else if (kind === 'employee') submitEmployee(form)
+    else if (kind === 'installment-pay') submitInstallmentPay(form)
   }
 
   async function submitAndRefresh(path, method, body, successMsg, afterRoute) {
@@ -1018,6 +1182,250 @@
     submitAndRefresh('/api/tasks', 'POST', body, 'Task added', projectId ? '/projects/' + encodeURIComponent(projectId) : '/projects')
   }
 
+  function findInModuleCache(module, id) {
+    var data = state.cache[module]
+    if (!data) return null
+    var list = module === 'procurement' ? data.purchaseOrders : (Array.isArray(data) ? data : null)
+    if (!list) return null
+    for (var i = 0; i < list.length; i++) {
+      if (list[i].id === id) return list[i]
+    }
+    return null
+  }
+
+  function submitProperty(form) {
+    var name = fieldVal('f-name').trim()
+    var price = num(fieldVal('f-price'))
+    if (!name) {
+      toast('Property name is required.')
+      return
+    }
+    if (!(price > 0)) {
+      toast('Enter a valid price.')
+      return
+    }
+    var id = form.getAttribute('data-id')
+    var body = {
+      name: name,
+      description: fieldVal('f-description'),
+      propertyType: fieldVal('f-prop-type'),
+      status: fieldVal('f-prop-status'),
+      price: price,
+      rentalPrice: numOrUndef(fieldVal('f-rental')),
+      areaSqft: numOrUndef(fieldVal('f-area')),
+      bedrooms: numOrUndef(fieldVal('f-bed')),
+      bathrooms: numOrUndef(fieldVal('f-bath')),
+      city: fieldVal('f-city'),
+      state: fieldVal('f-state'),
+      address: fieldVal('f-address'),
+    }
+    submitAndRefresh(
+      id ? '/api/properties/' + encodeURIComponent(id) : '/api/properties',
+      id ? 'PUT' : 'POST',
+      body,
+      id ? 'Property updated' : 'Property created'
+    )
+  }
+
+  function submitInventory(form) {
+    var name = fieldVal('f-inv-name').trim()
+    var unit = fieldVal('f-inv-unit').trim()
+    if (!name || !unit) {
+      toast('Item name and unit of measure are required.')
+      return
+    }
+    var id = form.getAttribute('data-id')
+    var body = {
+      name: name,
+      unitOfMeasure: unit,
+      description: fieldVal('f-inv-desc'),
+      categoryId: fieldVal('f-inv-cat') || undefined,
+      currentStock: numOrUndef(fieldVal('f-inv-stock')),
+      minStock: numOrUndef(fieldVal('f-inv-min')),
+      maxStock: numOrUndef(fieldVal('f-inv-max')),
+      unitCost: numOrUndef(fieldVal('f-inv-cost')),
+    }
+    submitAndRefresh(
+      id ? '/api/inventory/' + encodeURIComponent(id) : '/api/inventory',
+      id ? 'PUT' : 'POST',
+      body,
+      id ? 'Inventory item updated' : 'Inventory item added'
+    )
+  }
+
+  function submitInventoryAdjust(form) {
+    var id = form.getAttribute('data-id')
+    var stock = num(fieldVal('f-adj-stock'))
+    if (stock < 0) {
+      toast('Stock quantity cannot be negative.')
+      return
+    }
+    submitAndRefresh('/api/inventory/' + encodeURIComponent(id), 'PUT', { currentStock: stock }, 'Stock adjusted')
+  }
+
+  function readPoItems(form) {
+    var rows = form.querySelectorAll('.po-item')
+    var items = []
+    for (var i = 0; i < rows.length; i++) {
+      var row = rows[i]
+      var desc = (row.querySelector('.po-item-desc').value || '').trim()
+      if (!desc) continue
+      var qty = num(row.querySelector('.po-item-qty').value)
+      var price = num(row.querySelector('.po-item-price').value)
+      items.push({
+        description: desc,
+        quantity: qty,
+        unitPrice: price,
+        amount: S.round2(qty * price),
+      })
+    }
+    return items
+  }
+
+  function submitProcurement(form) {
+    var supplierId = fieldVal('f-po-supplier')
+    var items = readPoItems(form)
+    if (!supplierId) {
+      toast('Select a supplier.')
+      return
+    }
+    if (!items.length) {
+      toast('Add at least one line item with a description.')
+      return
+    }
+    var total = items.reduce(function (sum, it) { return sum + num(it.amount) }, 0)
+    var body = {
+      supplierId: supplierId,
+      orderDate: fieldVal('f-po-order') || undefined,
+      expectedDelivery: fieldVal('f-po-delivery') || undefined,
+      totalAmount: S.round2(total),
+      items: items,
+    }
+    submitAndRefresh('/api/procurement', 'POST', body, 'Purchase order created')
+  }
+
+  function submitProcurementEdit(form) {
+    var id = form.getAttribute('data-id')
+    var body = {
+      supplierId: fieldVal('f-po-supplier') || undefined,
+      orderDate: fieldVal('f-po-order') || undefined,
+      expectedDelivery: fieldVal('f-po-delivery') || undefined,
+    }
+    var status = fieldVal('f-po-status')
+    if (status) body.status = status
+    submitAndRefresh('/api/procurement/' + encodeURIComponent(id), 'PUT', body, 'Purchase order updated')
+  }
+
+  function submitFleet(form) {
+    var name = fieldVal('f-fleet-name').trim()
+    var plate = fieldVal('f-fleet-plate').trim()
+    if (!name || !plate) {
+      toast('Vehicle name and license plate are required.')
+      return
+    }
+    var id = form.getAttribute('data-id')
+    var body = {
+      name: name,
+      licensePlate: plate,
+      make: fieldVal('f-fleet-make'),
+      model: fieldVal('f-fleet-model'),
+      year: numOrUndef(fieldVal('f-fleet-year')),
+      status: fieldVal('f-fleet-status'),
+      fuelType: fieldVal('f-fleet-fuel'),
+      mileage: numOrUndef(fieldVal('f-fleet-mileage')),
+    }
+    submitAndRefresh(
+      id ? '/api/fleet/' + encodeURIComponent(id) : '/api/fleet',
+      id ? 'PUT' : 'POST',
+      body,
+      id ? 'Vehicle updated' : 'Vehicle added'
+    )
+  }
+
+  function submitAsset(form) {
+    var name = fieldVal('f-asset-name').trim()
+    if (!name) {
+      toast('Asset name is required.')
+      return
+    }
+    var id = form.getAttribute('data-id')
+    var body = {
+      name: name,
+      category: fieldVal('f-asset-cat'),
+      status: fieldVal('f-asset-status'),
+      purchaseDate: fieldVal('f-asset-pdate') || undefined,
+      purchasePrice: numOrUndef(fieldVal('f-asset-pprice')),
+      currentValue: numOrUndef(fieldVal('f-asset-cvalue')),
+      location: fieldVal('f-asset-loc'),
+      insuranceExpiry: fieldVal('f-asset-iexp') || undefined,
+    }
+    submitAndRefresh(
+      id ? '/api/assets/' + encodeURIComponent(id) : '/api/assets',
+      id ? 'PUT' : 'POST',
+      body,
+      id ? 'Asset updated' : 'Asset added'
+    )
+  }
+
+  function submitEmployeeNew(form) {
+    var first = fieldVal('f-emp-first').trim()
+    var last = fieldVal('f-emp-last').trim()
+    var dept = fieldVal('f-emp-dept')
+    if (!first || !last) {
+      toast('First and last name are required.')
+      return
+    }
+    if (!dept) {
+      toast('Select a department.')
+      return
+    }
+    var body = {
+      firstName: first,
+      lastName: last,
+      designation: fieldVal('f-emp-designation') || null,
+      departmentId: dept,
+      employmentType: fieldVal('f-emp-type'),
+      salary: num(fieldVal('f-emp-salary')),
+    }
+    submitAndRefresh('/api/hr/employee', 'POST', body, 'Employee added')
+  }
+
+  function submitEmployee(form) {
+    var id = form.getAttribute('data-id')
+    var body = {
+      employeeId: fieldVal('f-emp-id'),
+      designation: fieldVal('f-emp-designation'),
+      departmentId: fieldVal('f-emp-dept'),
+      employmentType: fieldVal('f-emp-type'),
+      dateOfJoining: fieldVal('f-emp-join') || undefined,
+      salary: num(fieldVal('f-emp-salary')),
+      status: fieldVal('f-emp-status'),
+    }
+    if (!body.employeeId || !body.designation || !body.departmentId || !body.dateOfJoining) {
+      toast('Employee ID, designation, department and join date are required.')
+      return
+    }
+    submitAndRefresh('/api/employees/' + encodeURIComponent(id), 'PUT', body, 'Employee updated')
+  }
+
+  function submitInstallmentPay(form) {
+    var planId = form.getAttribute('data-plan-id')
+    var installmentId = fieldVal('f-inst-id')
+    if (!installmentId) {
+      toast('Select an installment.')
+      return
+    }
+    var amount = num(fieldVal('f-inst-amount'))
+    var body = {
+      installmentId: installmentId,
+      status: 'paid',
+      paidDate: fieldVal('f-inst-date') || undefined,
+      notes: fieldVal('f-inst-notes'),
+    }
+    if (amount > 0) body.paidAmount = amount
+    submitAndRefresh('/api/installments/' + encodeURIComponent(planId), 'PUT', body, 'Payment recorded')
+  }
+
   async function markTaskComplete(id) {
     showLoading('Updating…')
     try {
@@ -1047,6 +1455,212 @@
       if (handleSessionError(err)) return
       toast('❌ ' + friendlyMessage(err))
     }
+  }
+
+  /* ------------------------------ module loaders ------------------------------ */
+
+  async function loadInventory() {
+    if (state.cache.inventory) return state.cache.inventory
+    try {
+      var data = await API.apiFetch('/api/inventory')
+      state.cache.inventory = data
+      storeSet(STORE.inventory, JSON.stringify(data))
+      return data
+    } catch (err) {
+      if (handleSessionError(err)) throw err
+      if (state.cache.inventory) return state.cache.inventory
+      throw err
+    }
+  }
+
+  async function loadProcurement() {
+    if (state.cache.procurement) return state.cache.procurement
+    try {
+      var data = await API.apiFetch('/api/procurement')
+      state.cache.procurement = data
+      storeSet(STORE.procurement, JSON.stringify(data))
+      return data
+    } catch (err) {
+      if (handleSessionError(err)) throw err
+      if (state.cache.procurement) return state.cache.procurement
+      throw err
+    }
+  }
+
+  async function loadHr() {
+    if (state.cache.employees) return state.cache.employees
+    try {
+      var data = await API.apiFetch('/api/hr')
+      state.cache.employees = data
+      storeSet(STORE.employees, JSON.stringify(data))
+      return data
+    } catch (err) {
+      if (handleSessionError(err)) throw err
+      if (state.cache.employees) return state.cache.employees
+      throw err
+    }
+  }
+
+  /* ------------------------------ module deletes ------------------------------ */
+
+  async function deleteModuleItem(module, path, id) {
+    if (!window.confirm('Delete this item? This cannot be undone.')) return
+    showLoading('Deleting…')
+    try {
+      await API.apiFetch(path + '/' + encodeURIComponent(id), { method: 'DELETE' })
+      hideLoading()
+      toast('✅ Deleted')
+      await refreshAllData()
+      if (state.route && state.route.name === 'module' && state.route.module === module) {
+        renderModuleScreen(module)
+      }
+    } catch (err) {
+      hideLoading()
+      if (handleSessionError(err)) return
+      toast('❌ ' + friendlyMessage(err))
+    }
+  }
+
+  function deleteProperty(id) { deleteModuleItem('properties', '/api/properties', id) }
+  function deleteInventory(id) { deleteModuleItem('inventory', '/api/inventory', id) }
+  function deleteProcurement(id) { deleteModuleItem('procurement', '/api/procurement', id) }
+  function deleteFleet(id) { deleteModuleItem('fleet', '/api/fleet', id) }
+  function deleteAsset(id) { deleteModuleItem('assets', '/api/assets', id) }
+  function deleteEmployee(id) { deleteModuleItem('employees', '/api/employees', id) }
+
+  /* ------------------------------ form openers ------------------------------ */
+
+  async function openPropertyForm(propertyId) {
+    if (!propertyId) {
+      openModal('New Property', S.renderPropertyForm())
+      return
+    }
+    try {
+      var p = await API.apiFetch('/api/properties/' + encodeURIComponent(propertyId))
+      openModal('Edit Property', S.renderPropertyForm(p))
+    } catch (err) {
+      if (handleSessionError(err)) return
+      toast('❌ ' + friendlyMessage(err))
+    }
+  }
+
+  async function openInventoryForm(itemId) {
+    var categories = []
+    try {
+      var list = await loadInventory()
+      categories = S.inventoryCategories(list)
+    } catch (err) {
+      if (handleSessionError(err)) return
+    }
+    if (!itemId) {
+      openModal('Add Inventory Item', S.renderInventoryForm(null, categories))
+      return
+    }
+    try {
+      var item = await API.apiFetch('/api/inventory/' + encodeURIComponent(itemId))
+      openModal('Edit Inventory Item', S.renderInventoryForm(item, categories))
+    } catch (err) {
+      if (handleSessionError(err)) return
+      toast('❌ ' + friendlyMessage(err))
+    }
+  }
+
+  async function openInventoryAdjust(itemId) {
+    try {
+      var item = await API.apiFetch('/api/inventory/' + encodeURIComponent(itemId))
+      openModal('Adjust Stock', S.renderInventoryAdjustForm(item))
+    } catch (err) {
+      if (handleSessionError(err)) return
+      toast('❌ ' + friendlyMessage(err))
+    }
+  }
+
+  async function openProcurementForm(poId) {
+    var suppliers = []
+    try {
+      var payload = await loadProcurement()
+      suppliers = payload.suppliers || []
+    } catch (err) {
+      if (handleSessionError(err)) return
+    }
+    if (!poId) {
+      openModal('New Purchase Order', S.renderProcurementCreateForm(suppliers))
+      return
+    }
+    try {
+      var po = await API.apiFetch('/api/procurement/' + encodeURIComponent(poId))
+      openModal('Edit Purchase Order', S.renderProcurementEditForm(suppliers, po))
+    } catch (err) {
+      if (handleSessionError(err)) return
+      toast('❌ ' + friendlyMessage(err))
+    }
+  }
+
+  function viewProcurementDetail(poId) {
+    var po = findInModuleCache('procurement', poId)
+    if (!po) {
+      toast('Could not find that purchase order.')
+      return
+    }
+    openModal('Purchase Order', S.renderProcurementDetail(po))
+  }
+
+  async function openFleetForm(vehicleId) {
+    if (!vehicleId) {
+      openModal('Add Vehicle', S.renderFleetForm())
+      return
+    }
+    try {
+      var v = await API.apiFetch('/api/fleet/' + encodeURIComponent(vehicleId))
+      openModal('Edit Vehicle', S.renderFleetForm(v))
+    } catch (err) {
+      if (handleSessionError(err)) return
+      toast('❌ ' + friendlyMessage(err))
+    }
+  }
+
+  async function openAssetForm(assetId) {
+    if (!assetId) {
+      openModal('Add Asset', S.renderAssetForm())
+      return
+    }
+    try {
+      var a = await API.apiFetch('/api/assets/' + encodeURIComponent(assetId))
+      openModal('Edit Asset', S.renderAssetForm(a))
+    } catch (err) {
+      if (handleSessionError(err)) return
+      toast('❌ ' + friendlyMessage(err))
+    }
+  }
+
+  async function openEmployeeForm(employeeId) {
+    var departments = []
+    try {
+      var hr = await loadHr()
+      departments = hr.departments || []
+    } catch (err) {
+      if (handleSessionError(err)) return
+    }
+    if (!employeeId) {
+      openModal('Add Employee', S.renderEmployeeForm(departments, null))
+      return
+    }
+    try {
+      var e = await API.apiFetch('/api/employees/' + encodeURIComponent(employeeId))
+      openModal('Edit Employee', S.renderEmployeeForm(departments, e))
+    } catch (err) {
+      if (handleSessionError(err)) return
+      toast('❌ ' + friendlyMessage(err))
+    }
+  }
+
+  function openInstallmentPay(planId) {
+    var plan = findInModuleCache('installments', planId)
+    if (!plan) {
+      toast('Could not find that installment plan.')
+      return
+    }
+    openModal('Record Payment', S.renderInstallmentPayForm(plan))
   }
 
   /* ------------------------------ form openers ------------------------------ */
@@ -1159,6 +1773,47 @@
     recomputeInvoiceTotals()
   }
 
+  /* ------------------------------ procurement items (modal) ------------------------------ */
+
+  function recomputePoTotals() {
+    var container = document.getElementById('po-items')
+    if (!container) return
+    var rows = container.querySelectorAll('.po-item')
+    for (var i = 0; i < rows.length; i++) {
+      var rm = rows[i].querySelector('.remove-po-item')
+      if (rm) rm.classList.toggle('hidden', rows.length <= 1)
+    }
+    var total = 0
+    for (var j = 0; j < rows.length; j++) {
+      var qty = num(rows[j].querySelector('.po-item-qty').value)
+      var price = num(rows[j].querySelector('.po-item-price').value)
+      total += qty * price
+    }
+    var totals = document.getElementById('po-totals')
+    if (totals) {
+      totals.innerHTML = '<b>Total: ' + S.formatCurrency(total) + '</b>'
+    }
+  }
+
+  function addPoItem() {
+    var container = document.getElementById('po-items')
+    if (!container) return
+    var row = document.createElement('div')
+    row.className = 'inv-item po-item'
+    row.innerHTML = S.poItemRowHtml()
+    container.appendChild(row)
+    recomputePoTotals()
+  }
+
+  function removePoItem(btn) {
+    var row = btn.closest('.po-item')
+    if (!row) return
+    var container = document.getElementById('po-items')
+    if (container && container.children.length <= 1) return
+    row.parentNode.removeChild(row)
+    recomputePoTotals()
+  }
+
   /* ------------------------------ refresh ------------------------------ */
 
   async function refreshAllData() {
@@ -1226,6 +1881,13 @@
         return renderContactsScreen()
       case 'alerts':
         return renderAlerts()
+      case 'more':
+        renderMoreScreen()
+        return Promise.resolve()
+      case 'module':
+        return renderModuleScreen(route.module)
+      case 'report':
+        return renderReportScreen(route.report)
       default:
         return Promise.resolve()
     }
@@ -1279,7 +1941,7 @@
 
   function isRefreshable() {
     var route = state.route
-    return route && (route.name === 'home' || route.name === 'projects' || route.name === 'finance' || route.name === 'contacts')
+    return route && (route.name === 'home' || route.name === 'projects' || route.name === 'finance' || route.name === 'contacts' || route.name === 'more' || route.name === 'module' || route.name === 'report')
   }
 
   /* ------------------------------ session ------------------------------ */
@@ -1350,10 +2012,15 @@
       if (action === 'close-modal') closeModal()
       else if (action === 'add-item') addInvoiceItem()
       else if (action === 'remove-item') removeInvoiceItem(btn)
+      else if (action === 'add-po-item') addPoItem()
+      else if (action === 'remove-po-item') removePoItem(btn)
     })
     $('#modal-body').addEventListener('input', function (e) {
       if (e.target && (e.target.classList.contains('f-item-qty') || e.target.classList.contains('f-item-price'))) {
         recomputeInvoiceTotals()
+      }
+      if (e.target && (e.target.classList.contains('po-item-qty') || e.target.classList.contains('po-item-price'))) {
+        recomputePoTotals()
       }
     })
 
@@ -1392,6 +2059,10 @@
       else if (action === 'retry') refreshCurrent()
       else if (action === 'link-qr') openQrScanner()
       else if (action === 'view-alerts') navigate('/alerts')
+      else if (action === 'open-alerts') navigate('/alerts')
+      else if (action === 'open-settings') navigate('/settings')
+      else if (action === 'open-module') navigate('/m/' + btn.getAttribute('data-module'))
+      else if (action === 'open-report') navigate('/report/' + btn.getAttribute('data-report'))
       else if (action === 'new-project') openProjectForm()
       else if (action === 'edit-project') openProjectForm(id)
       else if (action === 'new-invoice') openInvoiceForm()
@@ -1401,6 +2072,27 @@
       else if (action === 'delete-contact') deleteContact(id)
       else if (action === 'add-task') openTaskForm(id)
       else if (action === 'task-complete') markTaskComplete(id)
+      else if (action === 'new-property') openPropertyForm()
+      else if (action === 'edit-property') openPropertyForm(id)
+      else if (action === 'delete-property') deleteProperty(id)
+      else if (action === 'new-inventory') openInventoryForm()
+      else if (action === 'edit-inventory') openInventoryForm(id)
+      else if (action === 'adjust-inventory') openInventoryAdjust(id)
+      else if (action === 'delete-inventory') deleteInventory(id)
+      else if (action === 'new-procurement') openProcurementForm()
+      else if (action === 'edit-procurement') openProcurementForm(id)
+      else if (action === 'view-procurement') viewProcurementDetail(id)
+      else if (action === 'delete-procurement') deleteProcurement(id)
+      else if (action === 'new-fleet') openFleetForm()
+      else if (action === 'edit-fleet') openFleetForm(id)
+      else if (action === 'delete-fleet') deleteFleet(id)
+      else if (action === 'new-asset') openAssetForm()
+      else if (action === 'edit-asset') openAssetForm(id)
+      else if (action === 'delete-asset') deleteAsset(id)
+      else if (action === 'new-employee') openEmployeeForm()
+      else if (action === 'edit-employee') openEmployeeForm(id)
+      else if (action === 'delete-employee') deleteEmployee(id)
+      else if (action === 'pay-installment') openInstallmentPay(id)
     })
 
     window.addEventListener('hashchange', renderRoute)
