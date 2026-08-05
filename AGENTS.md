@@ -91,3 +91,9 @@ Demo:
 - **File locks during rebuild**: a running app from `dist/*/win-unpacked` locks files (esp. `ai/lib/ollama/*.dll` via `llama-server.exe` and `ollama.exe`). Kill `BuildProp*`, `llama-server*`, `ollama*` processes before rebuilding, or electron-builder fails with "Access is denied".
 - **Build commands must run from the right dir**: `npm run build:<edition>` from repo ROOT; `npx electron-builder ...` from `electron/`. Mixing them silently packages the WRONG edition (verified the hard way).
 - The emulator's headless camera cannot render getUserMedia video ("Unable to play media") — camera scanning is untestable on this machine; test on a real phone. The manual paste fallback covers it.
+
+## GitHub Actions — Mobile APK pipeline
+- `.github/workflows/build-apk.yml`: builds the signed release APK on push to `mobile/**` OR via the Actions tab → "Build Mobile APK" → "Run workflow". Artifact `BuildProp-Monitor-APK` (downloadable, 14-day retention).
+- CI generates its own keystore (`mobile/buildprop-release.keystore`) so the APK is signed/installable — it will NOT update over an app signed with the local keystore (test builds only).
+- Requires: Ubuntu runner, JDK 17 (temurin), Node 20, android-actions/setup-android, `sdkmanager` platform-34 + build-tools 34.
+- The mobile app is now a FULL admin app: 5 tabs (Home/Projects/Finance/More/Contacts); More grid = Properties, Inventory, Procurement, Fleet, Assets, Employees, Installments, Reports, Alerts, Settings. Equipment shows "Desktop only" (no API route). Field names match the real routes (validated).
