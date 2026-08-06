@@ -120,7 +120,7 @@ export function getLanIpv4(): string {
     for (const iface of ifaces) {
       const isIpv4 = iface.family === 'IPv4'
       if (!isIpv4 || iface.internal) continue
-      if (iface.address.startsWith('100.') || iface.address.startsWith('127.')) continue
+      if (iface.address.startsWith('100.') || iface.address.startsWith('127.') || iface.address.startsWith('169.254.')) continue
       return iface.address
     }
   }
@@ -132,13 +132,15 @@ export function getLanIpv4(): string {
 export async function resolveServerUrl(): Promise<{
   serverUrl: string
   tailscaleIp: string
+  lanUrl: string
 }> {
   const port = process.env.BUILDPROP_PORT || '3456'
+  const lanUrl = `http://${getLanIpv4()}:${port}`
   const tailscaleIp = await getTailscaleIp()
   if (tailscaleIp) {
-    return { serverUrl: `http://${tailscaleIp}:${port}`, tailscaleIp }
+    return { serverUrl: `http://${tailscaleIp}:${port}`, tailscaleIp, lanUrl }
   }
-  return { serverUrl: `http://${getLanIpv4()}:${port}`, tailscaleIp: '' }
+  return { serverUrl: lanUrl, tailscaleIp: '', lanUrl }
 }
 
 // Locates the app's resources directory (contains tools/tailscale-setup.msi).

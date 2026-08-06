@@ -277,6 +277,10 @@
       enterApp()
     } catch (err) {
       hideLoading()
+      // Primary address failed - retry with the fallback (e.g. Tailscale -> LAN)
+      if (fallbackUrl && fallbackUrl !== serverUrl) {
+        return pairWithCode(fallbackUrl, token, fromScanner, null)
+      }
       showLoginError(friendlyMessage(err))
     }
   }
@@ -296,7 +300,7 @@
     var obj = null
     try { obj = JSON.parse(String(text).trim()) } catch (e) { return null }
     if (!obj || obj.v !== 1 || !obj.s || !obj.k) return null
-    return { s: String(obj.s).trim(), k: String(obj.k).trim() }
+    return { s: String(obj.s).trim(), s2: obj.s2 ? String(obj.s2).trim() : '', k: String(obj.k).trim() }
   }
 
   function openQrScanner() {
@@ -396,7 +400,7 @@
               var parsed = parsePairPayload(result.data)
               if (parsed) {
                 stopCamera()
-                pairWithCode(parsed.s, parsed.k, true)
+                pairWithCode(parsed.s, parsed.k, true, parsed.s2)
                 return
               }
               var nowMs = Date.now()
@@ -415,7 +419,7 @@
     qr.raf = requestAnimationFrame(tick)
   }
 
-  async function pairWithCode(serverUrl, token, fromScanner) {
+  async function pairWithCode(serverUrl, token, fromScanner, fallbackUrl) {
     if (!serverUrl || !token) {
       showQrStatus('That does not look like a valid BuildProp pairing code.', true)
       return
@@ -460,7 +464,7 @@
       showLoginError('That does not look like a valid BuildProp pairing code.')
       return
     }
-    pairWithCode(parsed.s, parsed.k, false)
+    pairWithCode(parsed.s, parsed.k, false, parsed.s2)
   }
 
   function onQrManualCodeEntry() {
@@ -471,7 +475,7 @@
       return
     }
     stopCamera()
-    pairWithCode(parsed.s, parsed.k, true)
+    pairWithCode(parsed.s, parsed.k, true, parsed.s2)
   }
 
   /* ------------------------------ routing ------------------------------ */

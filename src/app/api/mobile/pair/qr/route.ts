@@ -33,10 +33,11 @@ async function generatePairing() {
   }
 
   const session = await createPairing(currentUser.id)
-  const { serverUrl, tailscaleIp } = await resolveServerUrl()
+  const { serverUrl, tailscaleIp, lanUrl } = await resolveServerUrl()
 
-  // QR payload format consumed by the mobile app's scanner / manual paste:
-  const payload = JSON.stringify({ v: 1, s: serverUrl, k: session.token })
+  // QR payload format consumed by the mobile app's scanner / manual paste.
+  // s2 = fallback LAN address when s is the Tailscale address (phone tries both).
+  const payload = JSON.stringify({ v: 1, s: serverUrl, s2: lanUrl !== serverUrl ? lanUrl : undefined, k: session.token })
   const qrDataUrl = await QRCode.toDataURL(payload, { width: 512, margin: 2 })
 
   try {
@@ -47,6 +48,7 @@ async function generatePairing() {
     success: true,
     v: 1,
     s: serverUrl,
+    s2: lanUrl !== serverUrl ? lanUrl : undefined,
     k: session.token,
     token: session.token,
     expiresAt: session.expiresAt,
