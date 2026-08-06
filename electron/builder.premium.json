@@ -1,52 +1,56 @@
 {
-    "appId": "com.buildprop.app",
-    "productName": "BuildProp",
-    "directories": {
-        "output": "../dist/premium"
-    },
-    "files": [
-        "main.js",
-        "wrapper.js",
-        "package.json"
-    ],
-    "win": {
-        "target": [
-            {
-                "target": "nsis",
-                "arch": "x64"
-            }
-        ],
-        "icon": "../public/favicon.ico"
-    },
-    "nsis": {
-        "oneClick": false,
-        "allowToChangeInstallationDirectory": true,
-        "createDesktopShortcut": true,
-        "shortcutName": "BuildProp"
-    },
-    "extraResources": [
-        {
-            "filter": [
-                "**/*"
-            ],
-            "from": "../.next/standalone",
-            "to": ".next/standalone"
-        },
-        {
-            "to": "ai/ollama.exe",
-            "from": "resources/ai/ollama.exe"
-        },
-        {
-            "to": "ai/models",
-            "from": "resources/ai/models"
-        },
-        {
-            "to": "ai/lib",
-            "from": "resources/ai/lib"
-        },
-        {
-            "from": "resources/tools/tailscale-setup.msi",
-            "to": "tools/tailscale-setup.msi"
-        }
-    ]
+    "appId":  "com.buildprop.app",
+    "productName":  "BuildProp",
+    "directories":  {
+                        "output":  "../dist/premium"
+                    },
+    "files":  [
+                  "main.js",
+                  "wrapper.js",
+                  "package.json"
+              ],
+    "win":  {
+                "target":  [
+                               {
+                                   "target":  "nsis",
+                                   "arch":  "x64"
+                               }
+                           ],
+                "icon":  "../public/favicon.ico"
+            },
+    "nsis":  {
+                 "oneClick":  false,
+                 "allowToChangeInstallationDirectory":  true,
+                 "createDesktopShortcut":  true,
+                 "shortcutName":  "BuildProp"
+             },
+    "extraResources":  [
+                           {
+                               "filter":  [
+                                              "**/*"
+                                          ],
+                               "from":  "../.next/standalone",
+                               "to":  ".next/standalone"
+                           },
+                           {
+                               "to":  "ai/ollama.exe",
+                               "from":  "resources/ai/ollama.exe"
+                           },
+                           {
+                               "to":  "ai/models",
+                               "from":  "resources/ai/models"
+                           },
+                           {
+                               "to":  "ai/lib",
+                               "from":  "resources/ai/lib"
+                           },
+                           {
+                               "from":  "resources/tools/tailscale-setup.msi",
+                               "to":  "tools/tailscale-setup.msi"
+                           },
+                           {
+                               "from":  "resources/tools/remote-config.json",
+                               "to":  "tools/remote-config.json"
+                           }
+                       ]
 }

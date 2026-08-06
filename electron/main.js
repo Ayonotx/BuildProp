@@ -132,7 +132,7 @@ function getTimestampDirName() {
 }
 
 // Safety-net backup of the SQLite DB + small JSON configs, run shortly after startup.
-// Never throws/crashes the app Ã¢â‚¬â€ any failure is caught and logged.
+// Never throws/crashes the app ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â any failure is caught and logged.
 function runAutoBackup() {
   const BACKUP_KEEP = 10
   try {
@@ -430,6 +430,70 @@ app.on('web-contents-created', (_event, contents) => {
   })
 })
 
+// === Remote Access (Tailscale) =============================================
+// Goal: office PC reachable from anywhere with ZERO user steps. On first run:
+//   1) installs the bundled Tailscale MSI (one UAC prompt via elevate.exe),
+//   2) connects it to the vendor's tailnet using a configured auth key.
+// After that the QR page auto-detects the Tailscale IP and the phone links
+// from anywhere. Reads electron/resources/tools/remote-config.json (bundled,
+// gitignored) or BUILDPROP_TAILSCALE_AUTHKEY env. Never blocks startup.
+
+function getRemoteConfig() {
+  try {
+    const cfgPath = path.join(getResourcesDir(), 'tools', 'remote-config.json')
+    if (fs.existsSync(cfgPath)) return JSON.parse(fs.readFileSync(cfgPath, 'utf-8'))
+  } catch (e) { console.error('[remote] config read failed:', e && e.message) }
+  return {}
+}
+
+function runTailscale(args, timeoutMs) {
+  return new Promise((resolve) => {
+    let exe = 'tailscale.exe'
+    try {
+      const candidates = ['tailscale.exe', 'C:\\Program Files\\Tailscale\\tailscale.exe']
+      for (const cand of candidates) {
+        if (cand === 'tailscale.exe' || fs.existsSync(cand)) { exe = cand; break }
+      }
+      const p = spawn(exe, args, { windowsHide: true })
+      let out = ''
+      const timer = setTimeout(() => { try { p.kill() } catch (e) {} }, timeoutMs || 20000)
+      p.stdout.on('data', (d) => { out += d.toString() })
+      p.stderr.on('data', (d) => { out += d.toString() })
+      p.on('close', () => { clearTimeout(timer); resolve(out.trim()) })
+      p.on('error', () => { clearTimeout(timer); resolve('') })
+    } catch (e) { resolve('') }
+  })
+}
+
+async function ensureRemoteAccess() {
+  try {
+    const cfg = getRemoteConfig()
+    const authKey = process.env.BUILDPROP_TAILSCALE_AUTHKEY || cfg.tailscaleAuthKey || ''
+    const msiPath = path.join(getResourcesDir(), 'tools', 'tailscale-setup.msi')
+
+    const version = await runTailscale(['version'], 10000)
+    if (!version) {
+      if (!fs.existsSync(msiPath)) { console.log('[remote] Tailscale not bundled - skipping'); return }
+      console.log('[remote] Installing bundled Tailscale (UAC prompt once)...')
+      const elevate = path.join(getResourcesDir(), 'elevate.exe')
+      await new Promise((resolve) => {
+        const cmd = fs.existsSync(elevate)
+          ? spawn(elevate, ['msiexec', '/i', msiPath, '/quiet'], { windowsHide: true })
+          : spawn('msiexec', ['/i', msiPath, '/quiet'], { windowsHide: true })
+        cmd.on('close', resolve)
+        cmd.on('error', resolve)
+      })
+    }
+
+    if (authKey) {
+      console.log('[remote] Connecting to tailnet with auth key...')
+      await runTailscale(['up', '--authkey=' + authKey], 60000)
+    } else {
+      console.log('[remote] No auth key configured - manual sign-in available in Settings')
+    }
+  } catch (e) { console.error('[remote] failed:', e && e.message) }
+}
+
 // === App Lifecycle ===
 app.on('ready', async () => {
     loadEnv()
@@ -455,6 +519,8 @@ app.on('ready', async () => {
   setTimeout(() => prewarmOllama(), 4000)
   // Safety-net auto-backup shortly after the server is up (non-blocking, never crashes startup)
   setTimeout(() => runAutoBackup(), 1500)
+  // Remote access: install + connect Tailscale automatically (background)
+  setTimeout(() => ensureRemoteAccess(), 10000)
 })
 
 app.on('window-all-closed', () => {

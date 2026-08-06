@@ -56,3 +56,5 @@ mobile/android/captures/
 mobile/android/*.iml
 
 electron/resources/tools/
+
+electron/resources/tools/remote-config.json
