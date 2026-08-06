@@ -101,6 +101,9 @@ export default function SettingsPage() {
   const [emailMsg, setEmailMsg] = useState<{ ok: boolean; text: string } | null>(null)
   const [showTestInput, setShowTestInput] = useState(false)
   const [testEmailTo, setTestEmailTo] = useState("")
+  const [googleStatus, setGoogleStatus] = useState<{ available: boolean; connected: boolean; email: string }>({ available: true, connected: false, email: "" })
+  const [googleBusy, setGoogleBusy] = useState(false)
+  const [googleMsg, setGoogleMsg] = useState<{ ok: boolean; text: string } | null>(null)
 
   const [pairing, setPairing] = useState<{ token: string; expiresAt: string; qrDataUrl: string; serverUrl: string; tailscaleInstalled: boolean; tailscaleIp: string } | null>(null)
   const [pairingLoading, setPairingLoading] = useState(false)
@@ -390,6 +393,11 @@ export default function SettingsPage() {
         fromEmail: data.fromEmail || "",
       })
       setEmailConfigured(!!data.configured)
+      setGoogleStatus({
+        available: data.googleAvailable !== false,
+        connected: !!data.googleConnected,
+        email: data.googleEmail || "",
+      })
     } catch {}
   }, [])
 
@@ -463,6 +471,53 @@ export default function SettingsPage() {
       return { ...prev, secure, port: secure ? 465 : 587 }
     })
   }
+
+  async function handleGoogleSignIn() {
+    setGoogleBusy(true)
+    setGoogleMsg(null)
+    try {
+      const res = await fetch("/api/email/oauth/start")
+      const data = await res.json()
+      if (res.ok && data.url) {
+        setGoogleStatus(prev => ({ ...prev, available: true }))
+        setGoogleMsg({ ok: true, text: "Google sign-in opened in your browser. Authorize the app, then close that tab and return here." })
+        window.open(data.url, "_blank", "noopener")
+      } else {
+        setGoogleStatus(prev => ({ ...prev, available: false }))
+        setGoogleMsg({ ok: false, text: errMsg(data, "Google sign-in is not configured by the vendor yet.") })
+      }
+    } catch {
+      setGoogleMsg({ ok: false, text: "Could not start Google sign-in." })
+    }
+    setGoogleBusy(false)
+  }
+
+  async function handleGoogleDisconnect() {
+    setGoogleBusy(true)
+    setGoogleMsg(null)
+    try {
+      const res = await fetch("/api/email/oauth/disconnect", { method: "POST" })
+      const data = await res.json()
+      if (res.ok && data.success) {
+        setGoogleStatus(prev => ({ ...prev, connected: false, email: "" }))
+        setGoogleMsg({ ok: true, text: "Google connection removed." })
+      } else {
+        setGoogleMsg({ ok: false, text: errMsg(data, "Failed to disconnect Google") })
+      }
+    } catch {
+      setGoogleMsg({ ok: false, text: "Failed to disconnect Google" })
+    }
+    setGoogleBusy(false)
+  }
+
+  useEffect(() => {
+    if (activeTab !== "email") return
+    // Re-fetch when the user returns from the Google consent window so the
+    // connection status updates without a manual reload.
+    const onFocus = () => fetchEmailSettings()
+    window.addEventListener("focus", onFocus)
+    return () => window.removeEventListener("focus", onFocus)
+  }, [activeTab, fetchEmailSettings])
 
   const fetchPairing = useCallback(async () => {
     setPairingLoading(true)
@@ -929,22 +984,72 @@ export default function SettingsPage() {
       )}
 
       {activeTab === "email" && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Mail className="h-5 w-5 text-blue-500" />
-              Email / SMTP Settings
-            </CardTitle>
-            <p className="text-sm text-slate-500">
-              Configure an SMTP account to send invoices, payment reminders, and quick messages to your contacts.
-            </p>
-          </CardHeader>
+        <div className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Key className="h-5 w-5 text-emerald-500" />
+                Gmail — Sign in with Google
+              </CardTitle>
+              <p className="text-sm text-slate-500">
+                One-click setup: authorize BuildProp in your browser and the app sends email through your Gmail account with Google OAuth — no SMTP password needed.
+              </p>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4 max-w-3xl">
+                {googleStatus.connected && (
+                  <div className="rounded-lg bg-emerald-50 border border-emerald-200 p-3 text-sm text-emerald-800 flex items-center gap-2">
+                    <Check className="h-4 w-4 shrink-0" />
+                    Gmail connected: {googleStatus.email || "Gmail account"}
+                  </div>
+                )}
+                {!googleStatus.connected && (
+                  <div className="text-sm text-slate-600">
+                    {googleStatus.available
+                      ? "Connect a Gmail account to send invoices, reminders, and messages without setting up an SMTP server."
+                      : "Google sign-in is not configured by the vendor yet."}
+                  </div>
+                )}
+                <div className="flex flex-wrap items-center gap-3">
+                  {!googleStatus.connected && googleStatus.available && (
+                    <Button onClick={handleGoogleSignIn} disabled={googleBusy}>
+                      {googleBusy ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Key className="h-4 w-4 mr-2" />}
+                      {googleBusy ? "Opening Google..." : "Sign in with Google"}
+                    </Button>
+                  )}
+                  {googleStatus.connected && (
+                    <Button variant="outline" onClick={handleGoogleDisconnect} disabled={googleBusy} className="text-red-600 border-red-300 hover:bg-red-50">
+                      {googleBusy ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <LogOut className="h-4 w-4 mr-2" />}
+                      Disconnect Google
+                    </Button>
+                  )}
+                </div>
+                {googleMsg && (
+                  <div className={`rounded-lg border p-3 text-sm ${googleMsg.ok ? "bg-emerald-50 border-emerald-200 text-emerald-800" : "bg-red-50 border-red-200 text-red-800"}`}>
+                    {googleMsg.ok ? <Check className="h-4 w-4 inline mr-1" /> : <X className="h-4 w-4 inline mr-1" />}
+                    {googleMsg.text}
+                  </div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Mail className="h-5 w-5 text-blue-500" />
+                Email / SMTP Settings
+              </CardTitle>
+              <p className="text-sm text-slate-500">
+                Configure an SMTP account to send invoices, payment reminders, and quick messages to your contacts.
+              </p>
+            </CardHeader>
           <CardContent>
             <div className="space-y-4 max-w-3xl">
               {emailConfigured && (
                 <div className="rounded-lg bg-emerald-50 border border-emerald-200 p-3 text-sm text-emerald-800 flex items-center gap-2">
                   <Check className="h-4 w-4" />
-                  SMTP account configured. Emails can be sent from the app.
+                  Email sending is configured. Emails can be sent from the app.
                 </div>
               )}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -1012,7 +1117,8 @@ export default function SettingsPage() {
               )}
             </div>
           </CardContent>
-        </Card>
+          </Card>
+        </div>
       )}
 
       {activeTab === "mobile" && (

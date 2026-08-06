@@ -9,6 +9,7 @@ const PUBLIC_PATHS = [
   '/api/auth/demo',
   '/api/mobile/auth',
   '/api/mobile/pair/confirm',
+  '/api/email/oauth/callback',
   '/api/setup',
 ]
 

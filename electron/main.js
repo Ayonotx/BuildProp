@@ -8,6 +8,7 @@ const http = require('http')
 let mainWindow = null
 let serverProcess = null
 let ollamaProcess = null
+let serverReady = false
 
 let PORT = 3456
 const OLLAMA_PORT = 11435
@@ -132,7 +133,7 @@ function getTimestampDirName() {
 }
 
 // Safety-net backup of the SQLite DB + small JSON configs, run shortly after startup.
-// Never throws/crashes the app ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â any failure is caught and logged.
+// Never throws/crashes the app ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â any failure is caught and logged.
 function runAutoBackup() {
   const BACKUP_KEEP = 10
   try {
@@ -403,7 +404,12 @@ function createWindow() {
       webPreferences: { nodeIntegration: false, contextIsolation: true },
     })
     mainWindow.setTitle('BuildProp - Construction & Real Estate Management')
-    mainWindow.loadURL('http://127.0.0.1:' + PORT + '/login')
+    // Show the branded loading screen instantly; navigate to the app once the server is ready
+    if (serverReady) {
+      mainWindow.loadURL('http://127.0.0.1:' + PORT + '/login')
+    } else {
+      mainWindow.loadFile(path.join(__dirname, 'splash.html'))
+    }
     mainWindow.on('closed', () => { mainWindow = null })
     mainWindow.on('ready-to-show', () => { mainWindow.show(); mainWindow.focus() })
   } catch (e) {
@@ -505,6 +511,9 @@ app.on('ready', async () => {
   console.log('[main] BuildProp starting up...')
   console.log('[main] AI_MODE=' + (process.env.AI_MODE || 'not-set'))
 
+  // Show the branded loading screen immediately while the server boots
+  createWindow()
+
   const serverStarted = await startNextServer()
   if (!serverStarted) {
     dialog.showErrorBox('Server Error',
@@ -513,8 +522,11 @@ app.on('ready', async () => {
     return
   }
 
-  // Show window immediately, AI in background
-  createWindow()
+  serverReady = true
+  // Server is up - load the application
+  if (mainWindow && !mainWindow.isDestroyed()) {
+    mainWindow.loadURL('http://127.0.0.1:' + PORT + '/login')
+  }
   setTimeout(() => startOllama(), 2000)
   setTimeout(() => prewarmOllama(), 4000)
   // Safety-net auto-backup shortly after the server is up (non-blocking, never crashes startup)

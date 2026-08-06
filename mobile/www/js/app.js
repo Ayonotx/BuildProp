@@ -25,7 +25,7 @@
   }
 
   var ROUTE_TITLES = {
-    home: 'BuildProp Admin',
+    home: 'BuildProp',
     projects: 'Projects',
     finance: 'Finance',
     contacts: 'Contacts',
@@ -124,27 +124,33 @@
   /* ------------------------------ boot ------------------------------ */
 
   function boot() {
-    API.configure(storeGet(STORE.serverUrl) || '')
-    API.setToken(storeGet(STORE.token) || '')
-    try { state.user = JSON.parse(storeGet(STORE.user) || 'null') } catch (e) { state.user = null }
-    state.serverUrl = API.getBaseUrl()
-    state.cache.dashboard = cacheGet(STORE.dashboard)
-    state.cache.projects = cacheGet(STORE.projects)
-    state.cache.finance = cacheGet(STORE.finance)
-    state.cache.contacts = cacheGet(STORE.contacts)
-    state.cache.properties = cacheGet(STORE.properties)
-    state.cache.inventory = cacheGet(STORE.inventory)
-    state.cache.procurement = cacheGet(STORE.procurement)
-    state.cache.fleet = cacheGet(STORE.fleet)
-    state.cache.assets = cacheGet(STORE.assets)
-    state.cache.employees = cacheGet(STORE.employees)
-    state.cache.installments = cacheGet(STORE.installments)
-    state.cache.reports = cacheGet(STORE.reports)
+    try {
+      API.configure(storeGet(STORE.serverUrl) || '')
+      API.setToken(storeGet(STORE.token) || '')
+      try { state.user = JSON.parse(storeGet(STORE.user) || 'null') } catch (e) { state.user = null }
+      state.serverUrl = API.getBaseUrl()
+      state.cache.dashboard = cacheGet(STORE.dashboard)
+      state.cache.projects = cacheGet(STORE.projects)
+      state.cache.finance = cacheGet(STORE.finance)
+      state.cache.contacts = cacheGet(STORE.contacts)
+      state.cache.properties = cacheGet(STORE.properties)
+      state.cache.inventory = cacheGet(STORE.inventory)
+      state.cache.procurement = cacheGet(STORE.procurement)
+      state.cache.fleet = cacheGet(STORE.fleet)
+      state.cache.assets = cacheGet(STORE.assets)
+      state.cache.employees = cacheGet(STORE.employees)
+      state.cache.installments = cacheGet(STORE.installments)
+      state.cache.reports = cacheGet(STORE.reports)
 
-    if (API.getToken() && state.user && state.serverUrl) {
-      enterApp()
-    } else {
+      if (API.getToken() && state.user && state.serverUrl) {
+        enterApp()
+      } else {
+        showLogin()
+      }
+    } catch (err) {
       showLogin()
+    } finally {
+      hideLoader()
     }
   }
 
@@ -191,6 +197,15 @@
 
   function hideLoading() {
     $('#loading').classList.add('hidden')
+  }
+
+  function hideLoader() {
+    var el = $('#boot-loader')
+    if (!el || el.classList.contains('hide')) return
+    el.classList.add('hide')
+    setTimeout(function () {
+      if (el.parentNode) el.parentNode.removeChild(el)
+    }, 320)
   }
 
   function toast(message) {
@@ -541,6 +556,14 @@
     }
   }
 
+  function setHeaderTitle(text) {
+    var el = $('#header-title')
+    if (!el) return
+    var name = el.querySelector('.head-name')
+    if (name) name.textContent = text
+    else el.textContent = text
+  }
+
   function updateHeader(route) {
     var back = $('#btn-back')
     var refresh = $('#btn-refresh')
@@ -552,15 +575,15 @@
       back.classList.remove('hidden')
       refresh.classList.toggle('hidden', !(route.name === 'module' || route.name === 'report'))
       bell.classList.add('hidden')
-      if (route.name === 'alerts') title.textContent = 'Alerts'
-      else if (route.name === 'project') title.textContent = state.detailName || 'Project'
-      else if (route.name === 'module') title.textContent = (MODULE_META[route.module] && MODULE_META[route.module].title) || S.statusLabel(route.module)
-      else title.textContent = (REPORT_META[route.report] && REPORT_META[route.report].title) || 'Report'
+      if (route.name === 'alerts') setHeaderTitle('Alerts')
+      else if (route.name === 'project') setHeaderTitle(state.detailName || 'Project')
+      else if (route.name === 'module') setHeaderTitle((MODULE_META[route.module] && MODULE_META[route.module].title) || S.statusLabel(route.module))
+      else setHeaderTitle((REPORT_META[route.report] && REPORT_META[route.report].title) || 'Report')
     } else {
       back.classList.add('hidden')
       refresh.classList.toggle('hidden', !(route.name === 'home' || route.name === 'projects' || route.name === 'finance' || route.name === 'contacts' || route.name === 'more'))
       bell.classList.toggle('hidden', route.name !== 'home')
-      title.textContent = ROUTE_TITLES[route.name] || 'BuildProp Admin'
+      setHeaderTitle(ROUTE_TITLES[route.name] || 'BuildProp')
     }
     updateAlertBadge()
   }

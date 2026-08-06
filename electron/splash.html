@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    background: #0f172a;
+    font-family: 'Segoe UI', Calibri, sans-serif;
+    height: 100vh; display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+  }
+  .wrap { text-align:center; }
+  .emblem { margin: 0 auto 24px; width: 72px; height: 72px; position: relative; }
+  .roof {
+    width: 0; height: 0;
+    border-left: 36px solid transparent; border-right: 36px solid transparent;
+    border-bottom: 30px solid #f97316;
+    position: absolute; top: 0; left: 0;
+  }
+  .body { width: 44px; height: 22px; background: #fff; position: absolute; left: 14px; top: 30px; }
+  .door { width: 10px; height: 14px; background: #f97316; position: absolute; left: 31px; top: 38px; }
+  h1 {
+    color: #fff; font-size: 44px; font-weight: 800; letter-spacing: 6px;
+    margin-bottom: 16px;
+  }
+  .line { width: 120px; height: 4px; background: #f97316; margin: 0 auto 14px; border-radius: 2px; }
+  .tag { color: #94a3b8; font-size: 15px; letter-spacing: 2px; text-transform: lowercase; }
+  .spinner {
+    width: 34px; height: 34px; margin: 34px auto 0;
+    border: 3px solid #334155; border-top-color: #f97316;
+    border-radius: 50%; animation: spin 0.9s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .progress { width: 220px; height: 4px; background: #1e293b; margin: 22px auto 0; border-radius: 2px; overflow: hidden; }
+  .fill { height: 100%; width: 40%; background: #f97316; border-radius: 2px; animation: slide 1.4s ease-in-out infinite; }
+  @keyframes slide { 0% { margin-left: -40%; } 100% { margin-left: 100%; } }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="emblem"><div class="roof"></div><div class="body"></div><div class="door"></div></div>
+    <h1>BUILDPROP</h1>
+    <div class="line"></div>
+    <div class="tag">a product of AxisOps Suite</div>
+    <div class="spinner"></div>
+    <div class="progress"><div class="fill"></div></div>
+  </div>
+</body>
+</html>

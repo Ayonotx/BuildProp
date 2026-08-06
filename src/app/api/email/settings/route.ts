@@ -52,6 +52,14 @@ export const POST = withValidation(emailSettingsSchema, async (_request, body) =
       password: body.password ? body.password : existing.password,
       fromName: body.fromName ?? '',
       fromEmail: body.fromEmail,
+      // Preserve any Google OAuth connection when manual SMTP settings are saved.
+      emailProvider: existing.emailProvider,
+      googleClientId: existing.googleClientId,
+      googleClientSecret: existing.googleClientSecret,
+      googleRefreshToken: existing.googleRefreshToken,
+      googleAccessToken: existing.googleAccessToken,
+      googleTokenExpiresAt: existing.googleTokenExpiresAt,
+      googleEmail: existing.googleEmail,
     }
 
     await saveEmailSettings(settings)
